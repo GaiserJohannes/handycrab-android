@@ -14,12 +14,22 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
     }
 
-    /** Called when the user taps the Send button */
     public void switchRadius(View view) {
         findViewById(R.id.radius1).setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
         findViewById(R.id.radius2).setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
         findViewById(R.id.radius3).setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
         view.setBackgroundTintList(ColorStateList.valueOf(0xFFFF503C));
+    }
+
+    public void switchLocation(View view) {
+        findViewById(R.id.radius1).setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        findViewById(R.id.radius2).setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        findViewById(R.id.radius3).setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        view.setBackgroundTintList(ColorStateList.valueOf(0xFFFF503C));
+    }
+
+    public void searchBarriers(View view) {
+
     }
 
 }
