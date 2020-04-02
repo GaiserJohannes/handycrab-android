@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HandyCrab</string>
+    <string name="login">Login</string>
+    <string name="loginError">Username oder Password falsch</string>
+</resources>
