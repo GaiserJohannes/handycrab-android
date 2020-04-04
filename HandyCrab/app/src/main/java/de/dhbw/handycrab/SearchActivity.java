@@ -2,9 +2,9 @@ package de.dhbw.handycrab;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 
 public class SearchActivity extends AppCompatActivity {
 
