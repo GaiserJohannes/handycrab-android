@@ -20,21 +20,22 @@
             android:layout_height="wrap_content" android:id="@+id/radius2"
             app:layout_constraintTop_toTopOf="@+id/radius1" app:layout_constraintStart_toEndOf="@+id/radius1"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/radius3"
-            android:onClick="switchRadius"/>
+            android:onClick="switchRadius" android:backgroundTint="@color/colorPrimary"/>
     <Button
             android:text="5 m"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/radius1"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toStartOf="@+id/radius2" app:layout_constraintTop_toBottomOf="@+id/textView"
-            android:layout_marginTop="16dp" android:onClick="switchRadius"/>
+            android:layout_marginTop="16dp" android:onClick="switchRadius"
+            android:backgroundTint="@color/colorPrimaryLight"/>
     <Button
             android:text="30 m"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/radius3"
             app:layout_constraintTop_toTopOf="@+id/radius2" app:layout_constraintStart_toEndOf="@+id/radius2"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="switchRadius"/>
+            android:onClick="switchRadius" android:backgroundTint="@color/colorPrimaryLight"/>
     <TextView
             android:text="@string/radiusLabel"
             android:layout_width="wrap_content"
@@ -55,14 +56,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/button"
             app:layout_constraintStart_toStartOf="@+id/radius1" android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" android:onClick="switchLocation"/>
+            app:layout_constraintTop_toBottomOf="@+id/textView3" android:onClick="switchLocation"
+            android:backgroundTint="@color/colorPrimary"/>
     <Button
             android:text="@string/mapLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/button2"
             app:layout_constraintTop_toTopOf="@+id/button" app:layout_constraintStart_toStartOf="@+id/radius2"
-            android:onClick="switchLocation"/>
+            android:onClick="switchLocation" android:backgroundTint="@color/colorPrimaryLight"/>
     <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
@@ -70,5 +72,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" android:id="@+id/search_progressbar"
             app:layout_constraintHorizontal_bias="0.498"
-            android:layout_marginBottom="32dp" app:layout_constraintBottom_toTopOf="@+id/search"/>
+            android:layout_marginBottom="32dp" app:layout_constraintBottom_toTopOf="@+id/search"
+            android:visibility="invisible"/>
+    <TextView
+            android:text="@string/longitudeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+            android:id="@+id/search_text_lon" app:layout_constraintTop_toBottomOf="@+id/button"
+            android:layout_marginTop="16dp"/>
+    <TextView
+            android:text="@string/latitudeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+            android:id="@+id/search_text_lat" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/search_text_lon"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/search_lon" app:layout_constraintStart_toEndOf="@+id/search_text_lon"
+            android:layout_marginStart="16dp" app:layout_constraintTop_toTopOf="@+id/search_text_lon"
+    />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/search_lat"
+            app:layout_constraintTop_toTopOf="@+id/search_text_lat"
+            app:layout_constraintStart_toStartOf="@+id/search_lon"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

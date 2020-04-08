@@ -20,15 +20,16 @@
             <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="75pt"
-                    android:id="@+id/imageView" android:scaleType="centerCrop"
-                    tools:srcCompat="@tools:sample/backgrounds/scenic"/>
+                    android:id="@+id/barrier_image" android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic"
+                    android:contentDescription="@string/barrierImageContentDesc"/>
             <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/list_barrier_title"
+                    android:layout_height="wrap_content" android:id="@+id/barrier_title"
                     android:textSize="24sp"/>
             <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/list_barrier_desc"/>
+                    android:layout_height="wrap_content" android:id="@+id/barrier_desc"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

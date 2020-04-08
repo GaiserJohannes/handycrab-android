@@ -3,33 +3,33 @@ package de.dhbw.handycrab.backend;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.mongodb.util.JSON;
-
+import de.dhbw.handycrab.model.Barrier;
+import de.dhbw.handycrab.model.Solution;
+import de.dhbw.handycrab.model.User;
+import de.dhbw.handycrab.model.Vote;
 import org.bson.types.ObjectId;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
-
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-import de.dhbw.handycrab.model.Barrier;
-import de.dhbw.handycrab.model.ErrorCode;
-import de.dhbw.handycrab.model.Solution;
-import de.dhbw.handycrab.model.User;
-import de.dhbw.handycrab.model.Vote;
-
+@Singleton
 public class BackendConnector implements IHandyCrabDataHandler {
 
     private String connection = "http://handycrab.nico-dreher.de/rest";
     private Client client = ClientBuilder.newClient();
     private WebTarget target = client.target(connection);
     private Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIDDeserializer()).create();
+
+    @Inject
+    public BackendConnector() {}
 
     @Override
     public CompletableFuture<User> registerAsync(final String email, final String username, final String password) {
