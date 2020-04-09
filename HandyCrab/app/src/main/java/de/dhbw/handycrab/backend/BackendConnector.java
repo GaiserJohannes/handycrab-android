@@ -3,32 +3,35 @@ package de.dhbw.handycrab.backend;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.mongodb.util.JSON;
 
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import de.dhbw.handycrab.model.Barrier;
-import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.Solution;
 import de.dhbw.handycrab.model.User;
 import de.dhbw.handycrab.model.Vote;
 
 public class BackendConnector implements IHandyCrabDataHandler {
 
-    private String connection = "http://handycrab.nico-dreher.de/rest";
-    private Client client = ClientBuilder.newClient();
-    private WebTarget target = client.target(connection);
+    private String connection = "http://handycrab.nico-dreher.de/rest/";
+    private HttpClient client = HttpClientBuilder.create().build();
     private Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIDDeserializer()).create();
 
     @Override
@@ -92,25 +95,62 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     //helpermethods
-    private Response DoPost(String path, String json){
-        return target.path(path).request(MediaType.APPLICATION_JSON).post(Entity.entity(json, MediaType.APPLICATION_JSON));
+    private HttpResponse get(String path, String json){
+        HttpEntityEnclosingRequestBase httpEntity = new HttpEntityEnclosingRequestBase() {
+            @Override
+            public String getMethod() {
+                return "GET";
+            }
+        };
+        httpEntity.addHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.toString());
+        httpEntity.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
+        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+            httpEntity.setURI(new URI(connection + path));
+            httpEntity.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+            return client.execute(httpEntity);
+        } catch (URISyntaxException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    private BackendConnectionException getException(Response response){
-        return gson.fromJson(response.readEntity(String.class), BackendConnectionException.class);
+    private HttpResponse post(String path, String json){
+        HttpPost postRequest = new HttpPost( connection + path);
+        postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+        try {
+           return client.execute(postRequest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    //synchron Restcall
+    private String getJsonBody(HttpResponse response){
+        try {
+            return new BufferedReader(new InputStreamReader(response.getEntity().getContent())).readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "{errorCode:0}";
+    }
+
+    private BackendConnectionException getException(HttpResponse response){
+        JsonObject object = gson.fromJson(getJsonBody(response), JsonObject.class);
+        return new BackendConnectionException(object.get("errorCode").getAsInt(), response.getStatusLine().getStatusCode());
+    }
+
+    //synchron Restcalls
+
     private User register(String email, String username, String password) {
         String path = "users/register";
         JsonObject object = new JsonObject();
         object.addProperty("email", email);
         object.addProperty("username", username);
         object.addProperty("password", password);
-        String erg = object.toString();
-        Response response = DoPost(path, erg);
-        if(response.getStatus() == 200){
-            return gson.fromJson(response.readEntity(String.class), User.class);
+        HttpResponse response = post(path, object.toString());
+        if(response.getStatusLine().getStatusCode() == 200){
+            return gson.fromJson(getJsonBody(response), User.class);
         }
         else{
             throw getException(response);
@@ -120,12 +160,11 @@ public class BackendConnector implements IHandyCrabDataHandler {
     private User login(String emailOrUsername, String password) {
         String path = "users/login";
         JsonObject object = new JsonObject();
-        object.addProperty("email", emailOrUsername);
-        object.addProperty("username", emailOrUsername);
+        object.addProperty("login", emailOrUsername);
         object.addProperty("password", password);
-        Response response = DoPost(path, object.toString());
-        if(response.getStatus() == 200){
-            return gson.fromJson(response.readEntity(String.class), User.class);
+        HttpResponse response = post(path, object.toString());
+        if(response.getStatusLine().getStatusCode() == 200){
+            return gson.fromJson(getJsonBody(response), User.class);
         }
         else{
             throw getException(response);
@@ -133,11 +172,27 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     private void logout() {
-
+        String path = "users/logout";
+        HttpResponse response = post(path, "");
+        if(response.getStatusLine().getStatusCode() < 300){
+            return;
+        }
+        else{
+            throw getException(response);
+        }
     }
 
     private String getUsername(ObjectId id) {
-        return null;
+        String path = "users/name";
+        JsonObject object = new JsonObject();
+        object.addProperty("_id", id.toString());
+        HttpResponse response = get(path, object.toString());
+        if(response.getStatusLine().getStatusCode() == 200){
+            return gson.fromJson(getJsonBody(response), JsonObject.class).get("result").getAsString();
+        }
+        else{
+            throw getException(response);
+        }
     }
 
     private List<Barrier> getBarriers(double longitude, double latitude, int radius) {

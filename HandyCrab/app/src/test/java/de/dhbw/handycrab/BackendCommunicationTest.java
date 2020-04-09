@@ -1,5 +1,6 @@
 package de.dhbw.handycrab;
 
+import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,12 +17,14 @@ public class BackendCommunicationTest {
 
     @Test
     public void registerTest() {
-        CompletableFuture<User> cuser = connector.registerAsync("abc@test.com", "usern4me123", "abc123DEF!");
+        CompletableFuture<User> cuser = connector.registerAsync("abddc@test.com", "usde2rn4me123", "abc123DEF!");
         User user = null;
         try {
             user = cuser.get();
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            if(e.getCause() instanceof BackendConnectionException){
+                System.out.println(((BackendConnectionException) e.getCause()).getErrorCode());
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -35,11 +38,44 @@ public class BackendCommunicationTest {
         try {
             user = cuser.get();
         } catch (ExecutionException e) {
-            System.out.println(((BackendConnectionException)e.getCause()).getErrorCode());
-            e.printStackTrace();
+            if(e.getCause() instanceof BackendConnectionException){
+                System.out.println(((BackendConnectionException) e.getCause()).getErrorCode());
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         Assert.assertNotNull(user);
     }
+
+    @Test
+    public void userNameTest(){
+        String name = null;
+        CompletableFuture<String> username = connector.getUsernameAsync(new ObjectId("5e85a97841e46f5d00cb3a5d"));
+        try {
+            name = username.get();
+        } catch (ExecutionException e) {
+            if(e.getCause() instanceof BackendConnectionException){
+                System.out.println(((BackendConnectionException) e.getCause()).getErrorCode());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Assert.assertNotNull(name);
+    }
+
+    @Test
+    public void logoutTest(){
+        try {
+           connector.logoutAsync().get();
+        } catch (ExecutionException e) {
+            if(e.getCause() instanceof BackendConnectionException){
+                System.out.println(((BackendConnectionException) e.getCause()).getErrorCode());
+            }
+            Assert.fail();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
 }
