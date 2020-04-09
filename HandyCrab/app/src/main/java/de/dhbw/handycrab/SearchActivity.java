@@ -1,43 +1,54 @@
 package de.dhbw.handycrab;
 
-import android.content.res.ColorStateList;
+import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import de.dhbw.handycrab.backend.BackendConnector;
+import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
+import de.dhbw.handycrab.helper.ServiceProvider;
+import de.dhbw.handycrab.model.Barrier;
 
-import javax.inject.Inject;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class SearchActivity extends AppCompatActivity {
 
-    @Inject
-    BackendConnector dataHandler;
+    public static String BARRIER_KEY = "de.dhbw.handycrab.BARRIERS";
+
+    IHandyCrabDataHandler dataHandler;
 
     private FusedLocationProviderClient fusedLocationClient;
 
     private int radius = 10;
+    private Location currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        dataHandler = ServiceProvider.DataHandler;
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        UpdateCurrentLocation();
+
+        if (currentLocation != null) {
+            ((TextView) findViewById(R.id.search_lat)).setText(String.format("%s", currentLocation.getLatitude()));
+            ((TextView) findViewById(R.id.search_lon)).setText(String.format("%s", currentLocation.getLongitude()));
+        }
+    }
+
+    private void UpdateCurrentLocation() {
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
                     // Got last known location. In some rare situations this can be null.
-                    System.out.println("Found Location......................................");
                     if (location != null) {
-                        ((TextView) findViewById(R.id.search_lat)).setText(String.format("%s", location.getLatitude()));
-                        ((TextView) findViewById(R.id.search_lon)).setText(String.format("%s", location.getLongitude()));
+                        currentLocation = location;
                     }
-                })
-                .addOnCompleteListener(this, location -> {
-                    System.out.println("End Location...................................");
                 });
     }
 
@@ -54,18 +65,30 @@ public class SearchActivity extends AppCompatActivity {
                 break;
         }
 
-        findViewById(R.id.radius1).setBackgroundTintList(getResources().getColorStateList(R.color.btn_default, getTheme()));
-        findViewById(R.id.radius2).setBackgroundTintList(getResources().getColorStateList(R.color.btn_default, getTheme()));
-        findViewById(R.id.radius3).setBackgroundTintList(getResources().getColorStateList(R.color.btn_default, getTheme()));
-        view.setBackgroundTintList(ColorStateList.valueOf(0xFFFF503C));
+        findViewById(R.id.radius1).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        findViewById(R.id.radius2).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        findViewById(R.id.radius3).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        view.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
     }
 
     public void switchLocation(View view) {
     }
 
     public void searchBarriers(View view) {
-        //dataHandler.getBarriersAsync(0, 0, radius);
         findViewById(R.id.search_progressbar).setVisibility(View.VISIBLE);
+
+        UpdateCurrentLocation();
+
+        if (currentLocation == null) {
+            return;
+        }
+
+        CompletableFuture<List<Barrier>> result = dataHandler.getBarriersAsync(currentLocation.getLongitude(), currentLocation.getLatitude(), radius);
+        List<Barrier> list = result.join();
+        ServiceProvider.DataHolder.store(BARRIER_KEY, list);
+
+        Intent intent = new Intent(this, BarrierListActivity.class);
+        startActivity(intent);
     }
 
 }

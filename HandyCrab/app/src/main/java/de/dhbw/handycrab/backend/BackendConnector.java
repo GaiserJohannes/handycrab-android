@@ -9,8 +9,6 @@ import de.dhbw.handycrab.model.User;
 import de.dhbw.handycrab.model.Vote;
 import org.bson.types.ObjectId;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -20,16 +18,12 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@Singleton
 public class BackendConnector implements IHandyCrabDataHandler {
 
     private String connection = "http://handycrab.nico-dreher.de/rest";
     private Client client = ClientBuilder.newClient();
     private WebTarget target = client.target(connection);
     private Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIDDeserializer()).create();
-
-    @Inject
-    public BackendConnector() {}
 
     @Override
     public CompletableFuture<User> registerAsync(final String email, final String username, final String password) {

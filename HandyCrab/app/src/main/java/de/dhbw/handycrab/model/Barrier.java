@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Barrier {
+
     private ObjectId _id;
     private ObjectId userId;
     private String title;
@@ -19,6 +20,20 @@ public class Barrier {
     private int upvotes;
     private int downvotes;
     private Vote vote;
+
+    public Barrier(ObjectId id, ObjectId userId, String title, double longitude, double latitude, URL picture, String description, String postcode, int upvotes, int downvotes, Vote vote) {
+        _id = id;
+        this.userId = userId;
+        this.title = title;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.picture = picture;
+        this.description = description;
+        this.postcode = postcode;
+        this.upvotes = upvotes;
+        this.downvotes = downvotes;
+        this.vote = vote;
+    }
 
     public ObjectId getId() {
         return _id;
