@@ -17,4 +17,6 @@
     <string name="barrierImageContentDesc">image of barrier</string>
     <string name="latitudeLabel">Latitude</string>
     <string name="longitudeLabel">Longitude</string>
+    <string name="thumbsUp">upvote</string>
+    <string name="thumbsDown">downvote</string>
 </resources>

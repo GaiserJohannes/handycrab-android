@@ -23,10 +23,10 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
 
     @NonNull
     @Override
-    public BarrierViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.barrier_card, viewGroup, false);
-        BarrierViewHolder pvh = new BarrierViewHolder(v);
-        return pvh;
+    public BarrierViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.barrier_card, parent, false);
+        BarrierViewHolder viewHolder = new BarrierViewHolder(v);
+        return viewHolder;
     }
 
     @Override
@@ -47,12 +47,12 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
     }
 
     public static class BarrierViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        TextView barrierTitle;
-        TextView barrierDesc;
-        ImageView barrierImage;
+        public CardView cv;
+        public TextView barrierTitle;
+        public TextView barrierDesc;
+        public ImageView barrierImage;
 
-        BarrierViewHolder(View itemView) {
+        public BarrierViewHolder(View itemView) {
             super(itemView);
             cv = itemView.findViewById(R.id.list_barrier_card);
             barrierTitle = itemView.findViewById(R.id.barrier_title);
