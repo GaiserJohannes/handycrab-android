@@ -9,10 +9,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
 import de.dhbw.handycrab.backend.BackendConnectionException;
-import de.dhbw.handycrab.backend.BackendConnector;
+import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.User;
 
+import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
@@ -23,10 +24,13 @@ public class LoginActivity extends AppCompatActivity {
     private Button submit;
     private TabLayout tabLayout;
 
-    private BackendConnector backendConnector = new BackendConnector();
+    @Inject
+    IHandyCrabDataHandler backendConnector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Program.getApplicationGraph().inject(this);
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);

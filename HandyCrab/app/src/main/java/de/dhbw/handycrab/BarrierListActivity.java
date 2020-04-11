@@ -40,7 +40,7 @@ public class BarrierListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((Program) getApplicationContext()).graph.inject(this);
+        Program.getApplicationGraph().inject(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barrier_list);

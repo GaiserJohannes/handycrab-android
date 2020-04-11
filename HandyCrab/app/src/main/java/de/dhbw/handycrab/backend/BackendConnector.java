@@ -3,17 +3,6 @@ package de.dhbw.handycrab.backend;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-
-import org.bson.types.ObjectId;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
 import cz.msebera.android.httpclient.HttpHeaders;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
@@ -23,11 +12,16 @@ import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
-import de.dhbw.handycrab.model.Barrier;
-import de.dhbw.handycrab.model.ErrorCode;
-import de.dhbw.handycrab.model.Solution;
-import de.dhbw.handycrab.model.User;
-import de.dhbw.handycrab.model.Vote;
+import de.dhbw.handycrab.model.*;
+import org.bson.types.ObjectId;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 
 public class BackendConnector implements IHandyCrabDataHandler {
@@ -51,7 +45,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<Void> logoutAsync() {
-        return CompletableFuture.runAsync(()->logout());
+        return CompletableFuture.runAsync(this::logout);
     }
 
     @Override
@@ -113,8 +107,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
             httpEntity.setURI(new URI(connection + path));
             httpEntity.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
             return client.execute(httpEntity);
-        } catch (URISyntaxException e) {
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -184,7 +177,6 @@ public class BackendConnector implements IHandyCrabDataHandler {
         String path = "users/logout";
         HttpResponse response = post(path, "");
         if(response != null && response.getStatusLine().getStatusCode() < 300){
-            return;
         }
         else{
             throw getException(response);

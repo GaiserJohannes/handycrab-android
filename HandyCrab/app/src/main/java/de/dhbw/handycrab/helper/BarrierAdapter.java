@@ -25,8 +25,7 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
     @Override
     public BarrierViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.barrier_card, parent, false);
-        BarrierViewHolder viewHolder = new BarrierViewHolder(v);
-        return viewHolder;
+        return new BarrierViewHolder(v);
     }
 
     @Override

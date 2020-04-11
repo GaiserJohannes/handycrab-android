@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DataHolder implements IDataHolder {
-
+    // TODO change WeakReference. Vielleicht räumt der Garbagge Collector zu früh auf. Keine Ahnung -> Testen
     Map<String, WeakReference<Object>> data = new HashMap<>();
 
     @Override

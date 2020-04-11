@@ -21,6 +21,8 @@ public class Barrier {
     private int downvotes;
     private Vote vote;
 
+    public Barrier() {}
+
     public Barrier(ObjectId id, ObjectId userId, String title, double longitude, double latitude, URL picture, String description, String postcode, int upvotes, int downvotes, Vote vote) {
         _id = id;
         this.userId = userId;

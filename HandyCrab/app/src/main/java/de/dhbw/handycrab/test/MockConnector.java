@@ -16,22 +16,24 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<User> registerAsync(String email, String username, String password) throws BackendConnectionException {
-        return null;
+        User user = new User(new ObjectId(), username, email);
+        return CompletableFuture.completedFuture(user);
     }
 
     @Override
     public CompletableFuture<User> loginAsync(String emailOrUsername, String password) {
-        return null;
+        User user = new User(new ObjectId(), emailOrUsername, emailOrUsername);
+        return CompletableFuture.completedFuture(user);
     }
 
     @Override
     public CompletableFuture<Void> logoutAsync() {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<String> getUsernameAsync(ObjectId id) {
-        return null;
+        return CompletableFuture.completedFuture("mocked Username");
     }
 
     @Override

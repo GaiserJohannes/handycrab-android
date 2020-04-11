@@ -4,8 +4,16 @@ import org.bson.types.ObjectId;
 
 public class User {
     private ObjectId _id;
-    private String username = "hallo";
-    private String email = "test";
+    private String username;
+    private String email;
+
+    public User() {}
+
+    public User(ObjectId id, String username, String email) {
+        _id = id;
+        this.username = username;
+        this.email = email;
+    }
 
     public ObjectId getId(){
         return _id;

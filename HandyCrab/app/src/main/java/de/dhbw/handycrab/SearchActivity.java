@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
+import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.IDataHolder;
 import de.dhbw.handycrab.model.Barrier;
@@ -26,35 +25,26 @@ public class SearchActivity extends AppCompatActivity {
     @Inject
     IDataHolder dataHolder;
 
-    private FusedLocationProviderClient fusedLocationClient;
+    @Inject
+    GeoLocationService locationService;
 
     private int radius = 10;
-    private Location currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((Program) getApplicationContext()).graph.inject(this);
+        Program.getApplicationGraph().inject(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        UpdateCurrentLocation();
-
-        if (currentLocation != null) {
-            ((TextView) findViewById(R.id.search_lat)).setText(String.format("%s", currentLocation.getLatitude()));
-            ((TextView) findViewById(R.id.search_lon)).setText(String.format("%s", currentLocation.getLongitude()));
-        }
+        locationService.getLastLocationCallback(this::UpdateLocationText);
     }
 
-    private void UpdateCurrentLocation() {
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, location -> {
-                    // Got last known location. In some rare situations this can be null.
-                    if (location != null) {
-                        currentLocation = location;
-                    }
-                });
+    private void UpdateLocationText(Boolean success, Location location) {
+        if (success && location != null) {
+            ((TextView) findViewById(R.id.search_lat)).setText(String.format("%s", location.getLatitude()));
+            ((TextView) findViewById(R.id.search_lon)).setText(String.format("%s", location.getLongitude()));
+        }
     }
 
     public void switchRadius(View view) {
@@ -82,18 +72,18 @@ public class SearchActivity extends AppCompatActivity {
     public void searchBarriers(View view) {
         findViewById(R.id.search_progressbar).setVisibility(View.VISIBLE);
 
-        UpdateCurrentLocation();
+        locationService.getLastLocationCallback(this::findBarriers);
+    }
 
-        if (currentLocation == null) {
-            return;
+    private void findBarriers(Boolean success, Location location) {
+        if (success && location != null) {
+            CompletableFuture<List<Barrier>> result = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius);
+            List<Barrier> list = result.join();
+            dataHolder.store(BARRIER_KEY, list);
+
+            Intent intent = new Intent(this, BarrierListActivity.class);
+            startActivity(intent);
         }
-
-        CompletableFuture<List<Barrier>> result = dataHandler.getBarriersAsync(currentLocation.getLongitude(), currentLocation.getLatitude(), radius);
-        List<Barrier> list = result.join();
-        dataHolder.store(BARRIER_KEY, list);
-
-        Intent intent = new Intent(this, BarrierListActivity.class);
-        startActivity(intent);
     }
 
 }
