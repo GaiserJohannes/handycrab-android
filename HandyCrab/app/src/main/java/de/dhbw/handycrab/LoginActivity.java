@@ -1,21 +1,19 @@
 package de.dhbw.handycrab;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
-
-import java.util.concurrent.ExecutionException;
-
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.User;
+
+import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -33,12 +31,12 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        email = (TextView) findViewById(R.id.mail);
-        username = (TextView) findViewById(R.id.username);
-        password = (TextView) findViewById(R.id.password);
-        submit = (Button) findViewById(R.id.submit);
+        email = findViewById(R.id.mail);
+        username = findViewById(R.id.username);
+        password = findViewById(R.id.password);
+        submit = findViewById(R.id.submit);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -66,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void submit(View view){
+    public void submit(View view) {
         if(tabLayout.getSelectedTabPosition() == 0){
             login(view);
         }
@@ -75,11 +73,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void login(View view){
+    public void login(View view) {
         User user = null;
         try {
             user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString()).get();
-            //todo go to barriersearchview
+            // TODO store user? -> DataHolder inject
+            successLogin();
         } catch (ExecutionException e) {
             if(e.getCause() instanceof BackendConnectionException){
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
@@ -98,11 +97,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void register(View view){
+    public void register(View view) {
         User user = null;
         try {
             user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString()).get();
-            //todo go to barriersearchview
+            // TODO store User? -> inject DataHolder
+            successLogin();
         } catch (ExecutionException e) {
             if(e.getCause() instanceof BackendConnectionException){
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
@@ -131,5 +131,10 @@ public class LoginActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void successLogin() {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
     }
 }
