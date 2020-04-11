@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">HandyCrab</string>
-    <string name="login">Login</string>
-    <string name="loginError">Username oder Password falsch</string>
     <string name="searchLabel">Suche</string>
     <string name="radiusLabel">Radius</string>
     <string name="locationLabel">Position</string>
@@ -19,4 +17,26 @@
     <string name="longitudeLabel">Longitude</string>
     <string name="thumbsUp">upvote</string>
     <string name="thumbsDown">downvote</string>
+    <string name="loginLabel">Login</string>
+    <string name="registerLabel">Registrieren</string>
+    <string name="usernameOrEmail">Benutzername / E-Mail</string>
+    <string name="username">Benutzername</string>
+    <string name="email">E-Mail</string>
+    <string name="password">Passwort</string>
+    //errorcode = 0
+    <string name="noConnectionToServerError">Es kann keine Verbindung zum Server hergestellt werden</string>
+    //errorcode = 1
+    <string name="incompleteError">Unvollständige Anfrage</string>
+    //errorcode = 3
+    <string name="emailAlreadyAssignedError">E-Mail bereits registriert</string>
+    //errorcode = 4
+    <string name="usernameAlreadyAssignedError">Benutzername bereits verwendet</string>
+    //errorcode = 5
+    <string name="invalidEmailError">Ungültige E-Mail Adresse</string>
+    //errorcode = 6
+    <string name="invalidLoginError">Benutzername oder Passwort falsch</string>
+    //errorcode = 12
+    <string name="invalidUsernameError">Ungültiger Benutzername</string>
+    //errorcode = 13
+    <string name="invalidPasswordError">Ungültiges Passwort</string>
 </resources>

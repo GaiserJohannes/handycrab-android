@@ -4,15 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
 
 import java.io.BufferedReader;
@@ -23,10 +14,21 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import cz.msebera.android.httpclient.HttpHeaders;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpEntityEnclosingRequestBase;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.ContentType;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import de.dhbw.handycrab.model.Barrier;
+import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.Solution;
 import de.dhbw.handycrab.model.User;
 import de.dhbw.handycrab.model.Vote;
+
 
 public class BackendConnector implements IHandyCrabDataHandler {
 
@@ -34,9 +36,12 @@ public class BackendConnector implements IHandyCrabDataHandler {
     private HttpClient client = HttpClientBuilder.create().build();
     private Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIDDeserializer()).create();
 
+    public BackendConnector(){
+    }
+
     @Override
     public CompletableFuture<User> registerAsync(final String email, final String username, final String password) {
-       return CompletableFuture.supplyAsync(() -> register(email, username, password));
+        return CompletableFuture.supplyAsync(() -> register(email, username, password));
     }
 
     @Override
@@ -119,7 +124,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         HttpPost postRequest = new HttpPost( connection + path);
         postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
         try {
-           return client.execute(postRequest);
+            return client.execute(postRequest);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -136,8 +141,12 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     private BackendConnectionException getException(HttpResponse response){
+        if(response == null){
+            return new BackendConnectionException(ErrorCode.NO_CONNECTION_TO_SERVER, -1);
+        }
         JsonObject object = gson.fromJson(getJsonBody(response), JsonObject.class);
-        return new BackendConnectionException(object.get("errorCode").getAsInt(), response.getStatusLine().getStatusCode());
+        ErrorCode err = ErrorCode.values()[object.get("errorCode").getAsInt()];
+        return new BackendConnectionException(err, response.getStatusLine().getStatusCode());
     }
 
     //synchron Restcalls
@@ -149,7 +158,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("username", username);
         object.addProperty("password", password);
         HttpResponse response = post(path, object.toString());
-        if(response.getStatusLine().getStatusCode() == 200){
+        if(response != null && response.getStatusLine().getStatusCode() == 200){
             return gson.fromJson(getJsonBody(response), User.class);
         }
         else{
@@ -163,7 +172,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("login", emailOrUsername);
         object.addProperty("password", password);
         HttpResponse response = post(path, object.toString());
-        if(response.getStatusLine().getStatusCode() == 200){
+        if(response != null && response.getStatusLine().getStatusCode() == 200){
             return gson.fromJson(getJsonBody(response), User.class);
         }
         else{
@@ -174,7 +183,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
     private void logout() {
         String path = "users/logout";
         HttpResponse response = post(path, "");
-        if(response.getStatusLine().getStatusCode() < 300){
+        if(response != null && response.getStatusLine().getStatusCode() < 300){
             return;
         }
         else{
@@ -187,7 +196,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         JsonObject object = new JsonObject();
         object.addProperty("_id", id.toString());
         HttpResponse response = get(path, object.toString());
-        if(response.getStatusLine().getStatusCode() == 200){
+        if(response != null && response.getStatusLine().getStatusCode() == 200){
             return gson.fromJson(getJsonBody(response), JsonObject.class).get("result").getAsString();
         }
         else{
