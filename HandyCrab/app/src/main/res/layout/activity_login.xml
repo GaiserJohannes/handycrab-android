@@ -4,36 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/loginTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loginLabel" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/registerTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/registerLabel" />
+
+    </com.google.android.material.tabs.TabLayout>
 
     <Button
-        android:id="@+id/login"
+        android:id="@+id/submit"
         android:layout_width="186dp"
         android:layout_height="78dp"
         android:layout_marginStart="108dp"
         android:layout_marginTop="55dp"
         android:layout_marginEnd="109dp"
         android:layout_marginBottom="256dp"
-        android:onClick="login"
-        android:text="@string/login"
+        android:onClick="submit"
+        android:text="@string/loginLabel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.529" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="156dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="157dp"
         android:autofillHints=""
         android:ems="10"
+        android:hint="@string/password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
@@ -41,48 +65,34 @@
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="156dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="157dp"
-        android:layout_marginBottom="44dp"
+        android:layout_marginStart="99dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="99dp"
+        android:layout_marginBottom="16dp"
         android:autofillHints=""
         android:ems="10"
+        android:hint="@string/usernameOrEmail"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/mail" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="185dp"
-        android:layout_height="88dp"
-        android:layout_marginStart="169dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="171dp"
-        android:layout_marginBottom="60dp"
-        android:text="@string/login"
-        android:textAlignment="center"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/username"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.483"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/errorMessage"
+    <EditText
+        android:id="@+id/mail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="270dp"
-        android:layout_marginTop="108dp"
-        android:layout_marginEnd="272dp"
-        android:foregroundTint="@color/colorError"
-        android:text="@string/loginError"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="210dp"
+        android:layout_marginEnd="157dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textPersonName"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login" />
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
