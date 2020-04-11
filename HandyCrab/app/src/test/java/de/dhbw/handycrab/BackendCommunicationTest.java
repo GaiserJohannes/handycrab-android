@@ -11,17 +11,19 @@ import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.model.User;
 
+
 public class BackendCommunicationTest {
 
     private BackendConnector connector = new BackendConnector();
 
     @Test
     public void registerTest() {
-        CompletableFuture<User> cuser = connector.registerAsync("abddc@test.com", "usde2rn4me123", "abc123DEF!");
+        CompletableFuture<User> cuser = connector.registerAsync("aasdaddc@test.com", "uGn4me123", "abdc123DEF!");
         User user = null;
         try {
             user = cuser.get();
         } catch (ExecutionException e) {
+            e.printStackTrace();
             if(e.getCause() instanceof BackendConnectionException){
                 System.out.println(((BackendConnectionException) e.getCause()).getErrorCode());
             }
@@ -54,6 +56,7 @@ public class BackendCommunicationTest {
         try {
             name = username.get();
         } catch (ExecutionException e) {
+            e.printStackTrace();
             if(e.getCause() instanceof BackendConnectionException){
                 System.out.println(((BackendConnectionException) e.getCause()).getErrorCode());
             }
@@ -77,5 +80,6 @@ public class BackendCommunicationTest {
             Assert.fail();
         }
     }
+
 
 }

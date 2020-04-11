@@ -1,8 +1,8 @@
 package de.dhbw.handycrab.model;
 
 public enum ErrorCode {
-    UNKNOWN,
-    UNVOLLSTÄNDIG,
+    NO_CONNECTION_TO_SERVER,
+    INCOMPLIETE,
     UNAUTHORIZED,
     EMAIL_ALREADY_ASSIGNED,
     USERNAME_ALREADY_ASSIGNED,

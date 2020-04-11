@@ -4,18 +4,18 @@ import de.dhbw.handycrab.model.ErrorCode;
 
 public class BackendConnectionException extends RuntimeException {
 
-    private int errorCode;
+    private ErrorCode errorCode;
 
     private int httpStatusCode;
 
-    BackendConnectionException(int errorCode, int httpStatusCode){
+    BackendConnectionException(ErrorCode errorCode, int httpStatusCode){
         super();
         this.errorCode = errorCode;
         this.httpStatusCode = httpStatusCode;
     }
 
     public ErrorCode getErrorCode() {
-        return ErrorCode.values()[errorCode];
+        return errorCode;
     }
 
     public String getMessage(){
