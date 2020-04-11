@@ -9,9 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
-import de.dhbw.handycrab.helper.ServiceProvider;
+import de.dhbw.handycrab.helper.IDataHolder;
 import de.dhbw.handycrab.model.Barrier;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -19,7 +20,11 @@ public class SearchActivity extends AppCompatActivity {
 
     public static String BARRIER_KEY = "de.dhbw.handycrab.BARRIERS";
 
+    @Inject
     IHandyCrabDataHandler dataHandler;
+
+    @Inject
+    IDataHolder dataHolder;
 
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -28,10 +33,10 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((Program) getApplicationContext()).graph.inject(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        dataHandler = ServiceProvider.DataHandler;
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         UpdateCurrentLocation();
@@ -85,7 +90,7 @@ public class SearchActivity extends AppCompatActivity {
 
         CompletableFuture<List<Barrier>> result = dataHandler.getBarriersAsync(currentLocation.getLongitude(), currentLocation.getLatitude(), radius);
         List<Barrier> list = result.join();
-        ServiceProvider.DataHolder.store(BARRIER_KEY, list);
+        dataHolder.store(BARRIER_KEY, list);
 
         Intent intent = new Intent(this, BarrierListActivity.class);
         startActivity(intent);

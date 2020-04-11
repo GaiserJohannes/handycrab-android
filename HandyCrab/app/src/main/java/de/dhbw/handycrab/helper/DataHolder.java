@@ -16,6 +16,9 @@ public class DataHolder implements IDataHolder {
     @Override
     public Object retrieve(String id) {
         WeakReference<Object> objectWeakReference = data.get(id);
-        return objectWeakReference.get();
+        if (objectWeakReference != null) {
+            return objectWeakReference.get();
+        }
+        return new Object();
     }
 }

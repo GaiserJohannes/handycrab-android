@@ -37,8 +37,10 @@ public class MockConnector implements IHandyCrabDataHandler {
     @Override
     public CompletableFuture<List<Barrier>> getBarriersAsync(double longitude, double latitude, int radius) {
         Barrier b1 = new Barrier(new ObjectId(), new ObjectId(), "Treppe", 42.0, 69.0, null, "Das ist eine Beschreibung", null, 0, 0, Vote.NONE);
+        Barrier b2 = new Barrier(new ObjectId(), new ObjectId(), "Treppe222", 41.0, 68.0, null, "Das ist eine andere Beschreibung", null, 0, 0, Vote.NONE);
         List<Barrier> list = new ArrayList<>();
         list.add(b1);
+        list.add(b2);
         return CompletableFuture.completedFuture(list);
     }
 

@@ -14,8 +14,8 @@ import de.dhbw.handycrab.model.Barrier;
 import java.util.List;
 
 public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierViewHolder> {
-
-    List<Barrier> barriers;
+    private View.OnClickListener clickListener;
+    private List<Barrier> barriers;
 
     public BarrierAdapter(List<Barrier> barriers) {
         this.barriers = barriers;
@@ -46,7 +46,12 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public static class BarrierViewHolder extends RecyclerView.ViewHolder {
+    public void setClickListener(View.OnClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
+    // static?
+    public class BarrierViewHolder extends RecyclerView.ViewHolder {
         public CardView cv;
         public TextView barrierTitle;
         public TextView barrierDesc;
@@ -58,6 +63,9 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
             barrierTitle = itemView.findViewById(R.id.barrier_title);
             barrierDesc = itemView.findViewById(R.id.barrier_desc);
             barrierImage = itemView.findViewById(R.id.barrier_image);
+
+            itemView.setTag(this);
+            itemView.setOnClickListener(clickListener);
         }
     }
 
