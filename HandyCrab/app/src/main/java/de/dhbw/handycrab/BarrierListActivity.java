@@ -2,8 +2,11 @@ package de.dhbw.handycrab;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.helper.BarrierAdapter;
@@ -44,6 +47,14 @@ public class BarrierListActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barrier_list);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+        // Enable the Up button
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_KEY);
 
@@ -56,8 +67,19 @@ public class BarrierListActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_barrier_list, menu);
+        return true;
+    }
+
     private void selectBarrier() {
         Intent intent = new Intent(this, DetailActivity.class);
+        startActivity(intent);
+    }
+
+    public void addBarrier(View view) {
+        Intent intent = new Intent(this, EditorActivity.class);
         startActivity(intent);
     }
 }

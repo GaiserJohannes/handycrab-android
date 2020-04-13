@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_sort_by"
+          android:icon="@android:drawable/ic_menu_sort_by_size" android:title="@string/sort_by"
+          app:showAsAction="ifRoom">
+        <menu
+        >
+            <item android:title="@string/sort_by_date" android:id="@+id/action_sort_by_date"/>
+            <item android:title="@string/sort_by_votes" android:id="@+id/action_sort_by_votes"/>
+            <item android:title="@string/sort_by_distance" android:id="@+id/action_sort_by_distance"/>
+        </menu>
+    </item>
+</menu>

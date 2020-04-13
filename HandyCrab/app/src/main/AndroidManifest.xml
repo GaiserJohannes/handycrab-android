@@ -13,16 +13,24 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity   android:name=".BarrierListActivity"
-                    android:parentActivityName=".SearchActivity">
+        <activity
+                android:name=".BarrierListActivity"
+                android:label="@string/title_barrier_list"
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".SearchActivity">
         </activity>
-        <activity   android:name=".DetailActivity"
-                    android:parentActivityName=".BarrierListActivity">
+        <activity
+                android:name=".DetailActivity"
+                android:parentActivityName=".BarrierListActivity">
         </activity>
-        <activity   android:name=".EditorActivity"
-                    android:parentActivityName=".BarrierListActivity">
+        <activity
+                android:name=".EditorActivity"
+                android:parentActivityName=".BarrierListActivity">
         </activity>
-        <activity android:name=".SearchActivity">
+        <activity
+                android:name=".SearchActivity"
+                android:label="@string/title_activity_search"
+                android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
