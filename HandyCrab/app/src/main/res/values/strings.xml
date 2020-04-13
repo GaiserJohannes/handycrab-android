@@ -23,10 +23,14 @@
     <string name="username">Benutzername</string>
     <string name="email">E-Mail</string>
     <string name="password">Passwort</string>
+    //default error
+    <string name="defaultError">Fehler während der Anfrage</string>
     //errorcode = 0
     <string name="noConnectionToServerError">Es kann keine Verbindung zum Server hergestellt werden</string>
     //errorcode = 1
     <string name="incompleteError">Unvollständige Anfrage</string>
+    //errorcode = 2
+    <string name="unauthorized">nicht autorisiert</string>
     //errorcode = 3
     <string name="emailAlreadyAssignedError">E-Mail bereits registriert</string>
     //errorcode = 4
@@ -35,8 +39,21 @@
     <string name="invalidEmailError">Ungültige E-Mail Adresse</string>
     //errorcode = 6
     <string name="invalidLoginError">Benutzername oder Passwort falsch</string>
+    //errorcode = 7
+    <string name="userNotFound">Der Benutzer konnte nicht gefunden werden</string>
+    //errorcode = 8
+    <string name="invalidLocation">ungültige Koordinaten</string>
+    //errorcode = 9
+    <string name="barrierNotFound">Diese Barriere konnte nicht gefunden werden</string>
+    //errorcode = 10
+    <string name="invalidUserId">ungültige Benutzer id</string>
+    //errorcode = 11
+    <string name="solutionNotFound">Diese Lösung konnte nicht gefunden werden</string>
     //errorcode = 12
     <string name="invalidUsernameError">Ungültiger Benutzername</string>
     //errorcode = 13
     <string name="invalidPasswordError">Ungültiges Passwort</string>
+    <string name="radius1Label">10 m</string>
+    <string name="radius2Label">25 m</string>
+    <string name="radius3Label">50 m</string>
 </resources>

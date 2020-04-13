@@ -7,7 +7,8 @@ public class User {
     private String username;
     private String email;
 
-    public User() {}
+    public User() {
+    }
 
     public User(ObjectId id, String username, String email) {
         _id = id;
@@ -15,15 +16,15 @@ public class User {
         this.email = email;
     }
 
-    public ObjectId getId(){
+    public ObjectId getId() {
         return _id;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return email;
     }
 }

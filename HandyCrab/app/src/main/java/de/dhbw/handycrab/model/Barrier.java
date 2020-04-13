@@ -21,9 +21,10 @@ public class Barrier {
     private int downvotes;
     private Vote vote;
 
-    public Barrier() {}
+    public Barrier() {
+    }
 
-    public Barrier(ObjectId id, ObjectId userId, String title, double longitude, double latitude, URL picture, String description, String postcode, int upvotes, int downvotes, Vote vote) {
+    public Barrier(ObjectId id, ObjectId userId, String title, double longitude, double latitude, URL picture, String description, String postcode, List<Solution> solution, int upvotes, int downvotes, Vote vote) {
         _id = id;
         this.userId = userId;
         this.title = title;
@@ -32,6 +33,7 @@ public class Barrier {
         this.picture = picture;
         this.description = description;
         this.postcode = postcode;
+        this.solution = solution;
         this.upvotes = upvotes;
         this.downvotes = downvotes;
         this.vote = vote;

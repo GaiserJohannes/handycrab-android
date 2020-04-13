@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.helper.BarrierAdapter;
-import de.dhbw.handycrab.helper.IDataHolder;
+import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 
 import javax.inject.Inject;
@@ -20,7 +20,7 @@ public class BarrierListActivity extends AppCompatActivity {
     private List<Barrier> barriers;
 
     @Inject
-    IDataHolder dataHolder;
+    IDataCache dataCache;
 
     private View.OnClickListener onItemClickListener = new View.OnClickListener() {
         @Override
@@ -32,7 +32,7 @@ public class BarrierListActivity extends AppCompatActivity {
             // viewHolder.itemView;
             Barrier thisItem = barriers.get(position);
 
-            dataHolder.store(ACTIVE_BARRIER, thisItem);
+            dataCache.store(ACTIVE_BARRIER, thisItem);
 
             selectBarrier();
         }
@@ -45,7 +45,7 @@ public class BarrierListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barrier_list);
 
-        barriers = (List<Barrier>) dataHolder.retrieve(SearchActivity.BARRIER_KEY);
+        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_KEY);
 
         RecyclerView rv = findViewById(R.id.barrier_list_rv);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());

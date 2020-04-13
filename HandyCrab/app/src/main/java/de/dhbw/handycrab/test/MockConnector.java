@@ -38,8 +38,19 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<List<Barrier>> getBarriersAsync(double longitude, double latitude, int radius) {
-        Barrier b1 = new Barrier(new ObjectId(), new ObjectId(), "Treppe", 42.0, 69.0, null, "Das ist eine Beschreibung", null, 0, 0, Vote.NONE);
-        Barrier b2 = new Barrier(new ObjectId(), new ObjectId(), "Treppe222", 41.0, 68.0, null, "Das ist eine andere Beschreibung", null, 0, 0, Vote.NONE);
+        Solution s1 = new Solution(ObjectId.get(), "einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen!", ObjectId.get(), 12, 42, Vote.NONE);
+        Solution s2 = new Solution(ObjectId.get(), "zweifach außen rum gehen!", ObjectId.get(), 421, 546, Vote.NONE);
+        Solution s3 = new Solution(ObjectId.get(), "dreifach außen rum gehen!", ObjectId.get(), 567, 85, Vote.NONE);
+        Solution s4 = new Solution(ObjectId.get(), "viewfach außen rum gehen!", ObjectId.get(), 456, 4, Vote.NONE);
+        Solution s5 = new Solution(ObjectId.get(), "fünffach außen rum gehen!", ObjectId.get(), 6, 784, Vote.NONE);
+        List<Solution> solutions = new ArrayList<>();
+        solutions.add(s1);
+        solutions.add(s2);
+        solutions.add(s3);
+        solutions.add(s4);
+        solutions.add(s5);
+        Barrier b1 = new Barrier(ObjectId.get(), ObjectId.get(), "Treppe", 42.0, 69.0, null, "Das ist eine Beschreibung", null, solutions, 43, 23, Vote.NONE);
+        Barrier b2 = new Barrier(ObjectId.get(), ObjectId.get(), "Treppe222", 41.0, 68.0, null, "Das ist eine andere Beschreibung", null, solutions, 42, 56, Vote.NONE);
         List<Barrier> list = new ArrayList<>();
         list.add(b1);
         list.add(b2);
@@ -73,12 +84,11 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<Void> voteBarrierAsync(ObjectId id, Vote vote) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> voteSolutionAsync(ObjectId id, Vote vote) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
-
 }

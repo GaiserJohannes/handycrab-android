@@ -10,6 +10,18 @@ public class Solution {
     private int downvotes;
     private Vote vote;
 
+    public Solution() {
+    }
+
+    public Solution(ObjectId id, String text, ObjectId userID, int upvotes, int downvotes, Vote vote) {
+        _id = id;
+        this.text = text;
+        this.userID = userID;
+        this.upvotes = upvotes;
+        this.downvotes = downvotes;
+        this.vote = vote;
+    }
+
     public ObjectId getId() {
         return _id;
     }

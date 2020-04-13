@@ -1,7 +1,6 @@
 package de.dhbw.handycrab.helper;
 
-public interface IDataHolder {
-
+public interface IDataCache {
     void store(String id, Object object);
 
     Object retrieve(String id);

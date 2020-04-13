@@ -4,11 +4,12 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
-import de.dhbw.handycrab.helper.IDataHolder;
+import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 
 import javax.inject.Inject;
@@ -19,11 +20,15 @@ public class SearchActivity extends AppCompatActivity {
 
     public static String BARRIER_KEY = "de.dhbw.handycrab.BARRIERS";
 
+    private TextView latitude;
+    private TextView longitude;
+    private Button search;
+
     @Inject
     IHandyCrabDataHandler dataHandler;
 
     @Inject
-    IDataHolder dataHolder;
+    IDataCache dataCache;
 
     @Inject
     GeoLocationService locationService;
@@ -37,22 +42,30 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        latitude = findViewById(R.id.search_lat);
+        longitude = findViewById(R.id.search_lon);
+        search = findViewById(R.id.search);
+
         locationService.getLastLocationCallback(this::UpdateLocationText);
     }
 
     private void UpdateLocationText(Boolean success, Location location) {
         if (success && location != null) {
-            ((TextView) findViewById(R.id.search_lat)).setText(String.format("%s", location.getLatitude()));
-            ((TextView) findViewById(R.id.search_lon)).setText(String.format("%s", location.getLongitude()));
+            latitude.setText(String.format("%s", location.getLatitude()));
+            longitude.setText(String.format("%s", location.getLongitude()));
+            search.setEnabled(true);
+        }
+        else {
+            locationService.getLastLocationCallback(this::UpdateLocationText);
         }
     }
 
     public void switchRadius(View view) {
         switch (view.getId()) {
-            case R.id.radius1:
+            case R.id.search_radius1:
                 radius = 5;
                 break;
-            case R.id.radius3:
+            case R.id.search_radius3:
                 radius = 30;
                 break;
             default:
@@ -60,9 +73,9 @@ public class SearchActivity extends AppCompatActivity {
                 break;
         }
 
-        findViewById(R.id.radius1).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
-        findViewById(R.id.radius2).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
-        findViewById(R.id.radius3).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        findViewById(R.id.search_radius1).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        findViewById(R.id.search_radius2).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        findViewById(R.id.search_radius3).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
         view.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
     }
 
@@ -79,11 +92,10 @@ public class SearchActivity extends AppCompatActivity {
         if (success && location != null) {
             CompletableFuture<List<Barrier>> result = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius);
             List<Barrier> list = result.join();
-            dataHolder.store(BARRIER_KEY, list);
+            dataCache.store(BARRIER_KEY, list);
 
             Intent intent = new Intent(this, BarrierListActivity.class);
             startActivity(intent);
         }
     }
-
 }

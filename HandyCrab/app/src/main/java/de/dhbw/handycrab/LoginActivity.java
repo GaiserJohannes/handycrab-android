@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
-import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.User;
 
 import javax.inject.Inject;
@@ -46,11 +45,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 submit.setText(tab.getText());
                 //login
-                if(tab.getPosition() == 0){
+                if (tab.getPosition() == 0) {
                     email.setVisibility(View.INVISIBLE);
                     username.setHint(getString(R.string.usernameOrEmail));
                 }
-                else{
+                else {
                     email.setVisibility(View.VISIBLE);
                     username.setHint(getString(R.string.username));
                 }
@@ -69,10 +68,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void submit(View view) {
-        if(tabLayout.getSelectedTabPosition() == 0){
+        if (tabLayout.getSelectedTabPosition() == 0) {
             login(view);
         }
-        else{
+        else {
             register(view);
         }
     }
@@ -83,20 +82,24 @@ public class LoginActivity extends AppCompatActivity {
             user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString()).get();
             // TODO store user? -> DataHolder inject
             successLogin();
-        } catch (ExecutionException e) {
-            if(e.getCause() instanceof BackendConnectionException){
+        }
+        catch (ExecutionException e) {
+            if (e.getCause() instanceof BackendConnectionException) {
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                if(ex.getErrorCode() == ErrorCode.NO_CONNECTION_TO_SERVER){
-                    Toast.makeText(LoginActivity.this, getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INCOMPLIETE){
-                    Toast.makeText(LoginActivity.this, getString(R.string.incompleteError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INVALID_LOGIN){
-                    Toast.makeText(LoginActivity.this, getString(R.string.invalidLoginError), Toast.LENGTH_SHORT).show();
+                switch (ex.getErrorCode()) {
+                    case NO_CONNECTION_TO_SERVER:
+                        Toast.makeText(LoginActivity.this, getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
+                        break;
+                    case INCOMPLETE:
+                        Toast.makeText(LoginActivity.this, getString(R.string.incompleteError), Toast.LENGTH_SHORT).show();
+                        break;
+                    case INVALID_LOGIN:
+                        Toast.makeText(LoginActivity.this, getString(R.string.invalidLoginError), Toast.LENGTH_SHORT).show();
+                        break;
                 }
             }
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -107,32 +110,36 @@ public class LoginActivity extends AppCompatActivity {
             user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString()).get();
             // TODO store User? -> inject DataHolder
             successLogin();
-        } catch (ExecutionException e) {
-            if(e.getCause() instanceof BackendConnectionException){
+        }
+        catch (ExecutionException e) {
+            if (e.getCause() instanceof BackendConnectionException) {
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                if(ex.getErrorCode() == ErrorCode.NO_CONNECTION_TO_SERVER){
-                    Toast.makeText(LoginActivity.this, getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INCOMPLIETE){
-                    Toast.makeText(LoginActivity.this, getString(R.string.incompleteError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.EMAIL_ALREADY_ASSIGNED){
-                    Toast.makeText(LoginActivity.this, getString(R.string.emailAlreadyAssignedError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.USERNAME_ALREADY_ASSIGNED){
-                    Toast.makeText(LoginActivity.this, getString(R.string.usernameAlreadyAssignedError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INVALID_USERNAME){
-                    Toast.makeText(LoginActivity.this, getString(R.string.invalidUsernameError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INVALID_EMAIL){
-                    Toast.makeText(LoginActivity.this, getString(R.string.invalidEmailError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INVALID_PASSWORD){
-                    Toast.makeText(LoginActivity.this, getString(R.string.invalidPasswordError), Toast.LENGTH_SHORT).show();
+                switch (ex.getErrorCode()) {
+                    case NO_CONNECTION_TO_SERVER:
+                        Toast.makeText(LoginActivity.this, getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
+                        break;
+                    case INCOMPLETE:
+                        Toast.makeText(LoginActivity.this, getString(R.string.incompleteError), Toast.LENGTH_SHORT).show();
+                        break;
+                    case EMAIL_ALREADY_ASSIGNED:
+                        Toast.makeText(LoginActivity.this, getString(R.string.emailAlreadyAssignedError), Toast.LENGTH_SHORT).show();
+                        break;
+                    case USERNAME_ALREADY_ASSIGNED:
+                        Toast.makeText(LoginActivity.this, getString(R.string.usernameAlreadyAssignedError), Toast.LENGTH_SHORT).show();
+                        break;
+                    case INVALID_USERNAME:
+                        Toast.makeText(LoginActivity.this, getString(R.string.invalidUsernameError), Toast.LENGTH_SHORT).show();
+                        break;
+                    case INVALID_EMAIL:
+                        Toast.makeText(LoginActivity.this, getString(R.string.invalidEmailError), Toast.LENGTH_SHORT).show();
+                        break;
+                    case INVALID_PASSWORD:
+                        Toast.makeText(LoginActivity.this, getString(R.string.invalidPasswordError), Toast.LENGTH_SHORT).show();
+                        break;
                 }
             }
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
