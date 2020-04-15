@@ -60,6 +60,8 @@ dependencies {
     implementation 'org.mongodb:mongodb-driver:3.3.0'
     implementation group: 'cz.msebera.android' , name: 'httpclient', version: '4.5.3'
 
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
+
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
 

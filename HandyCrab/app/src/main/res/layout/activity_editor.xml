@@ -37,10 +37,13 @@
                 android:text="@string/imageLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
         <Button
-                android:text="@string/selectLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/editor_select_button"/>
+            android:id="@+id/editor_select_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="choosePicture"
+            android:text="@string/selectLabel" />
         <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" tools:srcCompat="@tools:sample/backgrounds/scenic"
@@ -61,19 +64,26 @@
                 android:layout_height="match_parent">
 
             <Button
-                    android:text="@string/sendLabel"
-                    android:layout_width="186dp"
-                    android:layout_height="wrap_content" android:id="@+id/editor_send_button"
-                    app:layout_constraintTop_toTopOf="@+id/editor_cancel_button"
-                    app:layout_constraintStart_toEndOf="@+id/editor_cancel_button"
-                    app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"/>
+                android:id="@+id/editor_send_button"
+                android:layout_width="186dp"
+                android:layout_height="wrap_content"
+                android:onClick="sendBarrier"
+                android:text="@string/sendLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/editor_cancel_button"
+                app:layout_constraintTop_toTopOf="@+id/editor_cancel_button" />
+
             <Button
-                    android:text="@string/cancelLabel"
-                    android:layout_width="185dp"
-                    android:layout_height="wrap_content" android:id="@+id/editor_cancel_button"
-                    app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintEnd_toStartOf="@+id/editor_send_button"/>
+                android:id="@+id/editor_cancel_button"
+                android:layout_width="185dp"
+                android:layout_height="wrap_content"
+                android:onClick="cancel"
+                android:text="@string/cancelLabel"
+                app:layout_constraintEnd_toStartOf="@+id/editor_send_button"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </ScrollView>

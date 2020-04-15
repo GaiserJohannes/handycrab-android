@@ -138,7 +138,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void successLogin() {
-        Intent intent = new Intent(this, SearchActivity.class);
+        Intent intent = new Intent(this, EditorActivity.class);
+        //Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }
 }
