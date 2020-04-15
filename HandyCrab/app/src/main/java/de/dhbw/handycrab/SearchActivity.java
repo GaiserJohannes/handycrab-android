@@ -79,9 +79,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private boolean checkPermission() {
-        // Here, thisActivity is the current activity
         if (!locationService.isLocationPermissionGranted()) {
-
             // Permission is not granted
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -91,16 +89,9 @@ public class SearchActivity extends AppCompatActivity {
                 // sees the explanation, try again to request the permission.
             }
             else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
-
             return false;
         }
         else {
@@ -112,10 +103,8 @@ public class SearchActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay!
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationService.getLastLocationCallback(this::UpdateLocationText);
                 }
                 else {
                     // permission denied, boo! Disable the
@@ -157,7 +146,7 @@ public class SearchActivity extends AppCompatActivity {
                 List<Barrier> list = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius).get();
                 dataCache.store(BARRIER_KEY, list);
             }
-            catch (ExecutionException e) {
+            catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
                     BackendConnectionException ex = (BackendConnectionException) e.getCause();
                     switch (ex.getErrorCode()) {
@@ -175,10 +164,6 @@ public class SearchActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(SearchActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
                 }
-                return;
-            }
-            catch (InterruptedException e) {
-                Toast.makeText(SearchActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
                 return;
             }
             finally {

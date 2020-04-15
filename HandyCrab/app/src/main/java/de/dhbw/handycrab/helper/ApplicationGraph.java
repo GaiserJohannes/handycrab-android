@@ -1,10 +1,7 @@
 package de.dhbw.handycrab.helper;
 
 import dagger.Component;
-import de.dhbw.handycrab.BarrierListActivity;
-import de.dhbw.handycrab.DetailActivity;
-import de.dhbw.handycrab.LoginActivity;
-import de.dhbw.handycrab.SearchActivity;
+import de.dhbw.handycrab.*;
 
 import javax.inject.Singleton;
 
@@ -21,4 +18,6 @@ public interface ApplicationGraph {
     void inject(DetailActivity detailActivity);
 
     void inject(LoginActivity loginActivity);
+
+    void inject(EditorActivity editorActivity);
 }

@@ -53,6 +53,7 @@
     <string name="invalidUsernameError">Ungültiger Benutzername</string>
     //errorcode = 13
     <string name="invalidPasswordError">Ungültiges Passwort</string>
+    <string name="locationError">Position kann nicht ermittelt werden</string>
     <string name="radius1Label">10 m</string>
     <string name="radius2Label">25 m</string>
     <string name="radius3Label">50 m</string>
@@ -63,4 +64,6 @@
     <string name="sort_by_distance">Distanz</string>
     <string name="sort_by">Sortieren</string>
     <string name="title_barrier_list">Ergebnisse</string>
+    <string name="zipLabel">PLZ</string>
+    <string name="addSolutionLabel">Lösung hinzufügen</string>
 </resources>
