@@ -1,11 +1,19 @@
 package de.dhbw.handycrab;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.IDataHolder;
@@ -17,6 +25,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class SearchActivity extends AppCompatActivity {
 
+    private static final int REQUEST_ACCESS_FINE_LOCATION = 1;
     public static String BARRIER_KEY = "de.dhbw.handycrab.BARRIERS";
 
     @Inject
@@ -37,7 +46,13 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        locationService.getLastLocationCallback(this::UpdateLocationText);
+        //dangerous Permissions have to be explicitly requested on Android 6 and higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            locationService.getLastLocationCallback(this::UpdateLocationText);
+        }
     }
 
     private void UpdateLocationText(Boolean success, Location location) {
@@ -83,6 +98,19 @@ public class SearchActivity extends AppCompatActivity {
 
             Intent intent = new Intent(this, BarrierListActivity.class);
             startActivity(intent);
+        }
+    }
+
+    public void checkLocationPermission(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+       if(requestCode == REQUEST_ACCESS_FINE_LOCATION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            locationService.getLastLocationCallback(this::UpdateLocationText);
         }
     }
 
