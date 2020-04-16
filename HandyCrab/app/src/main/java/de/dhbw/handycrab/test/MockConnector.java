@@ -33,6 +33,7 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<String> getUsernameAsync(ObjectId id) {
+        //return CompletableFuture.supplyAsync(() -> { throw new BackendConnectionException(ErrorCode.USER_NOT_FOUND, 404); });
         return CompletableFuture.completedFuture("mocked Username");
     }
 

@@ -4,8 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryCache implements IDataCache {
-    // TODO change WeakReference. Vielleicht räumt der Garbagge Collector zu früh auf. Keine Ahnung -> Testen
+
     Map<String, Object> data = new HashMap<>();
+
+    @Override
+    public boolean contains(String id) {
+        return data.containsKey(id);
+    }
 
     @Override
     public void store(String id, Object object) {

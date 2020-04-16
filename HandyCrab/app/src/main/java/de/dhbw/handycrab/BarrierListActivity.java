@@ -14,6 +14,7 @@ import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BarrierListActivity extends AppCompatActivity {
@@ -25,7 +26,7 @@ public class BarrierListActivity extends AppCompatActivity {
     @Inject
     IDataCache dataCache;
 
-    private View.OnClickListener onItemClickListener = new View.OnClickListener() {
+    private final View.OnClickListener onItemClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
@@ -41,6 +42,7 @@ public class BarrierListActivity extends AppCompatActivity {
         }
     };
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Program.getApplicationGraph().inject(this);
@@ -56,7 +58,12 @@ public class BarrierListActivity extends AppCompatActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_KEY);
+        try {
+            barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_KEY);
+        }
+        catch (ClassCastException e) {
+            barriers = new ArrayList<>();
+        }
 
         RecyclerView rv = findViewById(R.id.barrier_list_rv);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());

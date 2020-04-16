@@ -8,7 +8,7 @@ public class BackendConnectionException extends RuntimeException {
 
     private int httpStatusCode;
 
-    BackendConnectionException(ErrorCode errorCode, int httpStatusCode) {
+    public BackendConnectionException(ErrorCode errorCode, int httpStatusCode) {
         super();
         this.errorCode = errorCode;
         this.httpStatusCode = httpStatusCode;

@@ -53,14 +53,14 @@
                         app:layout_constraintTop_toBottomOf="@+id/detail_user"
                         style="@android:style/Widget.Material.Button.Borderless"
                         android:layout_marginTop="8dp"
-                        android:drawableLeft="@mipmap/thumbs_up" android:onClick="upvote"/>
+                        android:drawableLeft="@mipmap/thumbs_up" android:onClick="upvote" android:alpha="0.5"/>
                 <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/detail_barrier_downvote"
                         app:layout_constraintEnd_toStartOf="@+id/detail_barrier_upvote"
                         app:layout_constraintTop_toTopOf="@+id/detail_barrier_upvote"
                         style="@android:style/Widget.Material.Button.Borderless"
-                        android:drawableRight="@mipmap/thumbs_down" android:onClick="downvote"/>
+                        android:drawableRight="@mipmap/thumbs_down" android:onClick="downvote" android:alpha="0.5"/>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -92,16 +92,18 @@
                     android:inputType="textMultiLine"
                     android:gravity="start|top"
                     android:ems="10"
-                    android:id="@+id/editText" app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/imageButton"
+                    android:id="@+id/detail_new_solution" app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/detail_send_solution"
                     android:hint="@string/solutionLabel" app:layout_constraintTop_toBottomOf="@id/textView"
                     android:layout_marginTop="8dp" android:autofillHints=""/>
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" app:srcCompat="@android:drawable/ic_menu_send"
-                    android:id="@+id/imageButton" app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/editText" app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintTop_toTopOf="@+id/editText" android:contentDescription="@string/sendLabel"/>
+                    android:id="@+id/detail_send_solution" app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/detail_new_solution"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintTop_toTopOf="@+id/detail_new_solution"
+                    android:contentDescription="@string/sendLabel" android:onClick="addSolution"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

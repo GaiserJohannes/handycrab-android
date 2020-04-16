@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
+import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.SolutionAdapter;
 import de.dhbw.handycrab.model.Barrier;
@@ -25,6 +26,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView title;
     private TextView description;
     private TextView user;
+    private TextView newSolution;
     private Button upvote;
     private Button downvote;
 
@@ -33,6 +35,9 @@ public class DetailActivity extends AppCompatActivity {
 
     @Inject
     IHandyCrabDataHandler dataHandler;
+
+    @Inject
+    DataHelper dataHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +53,14 @@ public class DetailActivity extends AppCompatActivity {
         user = findViewById(R.id.detail_user);
         upvote = findViewById(R.id.detail_barrier_upvote);
         downvote = findViewById(R.id.detail_barrier_downvote);
+        newSolution = findViewById(R.id.detail_new_solution);
 
         title.setText(activeBarrier.getTitle());
         description.setText(activeBarrier.getDescription());
-        user.setText(String.format("%s", activeBarrier.getUserId()));
+
+        String userName = dataHelper.getUsernameFromId(activeBarrier.getUserId());
+        user.setText(userName);
+
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
         downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
 
@@ -64,38 +73,60 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void upvote(View view) {
-        vote(Vote.UP);
+        if (activeBarrier.getVote() == Vote.UP) {
+            vote(Vote.NONE);
+            upvote.setAlpha(0.5f);
+        }
+        else {
+            vote(Vote.UP);
+            downvote.setAlpha(0.5f);
+            upvote.setAlpha(1.0f);
+        }
     }
 
     public void downvote(View view) {
-        vote(Vote.DOWN);
+        if (activeBarrier.getVote() == Vote.DOWN) {
+            vote(Vote.NONE);
+            downvote.setAlpha(0.5f);
+        }
+        else {
+            vote(Vote.DOWN);
+            upvote.setAlpha(0.5f);
+            downvote.setAlpha(1.0f);
+        }
     }
 
     private void vote(Vote vote) {
         try {
+            activeBarrier.setVote(vote);
             dataHandler.voteBarrierAsync(activeBarrier.getId(), vote).get();
         }
-        catch (ExecutionException e) {
+        catch (ExecutionException | InterruptedException e) {
             if (e.getCause() instanceof BackendConnectionException) {
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                switch (ex.getErrorCode()) {
-                    case NO_CONNECTION_TO_SERVER:
-                        Toast.makeText(DetailActivity.this, getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
-                        break;
-                    case BARRIER_NOT_FOUND:
-                        Toast.makeText(DetailActivity.this, getString(R.string.barrierNotFound), Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        Toast.makeText(DetailActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
-                        break;
-                }
+                dataHelper.showError(this, ex);
             }
             else {
                 Toast.makeText(DetailActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
             }
         }
-        catch (InterruptedException e) {
-            Toast.makeText(DetailActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
+    }
+
+    public void addSolution(View view) {
+        String solution = newSolution.getText().toString();
+        if (solution.trim().length() > 0) {
+            try {
+                dataHandler.addSolutionAsync(activeBarrier.getId(), null).get();
+            }
+            catch (ExecutionException | InterruptedException e) {
+                if (e.getCause() instanceof BackendConnectionException) {
+                    BackendConnectionException ex = (BackendConnectionException) e.getCause();
+                    dataHelper.showError(this, ex);
+                }
+                else {
+                    Toast.makeText(DetailActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 }

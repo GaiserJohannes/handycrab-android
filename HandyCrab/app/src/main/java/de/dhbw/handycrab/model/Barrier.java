@@ -79,11 +79,23 @@ public class Barrier {
         return upvotes;
     }
 
+    public void setUpvotes(int upvotes) {
+        this.upvotes = upvotes;
+    }
+
     public int getDownvotes() {
         return downvotes;
     }
 
+    public void setDownvotes(int downvotes) {
+        this.downvotes = downvotes;
+    }
+
     public Vote getVote() {
         return vote;
+    }
+
+    public void setVote(Vote vote) {
+        this.vote = vote;
     }
 }

@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
+import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 
@@ -31,6 +32,9 @@ public class SearchActivity extends AppCompatActivity {
     private TextView latitude;
     private TextView longitude;
     private Button search;
+
+    @Inject
+    DataHelper dataHelper;
 
     @Inject
     IHandyCrabDataHandler dataHandler;
@@ -149,17 +153,7 @@ public class SearchActivity extends AppCompatActivity {
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
                     BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                    switch (ex.getErrorCode()) {
-                        case NO_CONNECTION_TO_SERVER:
-                            Toast.makeText(SearchActivity.this, getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
-                            break;
-                        case INCOMPLETE:
-                            Toast.makeText(SearchActivity.this, getString(R.string.barrierNotFound), Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            Toast.makeText(SearchActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
-                            break;
-                    }
+                    dataHelper.showError(this, ex);
                 }
                 else {
                     Toast.makeText(SearchActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
