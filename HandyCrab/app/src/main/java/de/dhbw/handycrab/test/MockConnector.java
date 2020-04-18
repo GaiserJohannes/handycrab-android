@@ -57,7 +57,7 @@ public class MockConnector implements IHandyCrabDataHandler {
     }
 
     @Override
-    public CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, Solution solution) {
+    public CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, String solution) {
         return null;
     }
 
@@ -67,7 +67,7 @@ public class MockConnector implements IHandyCrabDataHandler {
     }
 
     @Override
-    public CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, Solution solution) {
+    public CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, String solution) {
         return null;
     }
 

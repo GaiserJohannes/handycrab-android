@@ -18,9 +18,9 @@ public interface IHandyCrabDataHandler {
     CompletableFuture<List<Barrier>> getBarriersAsync(double longitude, double latitude, int radius);
     CompletableFuture<List<Barrier>> getBarriersAsync(String postcode);
     CompletableFuture<Barrier> getBarrierAsync(ObjectId id);
-    CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, Solution solution);
+    CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, String solution);
     CompletableFuture<Barrier> modifyBarrierAsync(ObjectId id, String title, String picture_base64, String description);
-    CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, Solution solution);
+    CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, String solution);
     CompletableFuture<Void> voteBarrierAsync(ObjectId id, Vote vote);
     CompletableFuture<Void> voteSolutionAsync(ObjectId id, Vote vote);
 }

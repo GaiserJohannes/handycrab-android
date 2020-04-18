@@ -69,7 +69,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     @Override
-    public CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, Solution solution) {
+    public CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, String solution) {
         return CompletableFuture.supplyAsync(() -> addBarrier(title, longitude, latitude, picture_base64, description, postcode, solution));
     }
 
@@ -79,7 +79,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     @Override
-    public CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, Solution solution) {
+    public CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, String solution) {
         return CompletableFuture.supplyAsync(() -> addSolution(barrierID, solution));
     }
 
@@ -208,7 +208,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         return null;
     }
 
-    private Barrier addBarrier(String title, double longitude, double latitude, String picture_base64, String description, String postcode, Solution solution) {
+    private Barrier addBarrier(String title, double longitude, double latitude, String picture_base64, String description, String postcode, String solution) {
         return null;
     }
 
@@ -220,7 +220,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
 
     }
 
-    private Barrier addSolution(ObjectId barrierID, Solution solution) {
+    private Barrier addSolution(ObjectId barrierID, String solution) {
         return null;
     }
 
