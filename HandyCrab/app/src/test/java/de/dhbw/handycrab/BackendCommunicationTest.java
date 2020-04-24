@@ -26,37 +26,6 @@ public class BackendCommunicationTest {
     private BackendConnector connector = new BackendConnector();
 
     @Test
-    public void manualGet() throws IOException {
-        String json = "{_id:\"5e85a97841e46f5d00cb3a5d\"}";
-        //String json = "{login:\"test@mail.com\",password:\"SecretP4ssw0rd!\"}";
-        StringBuilder result = new StringBuilder();
-        URL url = new URL("http://handycrab.nico-dreher.de/rest/users/name");
-        //URL url = new URL("http://handycrab.nico-dreher.de/rest/users/login");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("Accept", "application/json");
-        conn.setDoOutput(true);
-        try(OutputStream os = conn.getOutputStream()) {
-            byte[] input = json.getBytes();
-            os.write(input, 0, input.length);
-            os.flush();
-            os.close();
-        }
-
-
-        int i = conn.getResponseCode();
-
-        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String line;
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
-        }
-        System.out.println(result.toString());
-        rd.close();
-    }
-
-    @Test
     public void registerTest() {
         CompletableFuture<User> cuser = connector.registerAsync("aasdaddc@test.com", "uGn4me123", "abdc123DEF!");
         User user = null;
