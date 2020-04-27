@@ -1,6 +1,8 @@
 package de.dhbw.handycrab;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,21 +10,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
+
 import de.dhbw.handycrab.backend.BackendConnectionException;
+import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
+import de.dhbw.handycrab.helper.IDataHolder;
 import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.User;
 
 import javax.inject.Inject;
+
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static String USER = "de.dhbw.handycrab.USER";
     private TextView username;
     private TextView email;
     private TextView password;
     private Button submit;
     private TabLayout tabLayout;
+
+    @Inject
+    IDataHolder dataHolder;
 
     @Inject
     IHandyCrabDataHandler backendConnector;
@@ -50,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                     email.setVisibility(View.INVISIBLE);
                     username.setHint(getString(R.string.usernameOrEmail));
                 }
+                //register
                 else{
                     email.setVisibility(View.VISIBLE);
                     username.setHint(getString(R.string.username));
@@ -58,79 +69,29 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
     }
 
     public void submit(View view) {
-        if(tabLayout.getSelectedTabPosition() == 0){
-            login(view);
-        }
-        else{
-            register(view);
-        }
-    }
-
-    public void login(View view) {
-        User user = null;
         try {
-            user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString()).get();
-            // TODO store user? -> DataHolder inject
-            successLogin();
-        } catch (ExecutionException e) {
-            if(e.getCause() instanceof BackendConnectionException){
-                BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                if(ex.getErrorCode() == ErrorCode.NO_CONNECTION_TO_SERVER){
-                    Toast.makeText(LoginActivity.this, getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INCOMPLIETE){
-                    Toast.makeText(LoginActivity.this, getString(R.string.incompleteError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INVALID_LOGIN){
-                    Toast.makeText(LoginActivity.this, getString(R.string.invalidLoginError), Toast.LENGTH_SHORT).show();
-                }
+            User user = null;
+            if(tabLayout.getSelectedTabPosition() == 0){
+                user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString()).get();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void register(View view) {
-        User user = null;
-        try {
-            user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString()).get();
-            // TODO store User? -> inject DataHolder
+            else{
+                user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString()).get();
+            }
+            dataHolder.store(USER, user);
             successLogin();
         } catch (ExecutionException e) {
             if(e.getCause() instanceof BackendConnectionException){
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                if(ex.getErrorCode() == ErrorCode.NO_CONNECTION_TO_SERVER){
-                    Toast.makeText(LoginActivity.this, getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INCOMPLIETE){
-                    Toast.makeText(LoginActivity.this, getString(R.string.incompleteError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.EMAIL_ALREADY_ASSIGNED){
-                    Toast.makeText(LoginActivity.this, getString(R.string.emailAlreadyAssignedError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.USERNAME_ALREADY_ASSIGNED){
-                    Toast.makeText(LoginActivity.this, getString(R.string.usernameAlreadyAssignedError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INVALID_USERNAME){
-                    Toast.makeText(LoginActivity.this, getString(R.string.invalidUsernameError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INVALID_EMAIL){
-                    Toast.makeText(LoginActivity.this, getString(R.string.invalidEmailError), Toast.LENGTH_SHORT).show();
-                }
-                else if(ex.getErrorCode() == ErrorCode.INVALID_PASSWORD){
-                    Toast.makeText(LoginActivity.this, getString(R.string.invalidPasswordError), Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -141,4 +102,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }
+
+
 }

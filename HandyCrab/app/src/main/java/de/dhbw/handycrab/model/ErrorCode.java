@@ -1,7 +1,9 @@
 package de.dhbw.handycrab.model;
 
 public enum ErrorCode {
-    NO_CONNECTION_TO_SERVER,
+    //can rise at every request
+    UNKNOWN_ERROR,
+    //rise only after incoming response
     INCOMPLIETE,
     UNAUTHORIZED,
     EMAIL_ALREADY_ASSIGNED,
@@ -14,5 +16,7 @@ public enum ErrorCode {
     INVALID_USER_ID,
     SOLUTION_NOT_FOUND,
     INVALID_USERNAME,
-    INVALID_PASSWORD
+    INVALID_PASSWORD,
+    //can rise at every request
+    NO_CONNECTION_TO_SERVER
 }
