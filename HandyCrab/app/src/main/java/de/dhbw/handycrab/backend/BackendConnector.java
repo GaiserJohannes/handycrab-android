@@ -47,14 +47,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-
 public class BackendConnector implements IHandyCrabDataHandler {
 
     private String connection = "http://handycrab.nico-dreher.de/rest/";
     private HttpClient client = HttpClientBuilder.create().build();
     private Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIDDeserializer()).create();
 
-    public BackendConnector(){
+    public BackendConnector() {
     }
 
     @Override

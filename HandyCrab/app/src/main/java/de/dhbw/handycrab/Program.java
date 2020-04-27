@@ -9,7 +9,8 @@ public class Program extends Application {
     private static Context context;
     private static ApplicationGraph graph;
 
-    @Override public void onCreate() {
+    @Override
+    public void onCreate() {
         super.onCreate();
         Program.context = getApplicationContext();
 

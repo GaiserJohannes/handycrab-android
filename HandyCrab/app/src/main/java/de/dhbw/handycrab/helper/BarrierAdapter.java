@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.R;
 import de.dhbw.handycrab.model.Barrier;
@@ -49,16 +48,13 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
         this.clickListener = clickListener;
     }
 
-    // static?
     public class BarrierViewHolder extends RecyclerView.ViewHolder {
-        public CardView cv;
         public TextView barrierTitle;
         public TextView barrierDesc;
         public ImageView barrierImage;
 
         public BarrierViewHolder(View itemView) {
             super(itemView);
-            cv = itemView.findViewById(R.id.list_barrier_card);
             barrierTitle = itemView.findViewById(R.id.barrier_title);
             barrierDesc = itemView.findViewById(R.id.barrier_desc);
             barrierImage = itemView.findViewById(R.id.barrier_image);
@@ -67,5 +63,4 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
             itemView.setOnClickListener(clickListener);
         }
     }
-
 }

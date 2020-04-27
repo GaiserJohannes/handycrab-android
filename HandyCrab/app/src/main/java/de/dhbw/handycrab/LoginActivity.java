@@ -56,12 +56,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 submit.setText(tab.getText());
                 //login
-                if(tab.getPosition() == 0){
+                if (tab.getPosition() == 0) {
                     email.setVisibility(View.INVISIBLE);
                     username.setHint(getString(R.string.usernameOrEmail));
                 }
                 //register
-                else{
+                else {
                     email.setVisibility(View.VISIBLE);
                     username.setHint(getString(R.string.username));
                 }

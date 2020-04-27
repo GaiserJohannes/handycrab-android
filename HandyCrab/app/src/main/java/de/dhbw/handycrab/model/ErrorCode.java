@@ -4,7 +4,7 @@ public enum ErrorCode {
     //can rise at every request
     UNKNOWN_ERROR,
     //rise only after incoming response
-    INCOMPLIETE,
+    INCOMPLETE,
     UNAUTHORIZED,
     EMAIL_ALREADY_ASSIGNED,
     USERNAME_ALREADY_ASSIGNED,

@@ -1,6 +1,7 @@
 package de.dhbw.handycrab.helper;
 
-public interface IDataHolder {
+public interface IDataCache {
+    boolean contains(String id);
 
     void store(String id, Object object);
 
