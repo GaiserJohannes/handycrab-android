@@ -28,7 +28,7 @@
     //errorcode = 1
     <string name="incompleteError">Unvollständige Anfrage</string>
     //errorcode = 2
-    <string name="unauthorized">Zugriff verweigert</string>
+    <string name="unauthorizedError">Zugriff verweigert</string>
     //errorcode = 3
     <string name="emailAlreadyAssignedError">E-Mail bereits registriert</string>
     //errorcode = 4

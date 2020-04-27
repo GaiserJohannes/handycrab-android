@@ -53,5 +53,4 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
             downvote = itemView.findViewById(R.id.solution_downvote);
         }
     }
-
 }

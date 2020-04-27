@@ -1,8 +1,8 @@
 package de.dhbw.handycrab.backend;
 
-import java.net.URI;
-
 import cz.msebera.android.httpclient.client.methods.HttpEntityEnclosingRequestBase;
+
+import java.net.URI;
 
 public class GetRequest extends HttpEntityEnclosingRequestBase {
 
@@ -29,5 +29,4 @@ public class GetRequest extends HttpEntityEnclosingRequestBase {
     public String getMethod() {
         return METHOD_NAME;
     }
-
 }

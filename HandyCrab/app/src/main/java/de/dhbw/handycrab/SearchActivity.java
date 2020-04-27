@@ -4,22 +4,16 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import de.dhbw.handycrab.backend.BackendConnectionException;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.DataHelper;
@@ -159,10 +153,10 @@ public class SearchActivity extends AppCompatActivity {
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
                     BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                    dataHelper.showError(this, ex);
+                    Toast.makeText(SearchActivity.this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(SearchActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
@@ -174,7 +168,7 @@ public class SearchActivity extends AppCompatActivity {
             startActivity(intent);
         }
         else {
-            Toast.makeText(SearchActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
+            Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
         }
     }
 }

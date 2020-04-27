@@ -1,7 +1,6 @@
 package de.dhbw.handycrab.backend;
 
 import de.dhbw.handycrab.model.Barrier;
-import de.dhbw.handycrab.model.Solution;
 import de.dhbw.handycrab.model.User;
 import de.dhbw.handycrab.model.Vote;
 import org.bson.types.ObjectId;

@@ -5,29 +5,25 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import org.apache.commons.codec.binary.Base64;
-
-import java.io.ByteArrayOutputStream;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
-import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.inject.Inject;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -41,9 +37,6 @@ public class EditorActivity extends AppCompatActivity {
     private TextView title;
     private TextView description;
     private TextView solution;
-
-    @Inject
-    DataHelper dataHelper;
 
     @Inject
     IHandyCrabDataHandler dataHandler;
@@ -74,8 +67,8 @@ public class EditorActivity extends AppCompatActivity {
         choosePicture();
     }
 
-    private void choosePicture(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+    private void choosePicture() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent, CAMERA_PIC_REQUEST);
         }
@@ -100,10 +93,10 @@ public class EditorActivity extends AppCompatActivity {
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
                     BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                    dataHelper.showError(this, ex);
+                    Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -114,8 +107,8 @@ public class EditorActivity extends AppCompatActivity {
         finish();
     }
 
-    private String getImageAsBase64(){
-        if(imageView.getDrawable() != null){
+    private String getImageAsBase64() {
+        if (imageView.getDrawable() != null) {
             BitmapDrawable bmapDraw = (BitmapDrawable) imageView.getDrawable();
             Bitmap bitmap = bmapDraw.getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -126,25 +119,23 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if( requestCode == CAMERA_PIC_REQUEST)
-        {
+        if (requestCode == CAMERA_PIC_REQUEST) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             imageView.setImageBitmap(thumbnail);
         }
     }
 
-    public void checkCameraPermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+    public void checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_ACCESS_CAMERA);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if(requestCode == REQUEST_ACCESS_CAMERA && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_ACCESS_CAMERA && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             choosePicture();
         }
     }

@@ -15,8 +15,9 @@ public class BackendModule {
 
     /**
      * define implementation for IHandyCrabDataHandler
-     * @see IHandyCrabDataHandler
+     *
      * @return data handler which will get injected
+     * @see IHandyCrabDataHandler
      */
     @Provides
     @Singleton
@@ -26,8 +27,9 @@ public class BackendModule {
 
     /**
      * define implementation for IDataHolder
-     * @see IDataCache
+     *
      * @return data holder which will get injected
+     * @see IDataCache
      */
     @Provides
     @Singleton

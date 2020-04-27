@@ -1,8 +1,6 @@
 package de.dhbw.handycrab;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,16 +8,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
-
 import de.dhbw.handycrab.backend.BackendConnectionException;
-import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
-import de.dhbw.handycrab.helper.IDataHolder;
-import de.dhbw.handycrab.model.ErrorCode;
+import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.User;
 
 import javax.inject.Inject;
-
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
@@ -32,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private TabLayout tabLayout;
 
     @Inject
-    IDataHolder dataHolder;
+    IDataCache dataHolder;
 
     @Inject
     IHandyCrabDataHandler backendConnector;
@@ -80,20 +74,22 @@ public class LoginActivity extends AppCompatActivity {
     public void submit(View view) {
         try {
             User user = null;
-            if(tabLayout.getSelectedTabPosition() == 0){
+            if (tabLayout.getSelectedTabPosition() == 0) {
                 user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString()).get();
             }
-            else{
+            else {
                 user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString()).get();
             }
             dataHolder.store(USER, user);
             successLogin();
-        } catch (ExecutionException e) {
-            if(e.getCause() instanceof BackendConnectionException){
+        }
+        catch (ExecutionException e) {
+            if (e.getCause() instanceof BackendConnectionException) {
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
                 Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
             }
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -102,6 +98,4 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }
-
-
 }

@@ -4,20 +4,30 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-
-
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpEntityEnclosingRequestBase;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.client.methods.HttpPut;
 import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
+import de.dhbw.handycrab.model.Barrier;
+import de.dhbw.handycrab.model.ErrorCode;
+import de.dhbw.handycrab.model.User;
+import de.dhbw.handycrab.model.Vote;
+import org.bson.types.ObjectId;
 
-import de.dhbw.handycrab.model.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 /*
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -35,17 +45,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
  */
-
-import org.bson.types.ObjectId;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class BackendConnector implements IHandyCrabDataHandler {
 
@@ -147,10 +146,10 @@ public class BackendConnector implements IHandyCrabDataHandler {
         JsonObject object = new JsonObject();
         object.addProperty("_id", id.toString());
         HttpResponse response = get(path, object.toString());
-        if(response != null && response.getStatusLine().getStatusCode() == 200){
+        if (response != null && response.getStatusLine().getStatusCode() == 200) {
             return gson.fromJson(getJsonBody(response), JsonObject.class).get("result").getAsString();
         }
-        else{
+        else {
             throw getException(response);
         }
     }
@@ -234,91 +233,96 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     //helper get objects of Response
-    private Barrier getBarrierOfResponse(HttpResponse response){
-        if(response != null && response.getStatusLine().getStatusCode() == 200){
+    private Barrier getBarrierOfResponse(HttpResponse response) {
+        if (response != null && response.getStatusLine().getStatusCode() == 200) {
             return gson.fromJson(getJsonBody(response), Barrier.class);
         }
-        else{
+        else {
             throw getException(response);
         }
     }
 
-    private List<Barrier> getBarriersOfResponse(HttpResponse response){
-        if(response != null && response.getStatusLine().getStatusCode() == 200){
-            Type listOfBarrierType = new TypeToken<ArrayList<Barrier>>(){}.getType();
+    private List<Barrier> getBarriersOfResponse(HttpResponse response) {
+        if (response != null && response.getStatusLine().getStatusCode() == 200) {
+            Type listOfBarrierType = new TypeToken<ArrayList<Barrier>>() {
+            }.getType();
             return gson.fromJson(getJsonBody(response), listOfBarrierType);
         }
-        else{
+        else {
             throw getException(response);
         }
     }
 
-    private User getUserOfResponse(HttpResponse response){
-        if(response != null && response.getStatusLine().getStatusCode() == 200){
+    private User getUserOfResponse(HttpResponse response) {
+        if (response != null && response.getStatusLine().getStatusCode() == 200) {
             return gson.fromJson(getJsonBody(response), User.class);
         }
-        else{
+        else {
             throw getException(response);
         }
     }
 
-    private void checkSuccessResponse(HttpResponse response){
-        if(response != null && response.getStatusLine().getStatusCode() < 300){
+    private void checkSuccessResponse(HttpResponse response) {
+        if (response != null && response.getStatusLine().getStatusCode() < 300) {
             return;
         }
         throw getException(response);
     }
 
     //http methods
-    private HttpResponse get(String path, String json){
-        GetRequest postRequest = new GetRequest( connection + path);
+    private HttpResponse get(String path, String json) {
+        GetRequest postRequest = new GetRequest(connection + path);
         postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
         try {
             return client.execute(postRequest);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private HttpResponse post(String path, String json){
-        HttpPost postRequest = new HttpPost( connection + path);
+    private HttpResponse post(String path, String json) {
+        HttpPost postRequest = new HttpPost(connection + path);
         postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
         try {
             return client.execute(postRequest);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private HttpResponse put(String path, String json){
-        HttpPut putRequest = new HttpPut( connection + path);
+    private HttpResponse put(String path, String json) {
+        HttpPut putRequest = new HttpPut(connection + path);
         putRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
         try {
             return client.execute(putRequest);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     //other helpermethods
-    private String getJsonBody(HttpResponse response){
+    private String getJsonBody(HttpResponse response) {
         try {
             HttpEntity e = response.getEntity();
             Header h = e.getContentType();
             long l = e.getContentLength();
             InputStream is = e.getContent();
             return new BufferedReader(new InputStreamReader(response.getEntity().getContent())).readLine();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         return "{errorCode:0}";
     }
 
-    private BackendConnectionException getException(HttpResponse response){
-        if(response == null){
+    private BackendConnectionException getException(HttpResponse response) {
+        if (response == null) {
             return new BackendConnectionException(ErrorCode.NO_CONNECTION_TO_SERVER, -1);
         }
         JsonObject object = gson.fromJson(getJsonBody(response), JsonObject.class);

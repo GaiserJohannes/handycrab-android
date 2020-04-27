@@ -127,10 +127,10 @@ public class DetailActivity extends AppCompatActivity {
         catch (ExecutionException | InterruptedException e) {
             if (e.getCause() instanceof BackendConnectionException) {
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                dataHelper.showError(this, ex);
+                Toast.makeText(DetailActivity.this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
             }
             else {
-                Toast.makeText(DetailActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -146,10 +146,10 @@ public class DetailActivity extends AppCompatActivity {
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
                     BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                    dataHelper.showError(this, ex);
+                    Toast.makeText(DetailActivity.this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(DetailActivity.this, getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
             }
         }

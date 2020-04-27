@@ -54,6 +54,7 @@ public class GeoLocationService {
 
     /**
      * checks if the app has the permission to retrieve the geo location
+     *
      * @return whether the permission is granted or not
      */
     public boolean isLocationPermissionGranted() {

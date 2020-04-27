@@ -1,6 +1,5 @@
 package de.dhbw.handycrab.helper;
 
-import android.content.Context;
 import android.widget.Toast;
 import de.dhbw.handycrab.Program;
 import de.dhbw.handycrab.R;
@@ -38,64 +37,14 @@ public class DataHelper {
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
                     BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                    showError(Program.getAppContext(), ex);
+                    Toast.makeText(Program.getAppContext(), ex.getDetailedMessage(Program.getAppContext()), Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(Program.getAppContext(), Program.getAppContext().getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Program.getAppContext(), Program.getAppContext().getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
                 userName = userId.toHexString();
             }
         }
         return userName;
-    }
-
-    public void showError(Context context, BackendConnectionException exception) {
-        switch (exception.getErrorCode()) {
-            case NO_CONNECTION_TO_SERVER:
-                Toast.makeText(context, context.getString(R.string.noConnectionToServerError), Toast.LENGTH_SHORT).show();
-                break;
-            case INCOMPLETE:
-                Toast.makeText(context, context.getString(R.string.incompleteError), Toast.LENGTH_SHORT).show();
-                break;
-            case UNAUTHORIZED:
-                Toast.makeText(context, context.getString(R.string.unauthorizedError), Toast.LENGTH_SHORT).show();
-                break;
-            case EMAIL_ALREADY_ASSIGNED:
-                Toast.makeText(context, context.getString(R.string.emailAlreadyAssignedError), Toast.LENGTH_SHORT).show();
-                break;
-            case USERNAME_ALREADY_ASSIGNED:
-                Toast.makeText(context, context.getString(R.string.usernameAlreadyAssignedError), Toast.LENGTH_SHORT).show();
-                break;
-            case INVALID_EMAIL:
-                Toast.makeText(context, context.getString(R.string.invalidEmailError), Toast.LENGTH_SHORT).show();
-                break;
-            case INVALID_LOGIN:
-                Toast.makeText(context, context.getString(R.string.invalidLoginError), Toast.LENGTH_SHORT).show();
-                break;
-            case USER_NOT_FOUND:
-                Toast.makeText(context, context.getString(R.string.userNotFoundError), Toast.LENGTH_SHORT).show();
-                break;
-            case INVALID_GEO_LOCATION:
-                Toast.makeText(context, context.getString(R.string.invalidLocationError), Toast.LENGTH_SHORT).show();
-                break;
-            case BARRIER_NOT_FOUND:
-                Toast.makeText(context, context.getString(R.string.barrierNotFoundError), Toast.LENGTH_SHORT).show();
-                break;
-            case INVALID_USER_ID:
-                Toast.makeText(context, context.getString(R.string.invalidUserIdError), Toast.LENGTH_SHORT).show();
-                break;
-            case SOLUTION_NOT_FOUND:
-                Toast.makeText(context, context.getString(R.string.solutionNotFoundError), Toast.LENGTH_SHORT).show();
-                break;
-            case INVALID_USERNAME:
-                Toast.makeText(context, context.getString(R.string.invalidUsernameError), Toast.LENGTH_SHORT).show();
-                break;
-            case INVALID_PASSWORD:
-                Toast.makeText(context, context.getString(R.string.invalidPasswordError), Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                Toast.makeText(context, context.getString(R.string.defaultError), Toast.LENGTH_SHORT).show();
-                break;
-        }
     }
 }

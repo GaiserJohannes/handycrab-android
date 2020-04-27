@@ -75,7 +75,7 @@ public class MockConnector implements IHandyCrabDataHandler {
     }
 
     @Override
-    public CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, Solution solution) {
+    public CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, String solution) {
         Barrier b1 = new Barrier(ObjectId.get(), ObjectId.get(), "add Barrier", 42.0, 69.0, null, "Diese Barriere wurde hinzugefügt", null, new ArrayList<>(), 43, 23, Vote.NONE);
         return CompletableFuture.completedFuture(b1);
     }
@@ -86,7 +86,7 @@ public class MockConnector implements IHandyCrabDataHandler {
     }
 
     @Override
-    public CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, Solution solution) {
+    public CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, String solution) {
         Solution s1 = new Solution(ObjectId.get(), "neue super Lösung!", ObjectId.get(), 12, 42, Vote.NONE);
         List<Solution> list = new ArrayList<>();
         list.add(s1);
