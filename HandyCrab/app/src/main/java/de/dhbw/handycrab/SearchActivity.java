@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity {
     @Inject
     GeoLocationService locationService;
 
-    private int radius = 10;
+    private int radius = 25;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,13 +122,13 @@ public class SearchActivity extends AppCompatActivity {
     public void switchRadius(View view) {
         switch (view.getId()) {
             case R.id.search_radius1:
-                radius = 5;
+                radius = 10;
                 break;
             case R.id.search_radius3:
-                radius = 30;
+                radius = 50;
                 break;
             default:
-                radius = 10;
+                radius = 25;
                 break;
         }
 

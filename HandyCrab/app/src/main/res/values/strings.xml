@@ -66,4 +66,6 @@
     <string name="title_barrier_list">Ergebnisse</string>
     <string name="zipLabel">PLZ</string>
     <string name="addSolutionLabel">Lösung hinzufügen</string>
+    <string name="editLabel">Bearbeiten</string>
+    <string name="title_barrier_detail">Details</string>
 </resources>

@@ -39,6 +39,12 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<List<Barrier>> getBarriersAsync(double longitude, double latitude, int radius) {
+        try {
+            Thread.sleep(500);
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Solution s1 = new Solution(ObjectId.get(), "einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen!", ObjectId.get(), 12, 42, Vote.NONE);
         Solution s2 = new Solution(ObjectId.get(), "zweifach außen rum gehen!", ObjectId.get(), 421, 546, Vote.NONE);
         Solution s3 = new Solution(ObjectId.get(), "dreifach außen rum gehen!", ObjectId.get(), 567, 85, Vote.NONE);
@@ -70,7 +76,8 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, Solution solution) {
-        return null;
+        Barrier b1 = new Barrier(ObjectId.get(), ObjectId.get(), "add Barrier", 42.0, 69.0, null, "Diese Barriere wurde hinzugefügt", null, new ArrayList<>(), 43, 23, Vote.NONE);
+        return CompletableFuture.completedFuture(b1);
     }
 
     @Override
@@ -80,7 +87,11 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, Solution solution) {
-        return null;
+        Solution s1 = new Solution(ObjectId.get(), "neue super Lösung!", ObjectId.get(), 12, 42, Vote.NONE);
+        List<Solution> list = new ArrayList<>();
+        list.add(s1);
+        Barrier b1 = new Barrier(ObjectId.get(), ObjectId.get(), "add Barrier", 42.0, 69.0, null, "Diese Barriere wurde hinzugefügt", null, list, 43, 23, Vote.NONE);
+        return CompletableFuture.completedFuture(b1);
     }
 
     @Override

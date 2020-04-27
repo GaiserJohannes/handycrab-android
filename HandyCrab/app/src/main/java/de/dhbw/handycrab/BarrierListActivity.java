@@ -14,13 +14,13 @@ import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BarrierListActivity extends AppCompatActivity {
 
     public static String ACTIVE_BARRIER = "de.dhbw.handycrab.ACTIVE_BARRIER";
 
+    private RecyclerView rv;
     private List<Barrier> barriers;
 
     @Inject
@@ -42,7 +42,6 @@ public class BarrierListActivity extends AppCompatActivity {
         }
     };
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Program.getApplicationGraph().inject(this);
@@ -58,16 +57,23 @@ public class BarrierListActivity extends AppCompatActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        try {
-            barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_KEY);
-        }
-        catch (ClassCastException e) {
-            barriers = new ArrayList<>();
-        }
-
-        RecyclerView rv = findViewById(R.id.barrier_list_rv);
+        rv = findViewById(R.id.barrier_list_rv);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         rv.setLayoutManager(llm);
+
+        updateBarriers();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateBarriers();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateBarriers() {
+        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_KEY);
 
         BarrierAdapter adapter = new BarrierAdapter(barriers);
         adapter.setClickListener(onItemClickListener);

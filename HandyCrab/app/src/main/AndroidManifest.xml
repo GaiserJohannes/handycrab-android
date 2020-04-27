@@ -21,6 +21,8 @@
         </activity>
         <activity
                 android:name=".DetailActivity"
+                android:label="@string/title_barrier_detail"
+                android:theme="@style/AppTheme.NoActionBar"
                 android:parentActivityName=".BarrierListActivity">
         </activity>
         <activity

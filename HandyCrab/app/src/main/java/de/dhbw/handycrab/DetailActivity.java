@@ -1,11 +1,14 @@
 package de.dhbw.handycrab;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.backend.BackendConnectionException;
@@ -30,6 +33,8 @@ public class DetailActivity extends AppCompatActivity {
     private Button upvote;
     private Button downvote;
 
+    private RecyclerView rv;
+
     @Inject
     IDataCache dataCache;
 
@@ -45,6 +50,14 @@ public class DetailActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+        // Enable the Up button
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         activeBarrier = (Barrier) dataCache.retrieve(BarrierListActivity.ACTIVE_BARRIER);
 
@@ -55,6 +68,20 @@ public class DetailActivity extends AppCompatActivity {
         downvote = findViewById(R.id.detail_barrier_downvote);
         newSolution = findViewById(R.id.detail_new_solution);
 
+        rv = findViewById(R.id.detail_solution_rv);
+        LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
+        rv.setLayoutManager(llm);
+
+        updateBarrier();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit, menu);
+        return true;
+    }
+
+    private void updateBarrier() {
         title.setText(activeBarrier.getTitle());
         description.setText(activeBarrier.getDescription());
 
@@ -63,10 +90,6 @@ public class DetailActivity extends AppCompatActivity {
 
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
         downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
-
-        RecyclerView rv = findViewById(R.id.detail_solution_rv);
-        LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
-        rv.setLayoutManager(llm);
 
         SolutionAdapter adapter = new SolutionAdapter(activeBarrier.getSolution());
         rv.setAdapter(adapter);
@@ -116,7 +139,9 @@ public class DetailActivity extends AppCompatActivity {
         String solution = newSolution.getText().toString();
         if (solution.trim().length() > 0) {
             try {
-                dataHandler.addSolutionAsync(activeBarrier.getId(), null).get();
+                activeBarrier = dataHandler.addSolutionAsync(activeBarrier.getId(), null).get();
+                dataCache.store(BarrierListActivity.ACTIVE_BARRIER, activeBarrier);
+                updateBarrier();
             }
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
