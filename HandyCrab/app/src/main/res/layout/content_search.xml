@@ -25,26 +25,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/search_radius2"
             app:layout_constraintTop_toTopOf="@+id/search_radius1"
+            android:onClick="switchRadius" android:backgroundTint="@color/colorPrimary"
             app:layout_constraintStart_toEndOf="@+id/search_radius1"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/search_radius3"
-            android:onClick="switchRadius" android:backgroundTint="@color/colorPrimary"/>
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/search_radius3"/>
     <Button
             android:text="@string/radius1Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/search_radius1"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toStartOf="@+id/search_radius2"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_radius_label"
             android:layout_marginTop="16dp" android:onClick="switchRadius"
-            android:backgroundTint="@color/colorPrimaryLight"/>
+            android:backgroundTint="@color/colorPrimaryLight"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/search_radius2"/>
     <Button
             android:text="@string/radius3Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/search_radius3"
             app:layout_constraintTop_toTopOf="@+id/search_radius2"
+            android:onClick="switchRadius" android:backgroundTint="@color/colorPrimaryLight"
             app:layout_constraintStart_toEndOf="@+id/search_radius2"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="switchRadius" android:backgroundTint="@color/colorPrimaryLight"/>
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/search_radius4"/>
     <TextView
             android:text="@string/radiusLabel"
             android:layout_width="wrap_content"
@@ -118,5 +118,13 @@
             android:id="@+id/search_lat"
             app:layout_constraintTop_toTopOf="@+id/search_lat_label"
             app:layout_constraintStart_toStartOf="@+id/search_lon"/>
+    <Button
+            android:text="@string/radius4Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/search_radius4"
+            app:layout_constraintTop_toTopOf="@+id/search_radius3"
+            app:layout_constraintStart_toEndOf="@+id/search_radius3" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="parent" android:backgroundTint="@color/colorPrimaryLight"
+            android:onClick="switchRadius"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

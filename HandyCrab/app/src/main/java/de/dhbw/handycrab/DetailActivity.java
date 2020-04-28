@@ -17,6 +17,7 @@ import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.SolutionAdapter;
 import de.dhbw.handycrab.model.Barrier;
+import de.dhbw.handycrab.model.Solution;
 import de.dhbw.handycrab.model.Vote;
 
 import javax.inject.Inject;
@@ -33,7 +34,7 @@ public class DetailActivity extends AppCompatActivity {
     private Button upvote;
     private Button downvote;
 
-    private RecyclerView rv;
+    private SolutionAdapter adapter;
 
     @Inject
     IDataCache dataCache;
@@ -43,6 +44,30 @@ public class DetailActivity extends AppCompatActivity {
 
     @Inject
     DataHelper dataHelper;
+
+    private final View.OnClickListener onUpvoteClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
+            int position = viewHolder.getAdapterPosition();
+
+            Solution thisItem = activeBarrier.getSolution().get(position);
+
+            // TODO handle vote
+        }
+    };
+
+    private final View.OnClickListener onDownvoteClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
+            int position = viewHolder.getAdapterPosition();
+
+            Solution thisItem = activeBarrier.getSolution().get(position);
+
+            // TODO handle vote
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +93,12 @@ public class DetailActivity extends AppCompatActivity {
         downvote = findViewById(R.id.detail_barrier_downvote);
         newSolution = findViewById(R.id.detail_new_solution);
 
-        rv = findViewById(R.id.detail_solution_rv);
+        RecyclerView recyclerView = findViewById(R.id.detail_solution_rv);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
-        rv.setLayoutManager(llm);
+        recyclerView.setLayoutManager(llm);
+
+        adapter = new SolutionAdapter(activeBarrier.getSolution());
+        recyclerView.setAdapter(adapter);
 
         updateBarrier();
     }
@@ -90,9 +118,11 @@ public class DetailActivity extends AppCompatActivity {
 
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
         downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
+    }
 
-        SolutionAdapter adapter = new SolutionAdapter(activeBarrier.getSolution());
-        rv.setAdapter(adapter);
+    private void updateSolutions() {
+//        adapter.setDataset(activeBarrier.getSolution());
+        adapter.notifyDataSetChanged();
     }
 
     public void upvote(View view) {
@@ -142,6 +172,7 @@ public class DetailActivity extends AppCompatActivity {
                 activeBarrier = dataHandler.addSolutionAsync(activeBarrier.getId(), null).get();
                 dataCache.store(BarrierListActivity.ACTIVE_BARRIER, activeBarrier);
                 updateBarrier();
+                updateSolutions();
             }
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {

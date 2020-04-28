@@ -16,7 +16,6 @@ import androidx.core.app.ActivityCompat;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
-import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 
@@ -32,9 +31,6 @@ public class SearchActivity extends AppCompatActivity {
     private TextView latitude;
     private TextView longitude;
     private Button search;
-
-    @Inject
-    DataHelper dataHelper;
 
     @Inject
     IHandyCrabDataHandler dataHandler;
@@ -114,7 +110,7 @@ public class SearchActivity extends AppCompatActivity {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-                return;
+                break;
             }
         }
     }
@@ -127,6 +123,9 @@ public class SearchActivity extends AppCompatActivity {
             case R.id.search_radius3:
                 radius = 50;
                 break;
+            case R.id.search_radius4:
+                radius = 100;
+                break;
             default:
                 radius = 25;
                 break;
@@ -135,6 +134,7 @@ public class SearchActivity extends AppCompatActivity {
         findViewById(R.id.search_radius1).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
         findViewById(R.id.search_radius2).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
         findViewById(R.id.search_radius3).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        findViewById(R.id.search_radius4).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
         view.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
     }
 

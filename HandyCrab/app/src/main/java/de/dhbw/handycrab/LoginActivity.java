@@ -36,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
         Program.getApplicationGraph().inject(this);
 
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_login);
 
         email = findViewById(R.id.mail);
@@ -73,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void submit(View view) {
         try {
-            User user = null;
+            User user;
             if (tabLayout.getSelectedTabPosition() == 0) {
                 user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString()).get();
             }

@@ -56,6 +56,7 @@
     <string name="radius1Label">10 m</string>
     <string name="radius2Label">25 m</string>
     <string name="radius3Label">50 m</string>
+    <string name="radius4Label">100 m</string>
     <string name="aboutLabel">Über</string>
     <string name="title_activity_search">Suche</string>
     <string name="sort_by_date">Datum</string>
