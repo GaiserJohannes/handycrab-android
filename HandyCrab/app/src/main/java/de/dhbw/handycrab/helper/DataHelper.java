@@ -3,11 +3,15 @@ package de.dhbw.handycrab.helper;
 import android.widget.Toast;
 import de.dhbw.handycrab.Program;
 import de.dhbw.handycrab.R;
+import de.dhbw.handycrab.SearchActivity;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
+import de.dhbw.handycrab.model.Barrier;
 import org.bson.types.ObjectId;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ExecutionException;
 
 public class DataHelper {
@@ -47,4 +51,17 @@ public class DataHelper {
         }
         return userName;
     }
+
+    public void replaceBarrierInList(Barrier barrier) {
+        List<Barrier> list = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+
+        ListIterator<Barrier> iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getId().equals(barrier.getId())) {
+                iterator.set(barrier);
+                break;
+            }
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package de.dhbw.handycrab;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.helper.BarrierAdapter;
+import de.dhbw.handycrab.helper.BarrierDateComparator;
+import de.dhbw.handycrab.helper.BarrierVoteComparator;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 
@@ -20,7 +23,7 @@ public class BarrierListActivity extends AppCompatActivity {
 
     public static String ACTIVE_BARRIER = "de.dhbw.handycrab.ACTIVE_BARRIER";
 
-    private RecyclerView rv;
+    private BarrierAdapter adapter;
     private List<Barrier> barriers;
 
     @Inject
@@ -57,11 +60,15 @@ public class BarrierListActivity extends AppCompatActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        rv = findViewById(R.id.barrier_list_rv);
+        RecyclerView recyclerView = findViewById(R.id.barrier_list_rv);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
-        rv.setLayoutManager(llm);
+        recyclerView.setLayoutManager(llm);
 
-        updateBarriers();
+        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+
+        adapter = new BarrierAdapter(barriers);
+        adapter.setClickListener(onItemClickListener);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -73,17 +80,31 @@ public class BarrierListActivity extends AppCompatActivity {
 
     @SuppressWarnings("unchecked")
     private void updateBarriers() {
-        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_KEY);
-
-        BarrierAdapter adapter = new BarrierAdapter(barriers);
-        adapter.setClickListener(onItemClickListener);
-        rv.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_barrier_list, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_sort_by_date:
+                barriers.sort(new BarrierDateComparator());
+                updateBarriers();
+                return true;
+            case R.id.action_sort_by_votes:
+                barriers.sort(new BarrierVoteComparator());
+                updateBarriers();
+                return true;
+            case R.id.action_sort_by_distance:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void selectBarrier() {
@@ -93,6 +114,7 @@ public class BarrierListActivity extends AppCompatActivity {
 
     public void addBarrier(View view) {
         Intent intent = new Intent(this, EditorActivity.class);
+        intent.putExtra(EditorActivity.NEW_BARRIER, true);
         startActivity(intent);
     }
 }

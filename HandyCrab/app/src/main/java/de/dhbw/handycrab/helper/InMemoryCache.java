@@ -25,4 +25,9 @@ public class InMemoryCache implements IDataCache {
         }
         return new Object();
     }
+
+    @Override
+    public void delete(String id) {
+        data.remove(id);
+    }
 }

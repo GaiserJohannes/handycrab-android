@@ -56,6 +56,7 @@
     <string name="radius1Label">10 m</string>
     <string name="radius2Label">25 m</string>
     <string name="radius3Label">50 m</string>
+    <string name="radius4Label">100 m</string>
     <string name="aboutLabel">Über</string>
     <string name="title_activity_search">Suche</string>
     <string name="sort_by_date">Datum</string>
@@ -67,6 +68,9 @@
     <string name="addSolutionLabel">Lösung hinzufügen</string>
     <string name="editLabel">Bearbeiten</string>
     <string name="title_barrier_detail">Details</string>
+    <string name="title_barrier_edit">Bearbeiten</string>
+    <string name="title_barrier_new">Erstellen</string>
+    <string name="missingPermission">Suche mittels Geo Position ist nicht ohne Berechtigung möglich!</string>
     <string name="title_activity_maps">Map</string>
     <string name="selected_location">aktuell ausgewählte Position</string>
 </resources>

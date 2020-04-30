@@ -5,9 +5,12 @@
           app:showAsAction="ifRoom">
         <menu
         >
-            <item android:title="@string/sort_by_date" android:id="@+id/action_sort_by_date"/>
-            <item android:title="@string/sort_by_votes" android:id="@+id/action_sort_by_votes"/>
-            <item android:title="@string/sort_by_distance" android:id="@+id/action_sort_by_distance"/>
+            <item android:title="@string/sort_by_date" android:id="@+id/action_sort_by_date"
+            />
+            <item android:title="@string/sort_by_votes" android:id="@+id/action_sort_by_votes"
+            />
+            <item android:title="@string/sort_by_distance" android:id="@+id/action_sort_by_distance"
+            />
         </menu>
     </item>
 </menu>
