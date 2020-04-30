@@ -119,4 +119,13 @@
             app:layout_constraintTop_toTopOf="@+id/search_lat_label"
             app:layout_constraintStart_toStartOf="@+id/search_lon"/>
 
+    <include
+        layout="@layout/map_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_lat" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

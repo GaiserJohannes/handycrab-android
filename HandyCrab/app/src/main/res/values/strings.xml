@@ -67,4 +67,6 @@
     <string name="addSolutionLabel">Lösung hinzufügen</string>
     <string name="editLabel">Bearbeiten</string>
     <string name="title_barrier_detail">Details</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="selected_location">aktuell ausgewählte Position</string>
 </resources>

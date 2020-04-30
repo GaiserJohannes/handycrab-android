@@ -13,18 +13,23 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
+import de.dhbw.handycrab.view.HandyCrabMapFragment;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
     public final static String BARRIER_KEY = "de.dhbw.handycrab.BARRIERS";
@@ -47,6 +52,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private int radius = 25;
 
+    private HandyCrabMapFragment mapFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Program.getApplicationGraph().inject(this);
@@ -63,6 +70,8 @@ public class SearchActivity extends AppCompatActivity {
         if (checkPermission()) {
             locationService.getLastLocationCallback(this::UpdateLocationText);
         }
+        mapFragment = (HandyCrabMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -169,6 +178,18 @@ public class SearchActivity extends AppCompatActivity {
         }
         else {
             Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        try {
+            List<Barrier> barriers = dataHandler.getBarriersAsync(0,0, 0).get();
+            mapFragment.showBarriers(barriers);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
