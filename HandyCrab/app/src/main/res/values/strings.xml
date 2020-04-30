@@ -71,4 +71,6 @@
     <string name="title_barrier_edit">Bearbeiten</string>
     <string name="title_barrier_new">Erstellen</string>
     <string name="missingPermission">Suche mittels Geo Position ist nicht ohne Berechtigung möglich!</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="selected_location">aktuell ausgewählte Position</string>
 </resources>

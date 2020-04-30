@@ -143,7 +143,7 @@ public class EditorActivity extends AppCompatActivity {
             return;
         }
 
-        Barrier barrier = dataHandler.addBarrierAsync(title.getText().toString(), loc.getLongitude(), loc.getLatitude(), "", description.getText().toString(), "", null).get();
+        Barrier barrier = dataHandler.addBarrierAsync(title.getText().toString(), loc.getLongitude(), loc.getLatitude(), getImageAsBase64(), description.getText().toString(), "", null).get();
         List<Barrier> barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
         barriers.add(barrier);
 

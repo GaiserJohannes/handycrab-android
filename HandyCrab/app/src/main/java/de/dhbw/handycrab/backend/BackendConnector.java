@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
@@ -21,7 +19,6 @@ import org.bson.types.ObjectId;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -43,12 +40,11 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-
  */
 
 public class BackendConnector implements IHandyCrabDataHandler {
 
-    private String connection = "http://handycrab.nico-dreher.de/rest/";
+    private String connection = "https://handycrab.nico-dreher.de/rest/";
     private HttpClient client = HttpClientBuilder.create().build();
     private Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIDDeserializer()).create();
 
@@ -190,7 +186,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("description", description);
         object.addProperty("postcode", postcode);
         object.addProperty("solution", solution);
-        HttpResponse response = get(path, object.toString());
+        HttpResponse response = post(path, object.toString());
         return getBarrierOfResponse(response);
     }
 
@@ -215,7 +211,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     private Barrier addSolution(ObjectId barrierID, String solution) {
-        String path = "barriers/add";
+        String path = "barriers/solution";
         JsonObject object = new JsonObject();
         object.addProperty("_id", barrierID.toString());
         object.addProperty("solution", solution);
@@ -309,10 +305,6 @@ public class BackendConnector implements IHandyCrabDataHandler {
     //other helpermethods
     private String getJsonBody(HttpResponse response) {
         try {
-            HttpEntity e = response.getEntity();
-            Header h = e.getContentType();
-            long l = e.getContentLength();
-            InputStream is = e.getContent();
             return new BufferedReader(new InputStreamReader(response.getEntity().getContent())).readLine();
         }
         catch (IOException e) {
