@@ -6,4 +6,6 @@ public interface IDataCache {
     void store(String id, Object object);
 
     Object retrieve(String id);
+
+    void delete(String id);
 }

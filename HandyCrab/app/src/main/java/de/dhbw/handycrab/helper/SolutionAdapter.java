@@ -14,6 +14,7 @@ import java.util.List;
 
 public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.SolutionViewHolder> {
     private List<Solution> solutions;
+    private View.OnClickListener voteListener;
 
     public SolutionAdapter(List<Solution> solutions) {
         this.solutions = solutions;
@@ -39,6 +40,14 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
         return solutions.size();
     }
 
+    public void setVoteListener(View.OnClickListener voteListener) {
+        this.voteListener = voteListener;
+    }
+
+    public void setDataset(List<Solution> solutions) {
+        this.solutions = solutions;
+    }
+
     public class SolutionViewHolder extends RecyclerView.ViewHolder {
         public TextView solutionUser;
         public TextView solutionText;
@@ -51,6 +60,11 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
             solutionText = itemView.findViewById(R.id.solution_text);
             upvote = itemView.findViewById(R.id.solution_upvote);
             downvote = itemView.findViewById(R.id.solution_downvote);
+
+            upvote.setTag(this);
+            downvote.setTag(this);
+            upvote.setOnClickListener(voteListener);
+            downvote.setOnClickListener(voteListener);
         }
     }
 }

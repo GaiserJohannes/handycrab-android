@@ -68,4 +68,7 @@
     <string name="addSolutionLabel">Lösung hinzufügen</string>
     <string name="editLabel">Bearbeiten</string>
     <string name="title_barrier_detail">Details</string>
+    <string name="title_barrier_edit">Bearbeiten</string>
+    <string name="title_barrier_new">Erstellen</string>
+    <string name="missingPermission">Suche mittels Geo Position ist nicht ohne Berechtigung möglich!</string>
 </resources>

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import com.google.android.material.snackbar.Snackbar;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
@@ -26,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class SearchActivity extends AppCompatActivity {
 
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
-    public final static String BARRIER_KEY = "de.dhbw.handycrab.BARRIERS";
+    public final static String BARRIER_LIST = "de.dhbw.handycrab.BARRIERS";
 
     private TextView latitude;
     private TextView longitude;
@@ -87,6 +88,8 @@ public class SearchActivity extends AppCompatActivity {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
+                findViewById(R.id.search_gps).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+                Snackbar.make(findViewById(R.id.search_activity_layout), R.string.missingPermission, Snackbar.LENGTH_LONG).show();
             }
             else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -112,6 +115,13 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 break;
             }
+        }
+    }
+
+    public void searchWithGPS(View view) {
+        findViewById(R.id.search_gps).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
+        if (checkPermission()) {
+            locationService.getLastLocationCallback(this::UpdateLocationText);
         }
     }
 
@@ -148,7 +158,7 @@ public class SearchActivity extends AppCompatActivity {
         if (success && location != null) {
             try {
                 List<Barrier> list = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius).get();
-                dataCache.store(BARRIER_KEY, list);
+                dataCache.store(BARRIER_LIST, list);
             }
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {

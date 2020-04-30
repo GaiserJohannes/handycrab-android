@@ -64,7 +64,7 @@ public class BarrierListActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         recyclerView.setLayoutManager(llm);
 
-        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_KEY);
+        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
 
         adapter = new BarrierAdapter(barriers);
         adapter.setClickListener(onItemClickListener);
@@ -105,7 +105,6 @@ public class BarrierListActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     private void selectBarrier() {
@@ -115,6 +114,7 @@ public class BarrierListActivity extends AppCompatActivity {
 
     public void addBarrier(View view) {
         Intent intent = new Intent(this, EditorActivity.class);
+        intent.putExtra(EditorActivity.NEW_BARRIER, true);
         startActivity(intent);
     }
 }
