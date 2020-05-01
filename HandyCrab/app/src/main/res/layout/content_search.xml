@@ -69,15 +69,18 @@
             android:backgroundTint="@color/colorPrimary" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/search_map"
             android:onClick="searchWithGPS"/>
+
     <Button
-            android:text="@string/mapLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/search_map"
-            app:layout_constraintTop_toTopOf="@+id/search_gps"
-            android:backgroundTint="@color/colorPrimaryLight"
-            app:layout_constraintStart_toEndOf="@+id/search_gps" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toStartOf="@+id/search_zip"/>
+        android:id="@+id/search_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimaryLight"
+        android:onClick="searchWithMap"
+        android:text="@string/mapLabel"
+        app:layout_constraintEnd_toStartOf="@+id/search_zip"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/search_gps"
+        app:layout_constraintTop_toTopOf="@+id/search_gps" />
     <Button
             android:text="@string/zipLabel"
             android:layout_width="wrap_content"
@@ -131,8 +134,10 @@
     <include
         layout="@layout/map_fragment"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="178dp"
+        app:layout_constraintBottom_toTopOf="@id/search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_lat" />

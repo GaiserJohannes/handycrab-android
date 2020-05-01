@@ -24,6 +24,7 @@ import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 import de.dhbw.handycrab.view.HandyCrabMapFragment;
+import de.dhbw.handycrab.view.MapMode;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -82,6 +83,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             latitude.setText(String.format("%s", location.getLatitude()));
             longitude.setText(String.format("%s", location.getLongitude()));
             search.setEnabled(true);
+            mapFragment.setLocation(location.getLatitude(), location.getLongitude(), getString(R.string.current_location));
         }
         else {
             locationService.getLastLocationCallback(this::UpdateLocationText);
@@ -129,9 +131,19 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
     public void searchWithGPS(View view) {
         findViewById(R.id.search_gps).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
+        findViewById(R.id.search_map).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        findViewById(R.id.search_zip).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        mapFragment.setMapMode(MapMode.GPS);
         if (checkPermission()) {
             locationService.getLastLocationCallback(this::UpdateLocationText);
         }
+    }
+
+    public void searchWithMap(View view) {
+        findViewById(R.id.search_gps).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        findViewById(R.id.search_map).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
+        findViewById(R.id.search_zip).setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+        mapFragment.setMapMode(MapMode.MAP);
     }
 
     public void switchRadius(View view) {
