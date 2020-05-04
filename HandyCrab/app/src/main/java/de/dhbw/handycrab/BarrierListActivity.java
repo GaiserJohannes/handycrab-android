@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.helper.BarrierAdapter;
 import de.dhbw.handycrab.helper.BarrierDateComparator;
-import de.dhbw.handycrab.helper.BarrierVoteComparator;
 import de.dhbw.handycrab.helper.IDataCache;
+import de.dhbw.handycrab.helper.VotableComparator;
 import de.dhbw.handycrab.model.Barrier;
 
 import javax.inject.Inject;
@@ -97,7 +97,7 @@ public class BarrierListActivity extends AppCompatActivity {
                 updateBarriers();
                 return true;
             case R.id.action_sort_by_votes:
-                barriers.sort(new BarrierVoteComparator());
+                barriers.sort(new VotableComparator());
                 updateBarriers();
                 return true;
             case R.id.action_sort_by_distance:

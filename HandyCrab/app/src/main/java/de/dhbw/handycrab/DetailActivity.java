@@ -19,9 +19,7 @@ import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.SolutionAdapter;
-import de.dhbw.handycrab.model.Barrier;
-import de.dhbw.handycrab.model.Solution;
-import de.dhbw.handycrab.model.Vote;
+import de.dhbw.handycrab.model.*;
 
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
@@ -57,50 +55,7 @@ public class DetailActivity extends AppCompatActivity {
 
             Solution solution = activeBarrier.getSolution().get(position);
 
-            switch (solution.getVote()) {
-                case UP:
-                    if (view == viewHolder.upvote) {
-                        voteSolution(solution, Vote.NONE);
-                        solution.setUpvotes(solution.getUpvotes() - 1);
-                        viewHolder.upvote.setAlpha(0.5f);
-                    }
-                    else {
-                        voteSolution(solution, Vote.DOWN);
-                        solution.setUpvotes(solution.getUpvotes() - 1);
-                        solution.setDownvotes(solution.getDownvotes() + 1);
-                        viewHolder.upvote.setAlpha(0.5f);
-                        viewHolder.downvote.setAlpha(1.0f);
-                    }
-                    break;
-                case DOWN:
-                    if (view == viewHolder.downvote) {
-                        voteSolution(solution, Vote.NONE);
-                        solution.setDownvotes(solution.getDownvotes() - 1);
-                        viewHolder.downvote.setAlpha(0.5f);
-                    }
-                    else {
-                        voteSolution(solution, Vote.UP);
-                        solution.setUpvotes(solution.getUpvotes() + 1);
-                        solution.setDownvotes(solution.getDownvotes() - 1);
-                        viewHolder.downvote.setAlpha(0.5f);
-                        viewHolder.upvote.setAlpha(1.0f);
-                    }
-                    break;
-                default:
-                    if (view == viewHolder.upvote) {
-                        voteSolution(solution, Vote.UP);
-                        solution.setUpvotes(solution.getUpvotes() + 1);
-                        viewHolder.upvote.setAlpha(1.0f);
-                    }
-                    else {
-                        voteSolution(solution, Vote.DOWN);
-                        solution.setDownvotes(solution.getDownvotes() + 1);
-                        viewHolder.downvote.setAlpha(1.0f);
-                    }
-                    break;
-            }
-            viewHolder.upvote.setText(String.format("%s", solution.getUpvotes()));
-            viewHolder.downvote.setText(String.format("%s", solution.getDownvotes()));
+            applyVotes(solution, viewHolder.upvote, viewHolder.downvote, view);
         }
     };
 
@@ -119,8 +74,6 @@ public class DetailActivity extends AppCompatActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        activeBarrier = (Barrier) dataCache.retrieve(BarrierListActivity.ACTIVE_BARRIER);
-
         title = findViewById(R.id.detail_title);
         image = findViewById(R.id.detail_image);
         description = findViewById(R.id.detail_description);
@@ -128,6 +81,8 @@ public class DetailActivity extends AppCompatActivity {
         upvote = findViewById(R.id.detail_barrier_upvote);
         downvote = findViewById(R.id.detail_barrier_downvote);
         newSolution = findViewById(R.id.detail_new_solution);
+
+        activeBarrier = (Barrier) dataCache.retrieve(BarrierListActivity.ACTIVE_BARRIER);
 
         RecyclerView recyclerView = findViewById(R.id.detail_solution_rv);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
@@ -142,7 +97,10 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_edit, menu);
+        User user = (User) dataCache.retrieve(LoginActivity.USER);
+        if (activeBarrier.getUserId().equals(user.getId())) {
+            getMenuInflater().inflate(R.menu.menu_edit, menu);
+        }
         return true;
     }
 
@@ -154,9 +112,21 @@ public class DetailActivity extends AppCompatActivity {
                 intent.putExtra(EditorActivity.NEW_BARRIER, false);
                 startActivity(intent);
                 return true;
+            case R.id.action_delete:
+                // TODO delete Barrier
+                dataHelper.deleteBarrierInList(activeBarrier);
+                finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        activeBarrier = (Barrier) dataCache.retrieve(BarrierListActivity.ACTIVE_BARRIER);
+        updateBarrier();
     }
 
     private void updateBarrier() {
@@ -177,72 +147,65 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void vote(View view) {
-        switch (activeBarrier.getVote()) {
+        applyVotes(activeBarrier, upvote, downvote, view);
+    }
+
+    private void applyVotes(Votable votable, Button upvote, Button downvote, View view) {
+        switch (votable.getVote()) {
             case UP:
                 if (view == upvote) {
-                    voteBarrier(Vote.NONE);
-                    activeBarrier.setUpvotes(activeBarrier.getUpvotes() - 1);
+                    voteVotable(votable, Vote.NONE);
+                    votable.setUpvotes(votable.getUpvotes() - 1);
                     upvote.setAlpha(0.5f);
                 }
                 else {
-                    voteBarrier(Vote.DOWN);
-                    activeBarrier.setUpvotes(activeBarrier.getUpvotes() - 1);
-                    activeBarrier.setDownvotes(activeBarrier.getDownvotes() + 1);
+                    voteVotable(votable, Vote.DOWN);
+                    votable.setUpvotes(votable.getUpvotes() - 1);
+                    votable.setDownvotes(votable.getDownvotes() + 1);
                     upvote.setAlpha(0.5f);
                     downvote.setAlpha(1.0f);
                 }
                 break;
             case DOWN:
                 if (view == downvote) {
-                    voteBarrier(Vote.NONE);
-                    activeBarrier.setDownvotes(activeBarrier.getDownvotes() - 1);
+                    voteVotable(votable, Vote.NONE);
+                    votable.setDownvotes(votable.getDownvotes() - 1);
                     downvote.setAlpha(0.5f);
                 }
                 else {
-                    voteBarrier(Vote.UP);
-                    activeBarrier.setUpvotes(activeBarrier.getUpvotes() + 1);
-                    activeBarrier.setDownvotes(activeBarrier.getDownvotes() - 1);
+                    voteVotable(votable, Vote.UP);
+                    votable.setUpvotes(votable.getUpvotes() + 1);
+                    votable.setDownvotes(votable.getDownvotes() - 1);
                     downvote.setAlpha(0.5f);
                     upvote.setAlpha(1.0f);
                 }
                 break;
             default:
                 if (view == upvote) {
-                    voteBarrier(Vote.UP);
-                    activeBarrier.setUpvotes(activeBarrier.getUpvotes() + 1);
+                    voteVotable(votable, Vote.UP);
+                    votable.setUpvotes(votable.getUpvotes() + 1);
                     upvote.setAlpha(1.0f);
                 }
                 else {
-                    voteBarrier(Vote.DOWN);
-                    activeBarrier.setDownvotes(activeBarrier.getDownvotes() + 1);
+                    voteVotable(votable, Vote.DOWN);
+                    votable.setDownvotes(votable.getDownvotes() + 1);
                     downvote.setAlpha(1.0f);
                 }
                 break;
         }
-        upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
-        downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
+        upvote.setText(String.format("%s", votable.getUpvotes()));
+        downvote.setText(String.format("%s", votable.getDownvotes()));
     }
 
-    private void voteBarrier(Vote vote) {
+    private void voteVotable(Votable votable, Vote vote) {
         try {
-            activeBarrier.setVote(vote);
-            dataHandler.voteBarrierAsync(activeBarrier.getId(), vote).get();
-        }
-        catch (ExecutionException | InterruptedException e) {
-            if (e.getCause() instanceof BackendConnectionException) {
-                BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                Toast.makeText(DetailActivity.this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
+            votable.setVote(vote);
+            if (votable instanceof Barrier) {
+                dataHandler.voteBarrierAsync(((Barrier)votable).getId(), vote).get();
             }
-            else {
-                Toast.makeText(DetailActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+            else if (votable instanceof Solution) {
+                dataHandler.voteBarrierAsync(((Solution)votable).getId(), vote).get();
             }
-        }
-    }
-
-    private void voteSolution(Solution solution, Vote vote) {
-        try {
-            solution.setVote(vote);
-            dataHandler.voteBarrierAsync(solution.getId(), vote).get();
         }
         catch (ExecutionException | InterruptedException e) {
             if (e.getCause() instanceof BackendConnectionException) {

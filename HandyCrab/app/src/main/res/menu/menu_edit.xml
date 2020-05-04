@@ -2,4 +2,5 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="@string/editLabel" app:showAsAction="never" android:id="@+id/action_edit"/>
+    <item android:title="@string/deleteLabel" android:id="@+id/action_delete" app:showAsAction="never"/>
 </menu>

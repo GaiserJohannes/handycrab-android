@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Barrier {
+public class Barrier implements Votable {
 
     private ObjectId _id;
     private ObjectId userId;
