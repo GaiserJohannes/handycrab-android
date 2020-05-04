@@ -17,6 +17,9 @@ public enum ErrorCode {
     SOLUTION_NOT_FOUND,
     INVALID_USERNAME,
     INVALID_PASSWORD,
+    PICTURE_TO_BIG,
+    INVALID_PICTURE_FORMAT,
+    PICTURE_NOT_FOUND,
     //can rise at every request
     NO_CONNECTION_TO_SERVER
 }
