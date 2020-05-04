@@ -91,7 +91,7 @@ public class DetailActivity extends AppCompatActivity {
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
         downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
 
-        SolutionAdapter adapter = new SolutionAdapter(activeBarrier.getSolution());
+        SolutionAdapter adapter = new SolutionAdapter(activeBarrier.getSolutions());
         rv.setAdapter(adapter);
     }
 

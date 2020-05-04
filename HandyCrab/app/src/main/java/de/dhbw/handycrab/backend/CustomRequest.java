@@ -4,29 +4,26 @@ import cz.msebera.android.httpclient.client.methods.HttpEntityEnclosingRequestBa
 
 import java.net.URI;
 
-public class GetRequest extends HttpEntityEnclosingRequestBase {
+public class CustomRequest extends HttpEntityEnclosingRequestBase {
 
-    public final static String METHOD_NAME = "GET";
+    private String method;
 
-    public GetRequest() {
-        super();
-    }
-
-    public GetRequest(final URI uri) {
-        super();
-        setURI(uri);
+    public CustomRequest(final String uri, String method) {
+        this(uri);
+        this.method = method;
     }
 
     /**
      * @throws IllegalArgumentException if the uri is invalid.
      */
-    public GetRequest(final String uri) {
+    public CustomRequest(final String uri) {
         super();
         setURI(URI.create(uri));
+        method = "GET";
     }
 
     @Override
     public String getMethod() {
-        return METHOD_NAME;
+        return method;
     }
 }

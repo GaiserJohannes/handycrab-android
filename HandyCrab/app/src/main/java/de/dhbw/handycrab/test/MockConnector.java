@@ -70,6 +70,11 @@ public class MockConnector implements IHandyCrabDataHandler {
     }
 
     @Override
+    public CompletableFuture<List<Barrier>> getBarriersAsync() {
+        return null;
+    }
+
+    @Override
     public CompletableFuture<Barrier> getBarrierAsync(ObjectId id) {
         return null;
     }
@@ -82,6 +87,11 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<Barrier> modifyBarrierAsync(ObjectId id, String title, String picture_base64, String description) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteBarrierAsync(ObjectId id) {
         return null;
     }
 
