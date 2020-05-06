@@ -40,6 +40,7 @@ public class EditorActivity extends AppCompatActivity {
 
     private TextView title;
     private TextView description;
+    private TextView zip;
     private TextView solution;
 
     private boolean new_barrier;
@@ -69,6 +70,7 @@ public class EditorActivity extends AppCompatActivity {
 
         title = findViewById(R.id.editor_title);
         description = findViewById(R.id.editor_description);
+        zip = findViewById(R.id.editor_zip);
         solution = findViewById(R.id.editor_solution);
         imageView = findViewById(R.id.editor_image);
 
@@ -150,6 +152,10 @@ public class EditorActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.missingTitle), Toast.LENGTH_LONG).show();
             return;
         }
+        if (zip.getText() == null || zip.getText().toString().equals("")) {
+            Toast.makeText(this, getString(R.string.missingZip), Toast.LENGTH_LONG).show();
+            return;
+        }
         if (imageView.getDrawable() == null && (description.getText() == null || description.getText().toString().equals(""))) {
             Toast.makeText(this, getString(R.string.missingDescription), Toast.LENGTH_LONG).show();
             return;
@@ -162,7 +168,7 @@ public class EditorActivity extends AppCompatActivity {
 
         String descText = description.getText() != null ? description.getText().toString() : "";
         String solutionText = solution.getText() != null ? solution.getText().toString() : "";
-        Barrier barrier = dataHandler.addBarrierAsync(title.getText().toString(), loc.getLongitude(), loc.getLatitude(), getImageAsBase64(), descText, "", solutionText).get();
+        Barrier barrier = dataHandler.addBarrierAsync(title.getText().toString(), loc.getLongitude(), loc.getLatitude(), getImageAsBase64(), descText, zip.getText().toString(), solutionText).get();
         List<Barrier> barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
         barriers.add(barrier);
 
