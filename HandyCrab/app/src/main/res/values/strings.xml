@@ -77,7 +77,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="selected_location">aktuell ausgewählte Position</string>
     <string name="deleteLabel">Löschen</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="aboutText">Diese App wurde im Rahmen eines Projektes an der DHBW Horb entworfen und entwickelt.\n\nEntwickelt wurde diese App von:\n\tJohannes Gaiser\n\tJoel Schmid
+    </string>
 </resources>
