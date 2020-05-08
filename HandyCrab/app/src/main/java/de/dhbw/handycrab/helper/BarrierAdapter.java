@@ -31,7 +31,11 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
     public void onBindViewHolder(@NonNull BarrierViewHolder barrierViewHolder, int i) {
         barrierViewHolder.barrierTitle.setText(barriers.get(i).getTitle());
         barrierViewHolder.barrierDesc.setText(barriers.get(i).getDescription());
-        barrierViewHolder.barrierImage.setImageResource(R.drawable.barrier);
+        barriers.get(i).setImageBitmapCallback((success, bitmap) -> {
+            if(success){
+                barrierViewHolder.barrierImage.setImageBitmap(bitmap);
+            }
+        });
     }
 
     @Override

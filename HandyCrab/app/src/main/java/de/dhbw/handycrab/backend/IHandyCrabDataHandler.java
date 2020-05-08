@@ -21,11 +21,15 @@ public interface IHandyCrabDataHandler {
 
     CompletableFuture<List<Barrier>> getBarriersAsync(String postcode);
 
+    CompletableFuture<List<Barrier>> getBarriersAsync();
+
     CompletableFuture<Barrier> getBarrierAsync(ObjectId id);
 
     CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, String solution);
 
     CompletableFuture<Barrier> modifyBarrierAsync(ObjectId id, String title, String picture_base64, String description);
+
+    CompletableFuture<Void> deleteBarrierAsync(ObjectId id);
 
     CompletableFuture<Barrier> addSolutionAsync(ObjectId barrierID, String solution);
 

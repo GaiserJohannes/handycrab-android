@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -162,10 +163,14 @@ public class DetailActivity extends AppCompatActivity {
     private void updateBarrier() {
         title.setText(activeBarrier.getTitle());
         description.setText(activeBarrier.getDescription());
-        image.setImageResource(R.drawable.barrier);
 
         String userName = dataHelper.getUsernameFromId(activeBarrier.getUserId());
         user.setText(userName);
+        activeBarrier.setImageBitmapCallback((success, bitmap) -> {
+            if(success){
+                image.setImageBitmap(bitmap);
+            }
+        });
 
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
         downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
@@ -174,6 +179,9 @@ public class DetailActivity extends AppCompatActivity {
     private void updateSolutions() {
         adapter.setDataset(activeBarrier.getSolution());
         adapter.notifyDataSetChanged();
+
+        SolutionAdapter adapter = new SolutionAdapter(activeBarrier.getSolutions());
+        rv.setAdapter(adapter);
     }
 
     public void vote(View view) {

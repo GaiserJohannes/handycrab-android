@@ -54,6 +54,12 @@ public class BackendConnectionException extends RuntimeException {
                 return context.getString(R.string.invalidUsernameError);
             case INVALID_PASSWORD:
                 return context.getString(R.string.invalidPasswordError);
+            case PICTURE_TO_BIG:
+                return context.getString(R.string.pictureToBig);
+            case INVALID_PICTURE_FORMAT:
+                return context.getString(R.string.invalidPictureFormat);
+            case PICTURE_NOT_FOUND:
+                return context.getString(R.string.pictureNotFound);
             default:
                 return context.getString(R.string.unknownError);
         }

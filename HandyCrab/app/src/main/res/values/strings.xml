@@ -50,6 +50,12 @@
     //errorcode = 12
     <string name="invalidUsernameError">Ungültiger Benutzername</string>
     //errorcode = 13
+    <string name="pictureToBig">Bild ist zu groß</string>
+    //errorcode = 14
+    <string name="invalidPictureFormat">Bild liegt in einem ungültigen Format vor</string>
+    //errorcode = 15
+    <string name="pictureNotFound">Das Bild wurde nicht gefunden</string>
+    //errorcode = 16
     <string name="invalidPasswordError">Ungültiges Passwort</string>
     <string name="noConnectionToServerError">Es kann keine Verbindung zum Server hergestellt werden</string>
     <string name="locationError">Position kann nicht ermittelt werden</string>

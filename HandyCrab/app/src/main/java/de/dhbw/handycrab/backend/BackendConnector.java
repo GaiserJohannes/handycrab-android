@@ -1,9 +1,11 @@
 package de.dhbw.handycrab.backend;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
@@ -15,6 +17,9 @@ import de.dhbw.handycrab.model.Barrier;
 import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.User;
 import de.dhbw.handycrab.model.Vote;
+import io.gsonfire.GsonFireBuilder;
+import io.gsonfire.PostProcessor;
+
 import org.bson.types.ObjectId;
 
 import java.io.BufferedReader;
@@ -25,30 +30,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-/*
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
- */
-
 public class BackendConnector implements IHandyCrabDataHandler {
 
     private String connection = "https://handycrab.nico-dreher.de/rest/";
     private HttpClient client = HttpClientBuilder.create().build();
-    private Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIDDeserializer()).create();
+    private Gson gson;
 
     public BackendConnector() {
+        gson = new GsonFireBuilder()
+                .registerPostProcessor(Barrier.class, new PostProcessor<Barrier>() {
+                    @Override
+                    public void postDeserialize(Barrier result, JsonElement src, Gson gson) {
+                        result.downloadImage();
+                    }
+
+                    @Override
+                    public void postSerialize(JsonElement result, Barrier src, Gson gson) {
+                    }
+                })
+                .createGsonBuilder()
+                .registerTypeAdapter(ObjectId.class, (JsonDeserializer<ObjectId>) (json, typeOfT, context) -> new ObjectId(json.getAsString()))
+                .create();
     }
 
     @Override
@@ -82,6 +84,11 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     @Override
+    public CompletableFuture<List<Barrier>> getBarriersAsync() {
+        return CompletableFuture.supplyAsync(() -> getBarriers());
+    }
+
+    @Override
     public CompletableFuture<Barrier> getBarrierAsync(ObjectId id) {
         return CompletableFuture.supplyAsync(() -> getBarrier(id));
     }
@@ -94,6 +101,11 @@ public class BackendConnector implements IHandyCrabDataHandler {
     @Override
     public CompletableFuture<Barrier> modifyBarrierAsync(ObjectId id, String title, String picture_base64, String description) {
         return CompletableFuture.supplyAsync(() -> modifyBarrier(id, title, picture_base64, description));
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteBarrierAsync(ObjectId id) {
+        return CompletableFuture.runAsync(() -> deleteBarrier(id));
     }
 
     @Override
@@ -168,6 +180,12 @@ public class BackendConnector implements IHandyCrabDataHandler {
         return getBarriersOfResponse(response);
     }
 
+    private List<Barrier> getBarriers() {
+        String path = "barriers/get";
+        HttpResponse response = get(path, new JsonObject().toString());
+        return getBarriersOfResponse(response);
+    }
+
     private Barrier getBarrier(ObjectId id) {
         String path = "barriers/get";
         JsonObject object = new JsonObject();
@@ -182,7 +200,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("title", title);
         object.addProperty("longitude", longitude);
         object.addProperty("latitude", latitude);
-        object.addProperty("picture", picture_base64);
+        if(picture_base64 != null && !picture_base64.isEmpty()){
+            object.addProperty("picture", picture_base64);
+        }
         object.addProperty("description", description);
         object.addProperty("postcode", postcode);
         object.addProperty("solution", solution);
@@ -195,10 +215,20 @@ public class BackendConnector implements IHandyCrabDataHandler {
         JsonObject object = new JsonObject();
         object.addProperty("_id", id.toString());
         object.addProperty("title", title);
-        object.addProperty("picture", picture_base64);
+        if(picture_base64 != null && !picture_base64.isEmpty()){
+            object.addProperty("picture", picture_base64);
+        }
         object.addProperty("description", description);
         HttpResponse response = put(path, object.toString());
         return getBarrierOfResponse(response);
+    }
+
+    private void deleteBarrier(ObjectId id) {
+        String path = "barriers/delete";
+        JsonObject object = new JsonObject();
+        object.addProperty("_id", id.toString());
+        HttpResponse response = delete(path, object.toString());
+        checkSuccessResponse(response);
     }
 
     private void voteBarrier(ObjectId id, Vote vote) {
@@ -267,7 +297,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
 
     //http methods
     private HttpResponse get(String path, String json) {
-        GetRequest postRequest = new GetRequest(connection + path);
+        CustomRequest postRequest = new CustomRequest(connection + path);
         postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
         try {
             return client.execute(postRequest);
@@ -302,10 +332,23 @@ public class BackendConnector implements IHandyCrabDataHandler {
         return null;
     }
 
+    private HttpResponse delete(String path, String json) {
+        CustomRequest deleteRequest = new CustomRequest(connection + path, "DELETE");
+        deleteRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+        try {
+            return client.execute(deleteRequest);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     //other helpermethods
     private String getJsonBody(HttpResponse response) {
         try {
-            return new BufferedReader(new InputStreamReader(response.getEntity().getContent())).readLine();
+            String s = new BufferedReader(new InputStreamReader(response.getEntity().getContent())).readLine();
+            return s;
         }
         catch (IOException e) {
             e.printStackTrace();
