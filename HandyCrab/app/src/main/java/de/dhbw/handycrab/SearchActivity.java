@@ -36,7 +36,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
     public final static String BARRIER_LIST = "de.dhbw.handycrab.BARRIERS";
 
-    private Button search;
     private Button[] radiusButtons;
     private Button searchGpsButton;
     private Button searchMapButton;
@@ -67,7 +66,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        search = findViewById(R.id.search);
         radiusButtons = new Button[4];
         radiusButtons[0] = findViewById(R.id.search_radius1);
         radiusButtons[1] = findViewById(R.id.search_radius2);
@@ -108,7 +106,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private void UpdateLocationText(Boolean success, Location location) {
         if (success && location != null) {
             // found Solution
-            search.setEnabled(true);
             mapFragment.setLocation(location.getLatitude(), location.getLongitude(), getString(R.string.current_location));
         }
         else {
@@ -122,11 +119,9 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
                 searchGpsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
                 Snackbar.make(findViewById(R.id.search_activity_layout), R.string.missingPermission, Snackbar.LENGTH_LONG).show();
+                mode = SearchMode.NONE;
             }
             else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -147,8 +142,9 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     locationService.getLastLocationCallback(this::UpdateLocationText);
                 }
                 else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    searchGpsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
+                    Snackbar.make(findViewById(R.id.search_activity_layout), R.string.missingPermission, Snackbar.LENGTH_LONG).show();
+                    mode = SearchMode.NONE;
                 }
                 break;
             }
@@ -170,10 +166,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 }
                 else {
                     searchGpsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
-                    searchMapButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
                     Snackbar.make(findViewById(R.id.search_activity_layout), R.string.missingPermission, Snackbar.LENGTH_LONG).show();
-                    mode = SearchMode.MAP;
-                    mapFragment.setMapMode(MapMode.MAP);
+                    mode = SearchMode.NONE;
                 }
                 break;
             case R.id.search_map:
@@ -211,15 +205,17 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     public void searchBarriers(View view) {
-        progressBar.setVisibility(View.VISIBLE);
-
         switch (mode) {
             case GPS:
-                locationService.getLastLocationCallback(this::findBarriersGps);
+                if (checkPermission()) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    locationService.getLastLocationCallback(this::findBarriersGps);
+                }
                 break;
             case ZIP:
                 String zip = zipText.getText() != null ? zipText.getText().toString() : "";
                 if (!zip.equals("")) {
+                    progressBar.setVisibility(View.VISIBLE);
                     try {
                         List<Barrier> list = dataHandler.getBarriersAsync(zip).get();
                         dataCache.store(BARRIER_LIST, list);
@@ -237,11 +233,16 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     finally {
                         progressBar.setVisibility(View.INVISIBLE);
                     }
+
+                    Intent intent = new Intent(this, BarrierListActivity.class);
+                    startActivity(intent);
                 }
                 else {
                     Toast.makeText(SearchActivity.this, getString(R.string.missingZip), Toast.LENGTH_SHORT).show();
                     break;
                 }
+            default:
+                Toast.makeText(SearchActivity.this, getString(R.string.missingSearchMode), Toast.LENGTH_SHORT).show();
         }
     }
 

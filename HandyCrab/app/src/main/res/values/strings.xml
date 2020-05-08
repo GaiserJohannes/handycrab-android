@@ -80,6 +80,7 @@
     <string name="missingTitle">Titel muss gegeben sein.</string>
     <string name="missingDescription">Bild oder Beschreibung muss gegeben sein.</string>
     <string name="missingZip">PLZ muss gegeben sein.</string>
+    <string name="missingSearchMode">Wähle einen Suchmodus.</string>
     <string name="title_activity_maps">Map</string>
     <string name="selected_location">aktuell ausgewählte Position</string>
     <string name="deleteLabel">Löschen</string>
