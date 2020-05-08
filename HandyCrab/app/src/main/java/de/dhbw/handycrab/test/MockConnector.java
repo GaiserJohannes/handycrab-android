@@ -11,6 +11,8 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class MockConnector implements IHandyCrabDataHandler {
 
@@ -116,5 +118,15 @@ public class MockConnector implements IHandyCrabDataHandler {
     @Override
     public CompletableFuture<Void> voteSolutionAsync(ObjectId id, Vote vote) {
         return CompletableFuture.completedFuture(null);
+    }
+
+    @Override
+    public void loadToken(String token, String domain) {
+
+    }
+
+    @Override
+    public void saveToken(BiConsumer<String, String> function) {
+
     }
 }

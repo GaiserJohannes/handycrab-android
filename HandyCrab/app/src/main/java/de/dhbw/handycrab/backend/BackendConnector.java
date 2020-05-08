@@ -1,5 +1,8 @@
 package de.dhbw.handycrab.backend;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -7,12 +10,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.client.methods.HttpPut;
+import cz.msebera.android.httpclient.client.protocol.HttpClientContext;
+import cz.msebera.android.httpclient.cookie.Cookie;
 import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.impl.client.BasicCookieStore;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
+import cz.msebera.android.httpclient.impl.client.HttpClients;
+import cz.msebera.android.httpclient.impl.cookie.BasicClientCookie;
 import de.dhbw.handycrab.model.Barrier;
 import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.User;
@@ -29,11 +40,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class BackendConnector implements IHandyCrabDataHandler {
+    private static String TOKEN = "TOKEN";
 
+    private CookieStore cookieStore = new BasicCookieStore();
     private String connection = "https://handycrab.nico-dreher.de/rest/";
-    private HttpClient client = HttpClientBuilder.create().build();
+    private CloseableHttpClient client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
     private Gson gson;
 
     public BackendConnector() {
@@ -121,6 +136,27 @@ public class BackendConnector implements IHandyCrabDataHandler {
     @Override
     public CompletableFuture<Void> voteSolutionAsync(ObjectId id, Vote vote) {
         return CompletableFuture.runAsync(() -> voteSolution(id, vote));
+    }
+
+    @Override
+    public void loadToken(String token, String domain) {
+        BasicClientCookie cookie = new BasicClientCookie(TOKEN, token);
+        cookie.setDomain(domain);
+        cookie.setPath("/");
+        cookie.setVersion(1);
+        cookieStore.addCookie(cookie);
+        client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
+    }
+
+    @Override
+    public void saveToken(BiConsumer<String, String> function) {
+        boolean tokenAvailable = cookieStore.getCookies().stream().anyMatch(c -> c.getName().equals(TOKEN));
+        if(tokenAvailable){
+            Cookie cookie = cookieStore.getCookies().stream().filter(c -> c.getName().equals(TOKEN)).findFirst().get();
+            String tokenValue = cookie.getValue();
+            String domain = cookie.getDomain();
+            function.accept(tokenValue, domain);
+        }
     }
 
     //synchron Restcalls
@@ -299,10 +335,11 @@ public class BackendConnector implements IHandyCrabDataHandler {
 
     //http methods
     private HttpResponse get(String path, String json) {
-        CustomRequest postRequest = new CustomRequest(connection + path);
-        postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+        CustomRequest getRequest = new CustomRequest(connection + path);
+
+        getRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
         try {
-            return client.execute(postRequest);
+            return client.execute(getRequest);
         }
         catch (IOException e) {
             e.printStackTrace();

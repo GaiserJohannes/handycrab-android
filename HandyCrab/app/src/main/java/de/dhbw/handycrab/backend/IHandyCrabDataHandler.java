@@ -7,6 +7,8 @@ import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public interface IHandyCrabDataHandler {
     CompletableFuture<User> registerAsync(String email, String username, String password, boolean createToken) throws BackendConnectionException;
@@ -36,4 +38,8 @@ public interface IHandyCrabDataHandler {
     CompletableFuture<Void> voteBarrierAsync(ObjectId id, Vote vote);
 
     CompletableFuture<Void> voteSolutionAsync(ObjectId id, Vote vote);
+
+    void loadToken(String token, String domain);
+
+    void saveToken(BiConsumer<String, String> function);
 }
