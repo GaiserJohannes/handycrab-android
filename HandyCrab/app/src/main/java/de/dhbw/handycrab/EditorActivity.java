@@ -117,10 +117,10 @@ public class EditorActivity extends AppCompatActivity {
         Thread t = new Thread(() -> {
             try {
                 if (new_barrier) {
-                    updateBarrier();
+                    addBarrier();
                 }
                 else {
-                    addBarrier();
+                    updateBarrier();
                 }
             }
             catch (ExecutionException | InterruptedException e) {
