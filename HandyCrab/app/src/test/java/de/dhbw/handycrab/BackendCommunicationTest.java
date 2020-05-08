@@ -23,11 +23,14 @@ public class BackendCommunicationTest {
 
     private ObjectId solutionID;
 
+    /*10x10 pixel white*/
+    private static String base64picture = "/9j/4AAQSkZJRgABAQEAwADAAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAAKAAoDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==";
+
     @Before
     public void init(){
         try {
             connector.loginAsync("abc@test.com", "abc123DEF!").get();
-            CompletableFuture<Barrier> cbarrier = connector.addBarrierAsync("Test barrier", 48.5, 8.5, "", "Dies ist eine Barriere", "72166", "So kann man diese barriere umgehen");
+            CompletableFuture<Barrier> cbarrier = connector.addBarrierAsync("Test barrier", 48.5, 8.5, base64picture, "Dies ist eine Barriere", "72166", "So kann man diese barriere umgehen");
             Barrier b = cbarrier.get();
             barrierID = b.getId();
             solutionID = b.getSolutions().get(0).getId();
@@ -71,6 +74,7 @@ public class BackendCommunicationTest {
             e.printStackTrace();
         }
         Assert.assertNotNull(user);
+        Assert.assertNotNull(user.getId());
     }
 
     @Test
@@ -106,6 +110,7 @@ public class BackendCommunicationTest {
             Assert.fail();
         }
         Assert.assertNotNull(barrier);
+        Assert.assertEquals(1, barrier.getSolutions().size());
     }
 
     @Test

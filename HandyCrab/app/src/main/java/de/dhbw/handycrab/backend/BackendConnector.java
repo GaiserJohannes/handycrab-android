@@ -1,12 +1,13 @@
 package de.dhbw.handycrab.backend;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpDelete;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.client.methods.HttpPut;
 import cz.msebera.android.httpclient.entity.ContentType;
@@ -16,6 +17,9 @@ import de.dhbw.handycrab.model.Barrier;
 import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.User;
 import de.dhbw.handycrab.model.Vote;
+import io.gsonfire.GsonFireBuilder;
+import io.gsonfire.PostProcessor;
+
 import org.bson.types.ObjectId;
 
 import java.io.BufferedReader;
@@ -26,30 +30,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-/*
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
- */
-
 public class BackendConnector implements IHandyCrabDataHandler {
 
     private String connection = "https://handycrab.nico-dreher.de/rest/";
     private HttpClient client = HttpClientBuilder.create().build();
-    private Gson gson = new GsonBuilder().registerTypeAdapter(ObjectId.class, new ObjectIDDeserializer()).create();
+    private Gson gson;
 
     public BackendConnector() {
+        gson = new GsonFireBuilder()
+                .registerPostProcessor(Barrier.class, new PostProcessor<Barrier>() {
+                    @Override
+                    public void postDeserialize(Barrier result, JsonElement src, Gson gson) {
+                        result.downloadImage();
+                    }
+
+                    @Override
+                    public void postSerialize(JsonElement result, Barrier src, Gson gson) {
+                    }
+                })
+                .createGsonBuilder()
+                .registerTypeAdapter(ObjectId.class, (JsonDeserializer<ObjectId>) (json, typeOfT, context) -> new ObjectId(json.getAsString()))
+                .create();
     }
 
     @Override

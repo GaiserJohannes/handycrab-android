@@ -4,15 +4,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
+import de.dhbw.handycrab.helper.BarrierAdapter;
 import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.SolutionAdapter;
@@ -32,6 +35,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView newSolution;
     private Button upvote;
     private Button downvote;
+    private ImageView image;
 
     private RecyclerView rv;
 
@@ -67,6 +71,7 @@ public class DetailActivity extends AppCompatActivity {
         upvote = findViewById(R.id.detail_barrier_upvote);
         downvote = findViewById(R.id.detail_barrier_downvote);
         newSolution = findViewById(R.id.detail_new_solution);
+        image = findViewById(R.id.detail_image);
 
         rv = findViewById(R.id.detail_solution_rv);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
@@ -90,6 +95,12 @@ public class DetailActivity extends AppCompatActivity {
 
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
         downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
+
+        activeBarrier.setImageBitmapCallback((success, bitmap) -> {
+            if(success){
+                image.setImageBitmap(bitmap);
+            }
+        });
 
         SolutionAdapter adapter = new SolutionAdapter(activeBarrier.getSolutions());
         rv.setAdapter(adapter);

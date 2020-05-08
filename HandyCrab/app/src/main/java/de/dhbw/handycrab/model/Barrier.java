@@ -1,10 +1,17 @@
 package de.dhbw.handycrab.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import org.bson.types.ObjectId;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 
 public class Barrier {
 
@@ -13,24 +20,25 @@ public class Barrier {
     private String title;
     private double longitude;
     private double latitude;
-    private URL picture;
+    private String picturePath;
     private String description;
     private String postcode;
     private List<Solution> solutions = new ArrayList<>();
     private int upvotes;
     private int downvotes;
     private Vote vote;
+    private Bitmap imageBitmap;
 
     public Barrier() {
     }
 
-    public Barrier(ObjectId id, ObjectId userId, String title, double longitude, double latitude, URL picture, String description, String postcode, List<Solution> solutions, int upvotes, int downvotes, Vote vote) {
+    public Barrier(ObjectId id, ObjectId userId, String title, double longitude, double latitude, String picturePath, String description, String postcode, List<Solution> solutions, int upvotes, int downvotes, Vote vote) {
         _id = id;
         this.userId = userId;
         this.title = title;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.picture = picture;
+        this.picturePath = picturePath;
         this.description = description;
         this.postcode = postcode;
         this.solutions = solutions;
@@ -59,8 +67,8 @@ public class Barrier {
         return latitude;
     }
 
-    public URL getPicture() {
-        return picture;
+    public String getPicture() {
+        return picturePath;
     }
 
     public String getDescription() {
@@ -97,5 +105,32 @@ public class Barrier {
 
     public void setVote(Vote vote) {
         this.vote = vote;
+    }
+
+    public boolean downloadImage(){
+        if(picturePath == null || picturePath.isEmpty()){
+            return false;
+        }
+        if(imageBitmap == null){
+            try {
+                InputStream in = new URL(picturePath).openStream();
+                imageBitmap = BitmapFactory.decodeStream(in);
+            } catch (RuntimeException r){}
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    public void setImageBitmapCallback(BiConsumer<Boolean, Bitmap> function) {
+        try {
+            Boolean success = CompletableFuture.supplyAsync(() -> downloadImage()).get();
+            function.accept(success, imageBitmap);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
