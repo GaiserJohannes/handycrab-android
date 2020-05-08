@@ -56,7 +56,7 @@ public class DetailActivity extends AppCompatActivity {
             SolutionAdapter.SolutionViewHolder viewHolder = (SolutionAdapter.SolutionViewHolder) view.getTag();
             int position = viewHolder.getAdapterPosition();
 
-            Solution solution = activeBarrier.getSolution().get(position);
+            Solution solution = activeBarrier.getSolutions().get(position);
 
             switch (solution.getVote()) {
                 case UP:
@@ -134,7 +134,7 @@ public class DetailActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         recyclerView.setLayoutManager(llm);
 
-        adapter = new SolutionAdapter(activeBarrier.getSolution());
+        adapter = new SolutionAdapter(activeBarrier.getSolutions());
         adapter.setVoteListener(onVoteListener);
         recyclerView.setAdapter(adapter);
 
@@ -177,11 +177,8 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void updateSolutions() {
-        adapter.setDataset(activeBarrier.getSolution());
+        adapter.setDataset(activeBarrier.getSolutions());
         adapter.notifyDataSetChanged();
-
-        SolutionAdapter adapter = new SolutionAdapter(activeBarrier.getSolutions());
-        rv.setAdapter(adapter);
     }
 
     public void vote(View view) {
