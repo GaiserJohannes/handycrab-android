@@ -2,7 +2,8 @@ package de.dhbw.handycrab.model;
 
 import org.bson.types.ObjectId;
 
-public class Solution {
+public class Solution implements Votable {
+
     private ObjectId _id;
     private String text;
     private ObjectId userID;

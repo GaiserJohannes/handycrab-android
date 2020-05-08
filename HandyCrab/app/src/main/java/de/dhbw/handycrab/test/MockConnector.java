@@ -14,15 +14,17 @@ import java.util.concurrent.CompletableFuture;
 
 public class MockConnector implements IHandyCrabDataHandler {
 
+    private static ObjectId sharedId = ObjectId.get();
+
     @Override
     public CompletableFuture<User> registerAsync(String email, String username, String password) throws BackendConnectionException {
-        User user = new User(new ObjectId(), username, email);
+        User user = new User(sharedId, username, email);
         return CompletableFuture.completedFuture(user);
     }
 
     @Override
     public CompletableFuture<User> loginAsync(String emailOrUsername, String password) {
-        User user = new User(new ObjectId(), emailOrUsername, emailOrUsername);
+        User user = new User(sharedId, emailOrUsername, emailOrUsername);
         return CompletableFuture.completedFuture(user);
     }
 
@@ -56,7 +58,7 @@ public class MockConnector implements IHandyCrabDataHandler {
         solutions.add(s3);
         solutions.add(s4);
         solutions.add(s5);
-        Barrier b1 = new Barrier(ObjectId.get(), ObjectId.get(), "Treppe", 42.0, 69.0, "https://www.seo-suedwest.de/images/canonical-herausragend.jpg", "Das ist eine Beschreibung", null, solutions, 43, 23, Vote.NONE);
+        Barrier b1 = new Barrier(ObjectId.get(), sharedId, "Treppe", 42.0, 69.0, "https://www.seo-suedwest.de/images/canonical-herausragend.jpg", "Das ist eine Beschreibung", null, solutions, 43, 23, Vote.NONE);
         Barrier b2 = new Barrier(ObjectId.get(), ObjectId.get(), "Treppe222", 41.0, 68.0, "https://hbsecurite-dz.com/wp-content/uploads/2019/01/barri%C3%A8re-levante-automatique-fbx.png", "Das ist eine andere Beschreibung", null, solutions, 42, 56, Vote.NONE);
 
         List<Barrier> list = new ArrayList<>();
@@ -82,13 +84,14 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<Barrier> addBarrierAsync(String title, double longitude, double latitude, String picture_base64, String description, String postcode, String solution) {
-        Barrier b1 = new Barrier(ObjectId.get(), ObjectId.get(), "add Barrier", 42.0, 69.0, null, "Diese Barriere wurde hinzugefügt", null, new ArrayList<>(), 43, 23, Vote.NONE);
+        Barrier b1 = new Barrier(ObjectId.get(), ObjectId.get(), title, longitude, latitude, null, "Diese Barriere wurde hinzugefügt", null, new ArrayList<>(), 43, 23, Vote.NONE);
         return CompletableFuture.completedFuture(b1);
     }
 
     @Override
     public CompletableFuture<Barrier> modifyBarrierAsync(ObjectId id, String title, String picture_base64, String description) {
-        return null;
+        Barrier b1 = new Barrier(id, sharedId, title, 42.0, 69.0, null, description, null, new ArrayList<>(), 43, 23, Vote.NONE);
+        return CompletableFuture.completedFuture(b1);
     }
 
     @Override

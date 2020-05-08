@@ -8,7 +8,7 @@ public class BarrierDateComparator implements Comparator<Barrier> {
 
     @Override
     public int compare(Barrier o1, Barrier o2) {
-        return 0;
+        return o1.getId().compareTo(o2.getId());
     }
 }
 

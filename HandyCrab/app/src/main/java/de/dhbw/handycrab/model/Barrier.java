@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 
-public class Barrier {
+public class Barrier implements Votable {
 
     private ObjectId _id;
     private ObjectId userId;

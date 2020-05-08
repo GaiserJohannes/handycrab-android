@@ -38,6 +38,16 @@
                 android:id="@+id/editor_description"
                 android:autofillHints=""/>
         <TextView
+                android:text="@string/zipLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/editor_zip" android:hint="@string/zipLabel" android:autofillHints=""/>
+        <TextView
                 android:text="@string/imageLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

@@ -64,4 +64,16 @@ public class DataHelper {
         }
     }
 
+    public void deleteBarrierInList(Barrier barrier) {
+        List<Barrier> list = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+
+        ListIterator<Barrier> iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getId().equals(barrier.getId())) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
 }
