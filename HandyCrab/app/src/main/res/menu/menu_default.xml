@@ -2,6 +2,7 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:title="@string/userBarriersLabel" android:id="@+id/action_userBarriers" app:showAsAction="never"/>
     <item android:title="@string/aboutLabel"
           android:id="@+id/action_about"
           app:showAsAction="never"

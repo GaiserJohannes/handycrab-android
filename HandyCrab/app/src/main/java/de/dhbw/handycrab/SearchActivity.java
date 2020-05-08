@@ -35,6 +35,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
     public final static String BARRIER_LIST = "de.dhbw.handycrab.BARRIERS";
+    public final static String USER_BARRIERS = "de.dhbw.handycrab.USER_BARRIERS";
 
     private Button[] radiusButtons;
     private Button searchGpsButton;
@@ -93,10 +94,31 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_about:
-                Intent intent = new Intent(this, AboutActivity.class);
+                intent = new Intent(this, AboutActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.action_userBarriers:
+                if (!dataCache.contains(USER_BARRIERS)) {
+                    try {
+                        dataCache.store(USER_BARRIERS, dataHandler.getBarriersAsync().get());
+                    }
+                    catch (ExecutionException | InterruptedException e) {
+                        if (e.getCause() instanceof BackendConnectionException) {
+                            BackendConnectionException ex = (BackendConnectionException) e.getCause();
+                            Toast.makeText(SearchActivity.this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+
+                intent = new Intent(this, BarrierListActivity.class);
+                startActivity(intent);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

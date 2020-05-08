@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import de.dhbw.handycrab.helper.BarrierAdapter;
 import de.dhbw.handycrab.helper.BarrierDateComparator;
 import de.dhbw.handycrab.helper.IDataCache;
@@ -22,6 +23,8 @@ import java.util.List;
 public class BarrierListActivity extends AppCompatActivity {
 
     public static String ACTIVE_BARRIER = "de.dhbw.handycrab.ACTIVE_BARRIER";
+
+    private FloatingActionButton addButton;
 
     private BarrierAdapter adapter;
     private List<Barrier> barriers;
@@ -60,11 +63,23 @@ public class BarrierListActivity extends AppCompatActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
+        Bundle extras = getIntent().getExtras();
+        boolean userBarriers = extras != null && extras.getBoolean(SearchActivity.USER_BARRIERS);
+
+        addButton = findViewById(R.id.add_barrier);
+
         RecyclerView recyclerView = findViewById(R.id.barrier_list_rv);
         LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
         recyclerView.setLayoutManager(llm);
 
-        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+        if (userBarriers) {
+            barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+            addButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.USER_BARRIERS);
+            addButton.setVisibility(View.GONE);
+        }
 
         adapter = new BarrierAdapter(barriers);
         adapter.setClickListener(onItemClickListener);
@@ -92,15 +107,25 @@ public class BarrierListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_sort_by_date:
+            case R.id.action_sort_by_date_down:
                 barriers.sort(new BarrierDateComparator());
                 updateBarriers();
                 return true;
-            case R.id.action_sort_by_votes:
+            case R.id.action_sort_by_date_up:
+                barriers.sort(new BarrierDateComparator().reversed());
+                updateBarriers();
+                return true;
+            case R.id.action_sort_by_votes_down:
                 barriers.sort(new VotableComparator());
                 updateBarriers();
                 return true;
-            case R.id.action_sort_by_distance:
+            case R.id.action_sort_by_votes_up:
+                barriers.sort(new VotableComparator().reversed());
+                updateBarriers();
+                return true;
+            case R.id.action_sort_by_distance_down:
+                return true;
+            case R.id.action_sort_by_distance_up:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

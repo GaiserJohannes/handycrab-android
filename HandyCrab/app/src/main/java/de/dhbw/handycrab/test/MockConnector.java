@@ -97,7 +97,30 @@ public class MockConnector implements IHandyCrabDataHandler {
 
     @Override
     public CompletableFuture<List<Barrier>> getBarriersAsync() {
-        return null;
+        try {
+            Thread.sleep(500);
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Solution s1 = new Solution(ObjectId.get(), "einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen! einfach außen rum gehen!", ObjectId.get(), 12, 42, Vote.NONE);
+        Solution s2 = new Solution(ObjectId.get(), "zweifach außen rum gehen!", ObjectId.get(), 421, 546, Vote.NONE);
+        Solution s3 = new Solution(ObjectId.get(), "dreifach außen rum gehen!", ObjectId.get(), 567, 85, Vote.NONE);
+        Solution s4 = new Solution(ObjectId.get(), "viewfach außen rum gehen!", ObjectId.get(), 456, 4, Vote.NONE);
+        Solution s5 = new Solution(ObjectId.get(), "fünffach außen rum gehen!", ObjectId.get(), 6, 784, Vote.NONE);
+        List<Solution> solutions = new ArrayList<>();
+        solutions.add(s1);
+        solutions.add(s2);
+        solutions.add(s3);
+        solutions.add(s4);
+        solutions.add(s5);
+        Barrier b1 = new Barrier(ObjectId.get(), sharedId, "Treppe", 42.0, 69.0, "https://www.seo-suedwest.de/images/canonical-herausragend.jpg", "Das ist eine Beschreibung", "72160", solutions, 43, 23, Vote.NONE);
+        Barrier b2 = new Barrier(ObjectId.get(), ObjectId.get(), "Treppe222", 41.0, 68.0, "https://hbsecurite-dz.com/wp-content/uploads/2019/01/barri%C3%A8re-levante-automatique-fbx.png", "Das ist eine andere Beschreibung", "72160", solutions, 42, 56, Vote.NONE);
+
+        List<Barrier> list = new ArrayList<>();
+        list.add(b1);
+        list.add(b2);
+        return CompletableFuture.completedFuture(list);
     }
 
     @Override
