@@ -117,6 +117,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 }
 
                 intent = new Intent(this, BarrierListActivity.class);
+                intent.putExtra(USER_BARRIERS, true);
                 startActivity(intent);
 
                 return true;

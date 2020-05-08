@@ -28,6 +28,7 @@ public class BarrierListActivity extends AppCompatActivity {
 
     private BarrierAdapter adapter;
     private List<Barrier> barriers;
+    private boolean userBarriers;
 
     @Inject
     IDataCache dataCache;
@@ -63,8 +64,13 @@ public class BarrierListActivity extends AppCompatActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        Bundle extras = getIntent().getExtras();
-        boolean userBarriers = extras != null && extras.getBoolean(SearchActivity.USER_BARRIERS);
+        if (savedInstanceState != null) {
+            userBarriers = savedInstanceState.getBoolean(SearchActivity.USER_BARRIERS);
+        }
+        else {
+            Bundle extras = getIntent().getExtras();
+            userBarriers = extras != null && extras.getBoolean(SearchActivity.USER_BARRIERS);
+        }
 
         addButton = findViewById(R.id.add_barrier);
 
@@ -73,12 +79,12 @@ public class BarrierListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(llm);
 
         if (userBarriers) {
-            barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
-            addButton.setVisibility(View.VISIBLE);
-        }
-        else {
             barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.USER_BARRIERS);
             addButton.setVisibility(View.GONE);
+        }
+        else {
+            barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+            addButton.setVisibility(View.VISIBLE);
         }
 
         adapter = new BarrierAdapter(barriers);
@@ -127,10 +133,21 @@ public class BarrierListActivity extends AppCompatActivity {
                 return true;
             case R.id.action_sort_by_distance_up:
                 return true;
+            case android.R.id.home:
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(SearchActivity.USER_BARRIERS, userBarriers);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
 
     private void selectBarrier() {
         Intent intent = new Intent(this, DetailActivity.class);
