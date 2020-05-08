@@ -2,7 +2,6 @@ package de.dhbw.handycrab.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import org.bson.types.ObjectId;
 
 import java.io.InputStream;
@@ -13,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 
-public class Barrier {
+public class Barrier implements Votable {
 
     private ObjectId _id;
     private ObjectId userId;
@@ -107,15 +106,17 @@ public class Barrier {
         this.vote = vote;
     }
 
-    public boolean downloadImage(){
-        if(picturePath == null || picturePath.isEmpty()){
+    public boolean downloadImage() {
+        if (picturePath == null || picturePath.isEmpty()) {
             return false;
         }
-        if(imageBitmap == null){
+        if (imageBitmap == null) {
             try {
                 InputStream in = new URL(picturePath).openStream();
                 imageBitmap = BitmapFactory.decodeStream(in);
-            } catch (RuntimeException r){}
+            }
+            catch (RuntimeException ignored) {
+            }
             catch (Exception e) {
                 e.printStackTrace();
             }
@@ -127,10 +128,13 @@ public class Barrier {
         try {
             Boolean success = CompletableFuture.supplyAsync(() -> downloadImage()).get();
             function.accept(success, imageBitmap);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        }
+        catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public Bitmap getImageBitmap() {
+        return imageBitmap;
     }
 }

@@ -17,6 +17,7 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
     private View.OnClickListener voteListener;
 
     public SolutionAdapter(List<Solution> solutions) {
+        solutions.sort(new VotableComparator());
         this.solutions = solutions;
     }
 
@@ -45,6 +46,7 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
     }
 
     public void setDataset(List<Solution> solutions) {
+        solutions.sort(new VotableComparator());
         this.solutions = solutions;
     }
 

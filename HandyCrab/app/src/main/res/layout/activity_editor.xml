@@ -28,7 +28,8 @@
         <TextView
                 android:text="@string/descriptionLabel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:labelFor="@id/editor_description"/>
+                android:layout_height="wrap_content" android:labelFor="@id/editor_description"
+                android:layout_marginTop="8dp"/>
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,9 +39,19 @@
                 android:id="@+id/editor_description"
                 android:autofillHints=""/>
         <TextView
+                android:text="@string/zipLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="8dp" android:labelFor="@id/editor_zip"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/editor_zip" android:autofillHints=""/>
+        <TextView
                 android:text="@string/imageLabel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" android:layout_marginTop="8dp"/>
 
         <Button
                 android:id="@+id/editor_select_button"
@@ -49,7 +60,7 @@
                 android:onClick="choosePicture"
                 android:text="@string/selectLabel"/>
         <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="275dp" tools:srcCompat="@tools:sample/backgrounds/scenic"
                 android:id="@+id/editor_image" tools:visibility="gone"
                 android:contentDescription="@string/barrierImageContentDesc"
@@ -58,7 +69,7 @@
                 android:text="@string/solutionLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:labelFor="@id/editor_solution"
-                android:id="@+id/editor_solution_label"/>
+                android:id="@+id/editor_solution_label" android:layout_marginTop="8dp"/>
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,7 +103,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/editor_send_button"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </ScrollView>
