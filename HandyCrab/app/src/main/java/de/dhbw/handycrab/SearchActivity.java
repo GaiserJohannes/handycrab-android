@@ -25,7 +25,6 @@ import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 import de.dhbw.handycrab.model.SearchMode;
 import de.dhbw.handycrab.view.HandyCrabMapFragment;
-import de.dhbw.handycrab.view.MapMode;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -166,19 +165,16 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 if (checkPermission()) {
                     locationService.getLastLocationCallback(this::UpdateLocationText);
                     mode = SearchMode.GPS;
-                    mapFragment.setMapMode(MapMode.GPS);
                 }
                 else {
                     searchGpsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
                     searchMapButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
                     Snackbar.make(findViewById(R.id.search_activity_layout), R.string.missingPermission, Snackbar.LENGTH_LONG).show();
                     mode = SearchMode.MAP;
-                    mapFragment.setMapMode(MapMode.MAP);
                 }
                 break;
             case R.id.search_map:
                 mode = SearchMode.MAP;
-                mapFragment.setMapMode(MapMode.MAP);
                 zipText.setVisibility(View.GONE);
                 break;
             case R.id.search_zip:
@@ -186,6 +182,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 zipText.setVisibility(View.VISIBLE);
                 break;
         }
+        mapFragment.setSearchMode(mode);
     }
 
     public void switchRadius(View view) {
@@ -216,6 +213,9 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         switch (mode) {
             case GPS:
                 locationService.getLastLocationCallback(this::findBarriersGps);
+                break;
+            case MAP:
+                mapFragment.getLocationCallback(this::findBarriersGps);
                 break;
             case ZIP:
                 String zip = zipText.getText() != null ? zipText.getText().toString() : "";
@@ -249,6 +249,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         if (success && location != null) {
             try {
                 List<Barrier> list = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius).get();
+                list.forEach(b -> b.setDistanceTo(location));
                 dataCache.store(BARRIER_LIST, list);
             }
             catch (ExecutionException | InterruptedException e) {
@@ -276,7 +277,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         try {
-            List<Barrier> barriers = dataHandler.getBarriersAsync(0, 0, 0).get();
+            List<Barrier> barriers = dataHandler.getBarriersAsync(0, 0, 1000000000).get();
             mapFragment.showBarriers(barriers);
         }
         catch (ExecutionException | InterruptedException e) {

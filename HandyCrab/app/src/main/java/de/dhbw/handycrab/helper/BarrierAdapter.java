@@ -1,5 +1,6 @@
 package de.dhbw.handycrab.helper;
 
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import de.dhbw.handycrab.R;
 import de.dhbw.handycrab.model.Barrier;
 
 import java.util.List;
+
+import static java.lang.String.format;
 
 public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierViewHolder> {
     private View.OnClickListener clickListener;
@@ -36,6 +39,12 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
                 barrierViewHolder.barrierImage.setImageBitmap(bitmap);
             }
         });
+        if(barriers.get(i).getDistance() > 1000){
+            barrierViewHolder.barrierDistance.setText(format(barrierViewHolder.itemView.getContext().getString(R.string.distance_km), barriers.get(i).getDistance()/1000));
+        }
+        else{
+            barrierViewHolder.barrierDistance.setText(format(barrierViewHolder.itemView.getContext().getString(R.string.distance_m), barriers.get(i).getDistance()));
+        }
     }
 
     @Override
@@ -55,6 +64,7 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
     public class BarrierViewHolder extends RecyclerView.ViewHolder {
         public TextView barrierTitle;
         public TextView barrierDesc;
+        public TextView barrierDistance;
         public ImageView barrierImage;
 
         public BarrierViewHolder(View itemView) {
@@ -62,7 +72,7 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
             barrierTitle = itemView.findViewById(R.id.barrier_title);
             barrierDesc = itemView.findViewById(R.id.barrier_desc);
             barrierImage = itemView.findViewById(R.id.barrier_image);
-
+            barrierDistance = itemView.findViewById(R.id.barrier_dist);
             itemView.setTag(this);
             itemView.setOnClickListener(clickListener);
         }

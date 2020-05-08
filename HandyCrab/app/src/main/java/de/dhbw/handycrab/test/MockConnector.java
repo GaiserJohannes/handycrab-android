@@ -58,8 +58,8 @@ public class MockConnector implements IHandyCrabDataHandler {
         solutions.add(s3);
         solutions.add(s4);
         solutions.add(s5);
-        Barrier b1 = new Barrier(ObjectId.get(), sharedId, "Treppe", 42.0, 69.0, "https://www.seo-suedwest.de/images/canonical-herausragend.jpg", "Das ist eine Beschreibung", null, solutions, 43, 23, Vote.NONE);
-        Barrier b2 = new Barrier(ObjectId.get(), ObjectId.get(), "Treppe222", 41.0, 68.0, "https://hbsecurite-dz.com/wp-content/uploads/2019/01/barri%C3%A8re-levante-automatique-fbx.png", "Das ist eine andere Beschreibung", null, solutions, 42, 56, Vote.NONE);
+        Barrier b1 = new Barrier(ObjectId.get(), sharedId, "Treppe", 8.5, 48.42, "https://www.seo-suedwest.de/images/canonical-herausragend.jpg", "Das ist eine Beschreibung", null, solutions, 43, 23, Vote.NONE);
+        Barrier b2 = new Barrier(ObjectId.get(), ObjectId.get(), "Treppe222", 8.499, 48.4202, "https://hbsecurite-dz.com/wp-content/uploads/2019/01/barri%C3%A8re-levante-automatique-fbx.png", "Das ist eine andere Beschreibung", null, solutions, 42, 56, Vote.NONE);
 
         List<Barrier> list = new ArrayList<>();
         list.add(b1);

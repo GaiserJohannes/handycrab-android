@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.helper.BarrierAdapter;
 import de.dhbw.handycrab.helper.BarrierDateComparator;
+import de.dhbw.handycrab.helper.BarrierDistanceComparator;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.VotableComparator;
 import de.dhbw.handycrab.model.Barrier;
@@ -101,6 +102,8 @@ public class BarrierListActivity extends AppCompatActivity {
                 updateBarriers();
                 return true;
             case R.id.action_sort_by_distance:
+                barriers.sort(new BarrierDistanceComparator());
+                updateBarriers();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

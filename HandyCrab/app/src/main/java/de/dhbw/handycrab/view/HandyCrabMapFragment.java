@@ -1,5 +1,7 @@
 package de.dhbw.handycrab.view;
 
+import android.location.Location;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -10,9 +12,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import de.dhbw.handycrab.R;
 import de.dhbw.handycrab.model.Barrier;
+import de.dhbw.handycrab.model.SearchMode;
 
 public class HandyCrabMapFragment extends SupportMapFragment implements OnMapReadyCallback {
 
@@ -20,7 +24,7 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
 
     private Marker marker;
 
-    private MapMode mapMode = MapMode.GPS;
+    private SearchMode searchMode = SearchMode.GPS;
 
     public HandyCrabMapFragment(){
         getMapAsync(this);
@@ -30,14 +34,14 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
         map.setOnMapClickListener((latLong) -> {
-            if(mapMode == MapMode.MAP)
+            if(searchMode == SearchMode.MAP)
                 setLocation(latLong, getString(R.string.selected_location));
         });
         map.moveCamera(CameraUpdateFactory.zoomTo(12f));
     }
 
-    public void setMapMode(MapMode mode){
-        this.mapMode = mode;
+    public void setSearchMode(SearchMode mode){
+        this.searchMode = mode;
     }
 
     public void showBarriers(List<Barrier> barriers){
@@ -53,7 +57,7 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
     }
 
     public void setLocation(LatLng location, String title){
-        if(mapMode == MapMode.GPS){
+        if(searchMode == SearchMode.GPS){
             map.moveCamera(CameraUpdateFactory.newLatLng(location));
         }
         if(marker == null){
@@ -64,10 +68,17 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
         marker.setTitle(title);
     }
 
-    public LatLng getLocation(){
+    public Location getLocation(){
         if(marker == null){
             return null;
         }
-        return marker.getPosition();
+        Location l = new Location("map");
+        l.setLongitude(marker.getPosition().longitude);
+        l.setLatitude(marker.getPosition().latitude);
+        return l;
+    }
+
+    public void getLocationCallback(BiConsumer<Boolean, Location> function) {
+        function.accept(getLocation() != null, getLocation());
     }
 }

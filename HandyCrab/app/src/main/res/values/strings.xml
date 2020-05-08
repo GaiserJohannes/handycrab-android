@@ -85,4 +85,6 @@
     <string name="deleteLabel">Löschen</string>
     <string name="aboutText">Diese App wurde im Rahmen eines Projektes an der DHBW Horb entworfen und entwickelt.\n\nEntwickelt wurde diese App von:\n\tJohannes Gaiser\n\tJoel Schmid</string>
     <string name="current_location">aktuelle Position</string>
+    <string name="distance_m">Distanz: %.0f m</string>
+    <string name="distance_km">Distanz: %.1f km</string>
 </resources>
