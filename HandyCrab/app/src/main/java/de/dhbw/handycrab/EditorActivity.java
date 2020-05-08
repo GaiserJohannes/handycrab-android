@@ -107,7 +107,7 @@ public class EditorActivity extends AppCompatActivity {
     private void fillContent() {
         title.setText(barrier.getTitle());
         description.setText(barrier.getDescription());
-        imageView.setImageResource(R.drawable.barrier);
+        imageView.setImageBitmap(barrier.getImageBitmap());
     }
 
     public void choosePicture(View view) {
