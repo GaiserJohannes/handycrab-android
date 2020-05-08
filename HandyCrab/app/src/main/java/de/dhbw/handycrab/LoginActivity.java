@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
+    public  static String LOGOUT = "LOGOUT";
     private static String COOKIE_TOKEN = "TOKEN";
     private static String COOKIE_DOMAIN = "DOMAIN";
 
@@ -74,7 +75,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
         preferences = getPreferences(MODE_PRIVATE);
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            if(extras.getBoolean(LOGOUT)){
+                preferences.edit().remove(COOKIE_DOMAIN).remove(COOKIE_TOKEN).commit();
+            }
+        }
+
         String token = preferences.getString(COOKIE_TOKEN, "");
         String domain = preferences.getString(COOKIE_DOMAIN, "");
         if(token != null && !token.isEmpty() && domain != null && !domain.isEmpty()){

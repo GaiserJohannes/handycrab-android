@@ -87,4 +87,5 @@
     <string name="current_location">aktuelle Position</string>
     <string name="distance_m">Distanz: %.0f m</string>
     <string name="distance_km">Distanz: %.1f km</string>
+    <string name="logout">Ausloggen</string>
 </resources>

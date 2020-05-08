@@ -28,10 +28,10 @@ import de.dhbw.handycrab.view.HandyCrabMapFragment;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback {
-
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
     public final static String BARRIER_LIST = "de.dhbw.handycrab.BARRIERS";
 
@@ -96,8 +96,27 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_about:
-                Intent intent = new Intent(this, AboutActivity.class);
-                startActivity(intent);
+                Intent about = new Intent(this, AboutActivity.class);
+                startActivity(about);
+                return true;
+            case R.id.action_logout:
+                CompletableFuture<Void> finished = dataHandler.logoutAsync();
+                Intent logout = new Intent(this, LoginActivity.class);
+                logout.putExtra(LoginActivity.LOGOUT, true);
+                startActivity(logout);
+                try {
+                    finished.get();
+                }
+                catch (ExecutionException | InterruptedException e) {
+                    if (e.getCause() instanceof BackendConnectionException) {
+                        BackendConnectionException ex = (BackendConnectionException) e.getCause();
+                        Toast.makeText(SearchActivity.this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
