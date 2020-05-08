@@ -54,13 +54,13 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     @Override
-    public CompletableFuture<User> registerAsync(final String email, final String username, final String password) {
-        return CompletableFuture.supplyAsync(() -> register(email, username, password));
+    public CompletableFuture<User> registerAsync(final String email, final String username, final String password, boolean createToken) {
+        return CompletableFuture.supplyAsync(() -> register(email, username, password, createToken));
     }
 
     @Override
-    public CompletableFuture<User> loginAsync(String emailOrUsername, String password) {
-        return CompletableFuture.supplyAsync(() -> login(emailOrUsername, password));
+    public CompletableFuture<User> loginAsync(String emailOrUsername, String password, boolean createToken) {
+        return CompletableFuture.supplyAsync(() -> login(emailOrUsername, password, createToken));
     }
 
     @Override
@@ -124,21 +124,23 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     //synchron Restcalls
-    private User register(String email, String username, String password) {
+    private User register(String email, String username, String password, boolean createToken) {
         String path = "users/register";
         JsonObject object = new JsonObject();
         object.addProperty("email", email);
         object.addProperty("username", username);
         object.addProperty("password", password);
+        object.addProperty("createToken", Boolean.toString(createToken));
         HttpResponse response = post(path, object.toString());
         return getUserOfResponse(response);
     }
 
-    private User login(String emailOrUsername, String password) {
+    private User login(String emailOrUsername, String password, boolean createToken) {
         String path = "users/login";
         JsonObject object = new JsonObject();
         object.addProperty("login", emailOrUsername);
         object.addProperty("password", password);
+        object.addProperty("createToken", Boolean.toString(createToken));
         HttpResponse response = post(path, object.toString());
         return getUserOfResponse(response);
     }

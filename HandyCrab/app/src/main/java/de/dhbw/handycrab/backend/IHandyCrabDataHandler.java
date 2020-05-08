@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface IHandyCrabDataHandler {
-    CompletableFuture<User> registerAsync(String email, String username, String password) throws BackendConnectionException;
+    CompletableFuture<User> registerAsync(String email, String username, String password, boolean createToken) throws BackendConnectionException;
 
-    CompletableFuture<User> loginAsync(String emailOrUsername, String password);
+    CompletableFuture<User> loginAsync(String emailOrUsername, String password, boolean createToken);
 
     CompletableFuture<Void> logoutAsync();
 

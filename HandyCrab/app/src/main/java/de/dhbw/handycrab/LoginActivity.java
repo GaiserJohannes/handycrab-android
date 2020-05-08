@@ -74,10 +74,10 @@ public class LoginActivity extends AppCompatActivity {
         try {
             User user;
             if (tabLayout.getSelectedTabPosition() == 0) {
-                user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString()).get();
+                user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString(), true).get();
             }
             else {
-                user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString()).get();
+                user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString(), true).get();
             }
             dataHolder.store(USER, user);
             successLogin();

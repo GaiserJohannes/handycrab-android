@@ -17,13 +17,13 @@ public class MockConnector implements IHandyCrabDataHandler {
     private static ObjectId sharedId = ObjectId.get();
 
     @Override
-    public CompletableFuture<User> registerAsync(String email, String username, String password) throws BackendConnectionException {
+    public CompletableFuture<User> registerAsync(String email, String username, String password, boolean createToken) throws BackendConnectionException {
         User user = new User(sharedId, username, email);
         return CompletableFuture.completedFuture(user);
     }
 
     @Override
-    public CompletableFuture<User> loginAsync(String emailOrUsername, String password) {
+    public CompletableFuture<User> loginAsync(String emailOrUsername, String password, boolean createToken) {
         User user = new User(sharedId, emailOrUsername, emailOrUsername);
         return CompletableFuture.completedFuture(user);
     }
