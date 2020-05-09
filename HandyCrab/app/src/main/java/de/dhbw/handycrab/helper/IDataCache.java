@@ -8,4 +8,6 @@ public interface IDataCache {
     Object retrieve(String id);
 
     void delete(String id);
+
+    void clear();
 }

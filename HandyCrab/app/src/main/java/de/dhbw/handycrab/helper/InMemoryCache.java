@@ -30,4 +30,9 @@ public class InMemoryCache implements IDataCache {
     public void delete(String id) {
         data.remove(id);
     }
+
+    @Override
+    public void clear() {
+        data.clear();
+    }
 }
