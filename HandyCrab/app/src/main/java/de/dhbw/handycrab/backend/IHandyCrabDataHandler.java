@@ -15,6 +15,8 @@ public interface IHandyCrabDataHandler {
 
     CompletableFuture<User> loginAsync(String emailOrUsername, String password, boolean createToken);
 
+    CompletableFuture<User> currenUserAsync();
+
     CompletableFuture<Void> logoutAsync();
 
     CompletableFuture<String> getUsernameAsync(ObjectId id);

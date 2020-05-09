@@ -88,7 +88,17 @@ public class LoginActivity extends AppCompatActivity {
         String domain = preferences.getString(COOKIE_DOMAIN, "");
         if(token != null && !token.isEmpty() && domain != null && !domain.isEmpty()){
             backendConnector.loadToken(token, domain);
-            successLogin();
+            try {
+                User user = backendConnector.currenUserAsync().get();
+                successLogin(user);
+            } catch (ExecutionException e) {
+                if (e.getCause() instanceof BackendConnectionException) {
+                    BackendConnectionException ex = (BackendConnectionException) e.getCause();
+                    Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -102,8 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                 user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString(), true).get();
             }
             backendConnector.saveToken((token, domain) ->  preferences.edit().putString(COOKIE_TOKEN, token).putString(COOKIE_DOMAIN, domain).commit());
-            dataHolder.store(USER, user);
-            successLogin();
+            successLogin(user);
         }
         catch (ExecutionException e) {
             if (e.getCause() instanceof BackendConnectionException) {
@@ -116,7 +125,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void successLogin() {
+    private void successLogin(User user) {
+        dataHolder.store(USER, user);
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
     }

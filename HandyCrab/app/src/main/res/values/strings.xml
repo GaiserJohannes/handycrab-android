@@ -57,6 +57,10 @@
     <string name="pictureNotFound">Das Bild wurde nicht gefunden</string>
     //errorcode = 16
     <string name="invalidPasswordError">Ungültiges Passwort</string>
+    //errorcode = 17
+    <string name="invalidJson">Ungültiges JSON in der Anfrage</string>
+    //errorcode = 18
+    <string name="invalidObjectID">Ungültige ID</string>
     <string name="noConnectionToServerError">Es kann keine Verbindung zum Server hergestellt werden</string>
     <string name="locationError">Position kann nicht ermittelt werden</string>
     <string name="radius1Label">10 m</string>

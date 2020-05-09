@@ -14,6 +14,7 @@ import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.client.methods.HttpPut;
+import cz.msebera.android.httpclient.client.methods.HttpUriRequest;
 import cz.msebera.android.httpclient.client.protocol.HttpClientContext;
 import cz.msebera.android.httpclient.cookie.Cookie;
 import cz.msebera.android.httpclient.entity.ContentType;
@@ -76,6 +77,11 @@ public class BackendConnector implements IHandyCrabDataHandler {
     @Override
     public CompletableFuture<User> loginAsync(String emailOrUsername, String password, boolean createToken) {
         return CompletableFuture.supplyAsync(() -> login(emailOrUsername, password, createToken));
+    }
+
+    @Override
+    public CompletableFuture<User> currenUserAsync() {
+        return CompletableFuture.supplyAsync(() -> currentUser());
     }
 
     @Override
@@ -178,6 +184,12 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("password", password);
         object.addProperty("createToken", Boolean.toString(createToken));
         HttpResponse response = post(path, object.toString());
+        return getUserOfResponse(response);
+    }
+
+    private User currentUser() {
+        String path = "users/currentuser";
+        HttpResponse response = get(path);
         return getUserOfResponse(response);
     }
 
@@ -336,46 +348,36 @@ public class BackendConnector implements IHandyCrabDataHandler {
     //http methods
     private HttpResponse get(String path, String json) {
         CustomRequest getRequest = new CustomRequest(connection + path);
-
         getRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
-        try {
-            return client.execute(getRequest);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return execute(getRequest);
+    }
+
+    private HttpResponse get(String path) {
+        CustomRequest getRequest = new CustomRequest(connection + path);
+        return execute(getRequest);
     }
 
     private HttpResponse post(String path, String json) {
         HttpPost postRequest = new HttpPost(connection + path);
         postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
-        try {
-            return client.execute(postRequest);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return execute(postRequest);
     }
 
     private HttpResponse put(String path, String json) {
         HttpPut putRequest = new HttpPut(connection + path);
         putRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
-        try {
-            return client.execute(putRequest);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return execute(putRequest);
     }
 
     private HttpResponse delete(String path, String json) {
         CustomRequest deleteRequest = new CustomRequest(connection + path, "DELETE");
         deleteRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+        return execute(deleteRequest);
+    }
+
+    private HttpResponse execute(HttpUriRequest request){
         try {
-            return client.execute(deleteRequest);
+            return client.execute(request);
         }
         catch (IOException e) {
             e.printStackTrace();

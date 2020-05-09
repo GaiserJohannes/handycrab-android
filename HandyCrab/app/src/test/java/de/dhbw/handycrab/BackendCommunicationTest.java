@@ -78,6 +78,23 @@ public class BackendCommunicationTest {
     }
 
     @Test
+    public void currentUserTest() {
+        CompletableFuture<User> cuser = connector.currenUserAsync();
+        User user = null;
+        try {
+            user = cuser.get();
+        } catch (ExecutionException e) {
+            if(e.getCause() instanceof BackendConnectionException){
+                System.out.println(((BackendConnectionException) e.getCause()).getErrorCode() + " - Http-Code: " + ((BackendConnectionException) e.getCause()).getHttpStatusCode());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.getId());
+    }
+
+    @Test
     public void userNameTest(){
         String name = null;
         CompletableFuture<String> username = connector.getUsernameAsync(new ObjectId("5e85a97841e46f5d00cb3a5d"));
@@ -183,6 +200,7 @@ public class BackendCommunicationTest {
             Assert.fail();
         }
         Assert.assertNotNull(barrier);
+        Assert.assertNotNull(barrier.getSolutions().get(0));
     }
 
     @Test

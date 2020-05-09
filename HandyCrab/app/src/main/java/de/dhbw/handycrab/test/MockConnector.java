@@ -31,6 +31,12 @@ public class MockConnector implements IHandyCrabDataHandler {
     }
 
     @Override
+    public CompletableFuture<User> currenUserAsync() {
+        User user = new User(sharedId, "Hans", "Hans@mail.com");
+        return CompletableFuture.completedFuture(user);
+    }
+
+    @Override
     public CompletableFuture<Void> logoutAsync() {
         return CompletableFuture.completedFuture(null);
     }

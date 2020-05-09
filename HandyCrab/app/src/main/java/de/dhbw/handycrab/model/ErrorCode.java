@@ -20,6 +20,8 @@ public enum ErrorCode {
     PICTURE_TO_BIG,
     INVALID_PICTURE_FORMAT,
     PICTURE_NOT_FOUND,
+    INVALID_JSON,
+    INVALID_OBJECT_ID,
     //can rise at every request
     NO_CONNECTION_TO_SERVER
 }

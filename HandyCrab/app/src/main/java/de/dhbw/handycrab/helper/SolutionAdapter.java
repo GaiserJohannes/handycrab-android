@@ -30,7 +30,12 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
 
     @Override
     public void onBindViewHolder(@NonNull SolutionViewHolder solutionViewHolder, int i) {
-        solutionViewHolder.solutionUser.setText(solutions.get(i).getUserID().toString());
+        try{
+            solutionViewHolder.solutionUser.setText(solutions.get(i).getUserID().toString());
+        }
+        catch (NullPointerException e){
+System.out.println("ja");
+        }
         solutionViewHolder.solutionText.setText(solutions.get(i).getText());
         solutionViewHolder.upvote.setText(String.format("%s", solutions.get(i).getUpvotes()));
         solutionViewHolder.downvote.setText(String.format("%s", solutions.get(i).getDownvotes()));
