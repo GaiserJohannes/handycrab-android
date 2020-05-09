@@ -7,6 +7,6 @@ import java.util.Comparator;
 public class VotableComparator implements Comparator<Votable> {
     @Override
     public int compare(Votable o1, Votable o2) {
-        return (o1.getUpvotes() - o1.getDownvotes()) - (o2.getUpvotes() - o2.getDownvotes());
+        return (o2.getUpvotes() - o2.getDownvotes()) - (o1.getUpvotes() - o1.getDownvotes());
     }
 }

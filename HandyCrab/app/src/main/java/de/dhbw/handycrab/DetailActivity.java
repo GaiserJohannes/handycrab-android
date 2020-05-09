@@ -146,6 +146,16 @@ public class DetailActivity extends AppCompatActivity {
 
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
         downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
+        switch (activeBarrier.getVote()) {
+            case UP:
+                upvote.setAlpha(1.0f);
+                downvote.setAlpha(0.5f);
+                break;
+            case DOWN:
+                downvote.setAlpha(1.0f);
+                upvote.setAlpha(0.5f);
+                break;
+        }
     }
 
     private void updateSolutions() {

@@ -34,6 +34,17 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
         solutionViewHolder.solutionText.setText(solutions.get(i).getText());
         solutionViewHolder.upvote.setText(String.format("%s", solutions.get(i).getUpvotes()));
         solutionViewHolder.downvote.setText(String.format("%s", solutions.get(i).getDownvotes()));
+
+        switch (solutions.get(i).getVote()) {
+            case UP:
+                solutionViewHolder.upvote.setAlpha(1.0f);
+                solutionViewHolder.downvote.setAlpha(0.5f);
+                break;
+            case DOWN:
+                solutionViewHolder.downvote.setAlpha(1.0f);
+                solutionViewHolder.upvote.setAlpha(0.5f);
+                break;
+        }
     }
 
     @Override
