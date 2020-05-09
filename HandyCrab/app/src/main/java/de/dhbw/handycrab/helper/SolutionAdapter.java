@@ -7,16 +7,24 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import de.dhbw.handycrab.Program;
 import de.dhbw.handycrab.R;
 import de.dhbw.handycrab.model.Solution;
 
+import javax.inject.Inject;
 import java.util.List;
 
 public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.SolutionViewHolder> {
+
+    @Inject
+    DataHelper dataHelper;
+
     private List<Solution> solutions;
     private View.OnClickListener voteListener;
 
     public SolutionAdapter(List<Solution> solutions) {
+        Program.getApplicationGraph().inject(this);
+
         solutions.sort(new VotableComparator());
         this.solutions = solutions;
     }
@@ -30,7 +38,8 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
 
     @Override
     public void onBindViewHolder(@NonNull SolutionViewHolder solutionViewHolder, int i) {
-        solutionViewHolder.solutionUser.setText(solutions.get(i).getUserID().toString());
+        String userName = dataHelper.getUsernameFromId(solutions.get(i).getUserID());
+        solutionViewHolder.solutionUser.setText(userName);
         solutionViewHolder.solutionText.setText(solutions.get(i).getText());
         solutionViewHolder.upvote.setText(String.format("%s", solutions.get(i).getUpvotes()));
         solutionViewHolder.downvote.setText(String.format("%s", solutions.get(i).getDownvotes()));

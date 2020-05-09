@@ -20,4 +20,6 @@ public interface ApplicationGraph {
     void inject(LoginActivity loginActivity);
 
     void inject(EditorActivity editorActivity);
+
+    void inject(SolutionAdapter solutionAdapter);
 }
