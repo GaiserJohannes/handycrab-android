@@ -6,27 +6,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
-
-import com.google.android.material.tabs.TabLayout;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import de.dhbw.handycrab.helper.BarrierAdapter;
-import de.dhbw.handycrab.helper.BarrierDateComparator;
-import de.dhbw.handycrab.helper.BarrierDistanceComparator;
-import de.dhbw.handycrab.helper.IDataCache;
-import de.dhbw.handycrab.helper.VotableComparator;
+import com.google.android.material.tabs.TabLayout;
+import de.dhbw.handycrab.helper.*;
 import de.dhbw.handycrab.model.Barrier;
-import de.dhbw.handycrab.helper.ViewPagerAdapter;
 
 import javax.inject.Inject;
-
 import java.util.List;
 
 public class BarrierListActivity extends AppCompatActivity {
@@ -36,7 +25,6 @@ public class BarrierListActivity extends AppCompatActivity {
 
     private FloatingActionButton addButton;
 
-    private BarrierAdapter adapter;
     private List<Barrier> barriers;
     private ViewPagerAdapter sectionsPagerAdapter;
     private boolean userBarriers;

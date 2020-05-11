@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
-
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.IDataCache;
@@ -19,7 +18,7 @@ import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
-    public  static String LOGOUT = "LOGOUT";
+    public static String LOGOUT = "LOGOUT";
     private static String COOKIE_TOKEN = "TOKEN";
     private static String COOKIE_DOMAIN = "DOMAIN";
 
@@ -75,28 +74,29 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
         preferences = getPreferences(MODE_PRIVATE);
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
-            if(extras.getBoolean(LOGOUT)){
+        if (extras != null) {
+            if (extras.getBoolean(LOGOUT)) {
                 preferences.edit().remove(COOKIE_DOMAIN).remove(COOKIE_TOKEN).commit();
             }
         }
 
         String token = preferences.getString(COOKIE_TOKEN, "");
         String domain = preferences.getString(COOKIE_DOMAIN, "");
-        if(token != null && !token.isEmpty() && domain != null && !domain.isEmpty()){
+        if (token != null && !token.isEmpty() && domain != null && !domain.isEmpty()) {
             backendConnector.loadToken(token, domain);
             try {
                 User user = backendConnector.currenUserAsync().get();
                 successLogin(user);
-            } catch (ExecutionException e) {
+            }
+            catch (ExecutionException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
                     BackendConnectionException ex = (BackendConnectionException) e.getCause();
                     Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
                 }
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             else {
                 user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString(), true).get();
             }
-            backendConnector.saveToken((token, domain) ->  preferences.edit().putString(COOKIE_TOKEN, token).putString(COOKIE_DOMAIN, domain).commit());
+            backendConnector.saveToken((token, domain) -> preferences.edit().putString(COOKIE_TOKEN, token).putString(COOKIE_DOMAIN, domain).commit());
             successLogin(user);
         }
         catch (ExecutionException e) {

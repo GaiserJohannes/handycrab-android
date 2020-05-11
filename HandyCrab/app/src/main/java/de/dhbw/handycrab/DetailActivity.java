@@ -20,7 +20,6 @@ import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.SolutionAdapter;
 import de.dhbw.handycrab.model.*;
-import de.dhbw.handycrab.view.BarrierListFragment;
 
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
@@ -142,14 +141,14 @@ public class DetailActivity extends AppCompatActivity {
         String userName = dataHelper.getUsernameFromId(activeBarrier.getUserId());
         user.setText(userName);
         activeBarrier.setImageBitmapCallback((success, bitmap) -> {
-            if(success){
+            if (success) {
                 image.setImageBitmap(bitmap);
             }
         });
-        if(activeBarrier.getDistance() > 1000){
-            distance.setText(String.format(getString(R.string.distance_km), activeBarrier.getDistance()/1000));
+        if (activeBarrier.getDistance() > 1000) {
+            distance.setText(String.format(getString(R.string.distance_km), activeBarrier.getDistance() / 1000));
         }
-        else{
+        else {
             distance.setText(String.format(getString(R.string.distance_m), activeBarrier.getDistance()));
         }
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
@@ -226,10 +225,10 @@ public class DetailActivity extends AppCompatActivity {
         try {
             votable.setVote(vote);
             if (votable instanceof Barrier) {
-                dataHandler.voteBarrierAsync(((Barrier)votable).getId(), vote).get();
+                dataHandler.voteBarrierAsync(((Barrier) votable).getId(), vote).get();
             }
             else if (votable instanceof Solution) {
-                dataHandler.voteBarrierAsync(((Solution)votable).getId(), vote).get();
+                dataHandler.voteBarrierAsync(((Solution) votable).getId(), vote).get();
             }
         }
         catch (ExecutionException | InterruptedException e) {
