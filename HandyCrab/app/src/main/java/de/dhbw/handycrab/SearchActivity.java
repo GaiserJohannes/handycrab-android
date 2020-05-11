@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback{
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
     public final static String BARRIER_LIST = "de.dhbw.handycrab.BARRIERS";
 
@@ -84,6 +84,17 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
         mapFragment = (HandyCrabMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mapFragment.onLocationChangedCallback((success, location) -> {
+            List<Barrier> barriers = null;
+            try {
+                barriers = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), 1000).get();
+                mapFragment.showBarriers(barriers);
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -295,12 +306,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        try {
-            List<Barrier> barriers = dataHandler.getBarriersAsync(0, 0, 1000000000).get();
-            mapFragment.showBarriers(barriers);
-        }
-        catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        locationService.getLastLocationCallback(this::UpdateLocationText);
     }
 }

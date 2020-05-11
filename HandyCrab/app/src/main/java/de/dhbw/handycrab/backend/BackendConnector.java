@@ -1,8 +1,5 @@
 package de.dhbw.handycrab.backend;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -11,18 +8,14 @@ import com.google.gson.reflect.TypeToken;
 
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.CookieStore;
-import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.client.methods.HttpPut;
 import cz.msebera.android.httpclient.client.methods.HttpUriRequest;
-import cz.msebera.android.httpclient.client.protocol.HttpClientContext;
 import cz.msebera.android.httpclient.cookie.Cookie;
 import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.BasicCookieStore;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
-import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
-import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.impl.cookie.BasicClientCookie;
 import de.dhbw.handycrab.model.Barrier;
@@ -42,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class BackendConnector implements IHandyCrabDataHandler {
     private static String TOKEN = "TOKEN";
@@ -255,7 +247,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         }
         object.addProperty("description", description);
         object.addProperty("postcode", postcode);
-        object.addProperty("solution", solution);
+        if(solution != null && !solution.isEmpty()) {
+            object.addProperty("solution", solution);
+        }
         HttpResponse response = post(path, object.toString());
         return getBarrierOfResponse(response);
     }

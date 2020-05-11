@@ -11,8 +11,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import de.dhbw.handycrab.R;
 import de.dhbw.handycrab.model.Barrier;
@@ -25,6 +27,10 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
     private Marker marker;
 
     private SearchMode searchMode = SearchMode.GPS;
+
+    private BiConsumer<Boolean, Location> function;
+
+    private List<Marker> markers = new ArrayList<>();
 
     public HandyCrabMapFragment(){
         getMapAsync(this);
@@ -45,15 +51,22 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
     }
 
     public void showBarriers(List<Barrier> barriers){
+        markers.forEach(m -> m.remove());
+        markers.clear();
         if(map != null){
             for (Barrier barrier : barriers) {
-                map.addMarker(new MarkerOptions().position(new LatLng(barrier.getLatitude(), barrier.getLongitude())).title(barrier.getTitle()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_round)));
+                Marker m = map.addMarker(new MarkerOptions().position(new LatLng(barrier.getLatitude(), barrier.getLongitude())).title(barrier.getTitle()).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_round)));
+                markers.add(m);
             }
         }
     }
 
     public void setLocation(double latitude, double longitude, String title){
         setLocation(new LatLng(latitude, longitude), title);
+    }
+
+    public void onLocationChangedCallback(BiConsumer<Boolean, Location> function){
+        this.function = function;
     }
 
     public void setLocation(LatLng location, String title){
@@ -66,6 +79,9 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
         }
         marker.setPosition(location);
         marker.setTitle(title);
+        if(function != null){
+            getLocationCallback(function);
+        }
     }
 
     public Location getLocation(){
