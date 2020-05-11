@@ -29,7 +29,7 @@ public class BackendCommunicationTest {
     @Before
     public void init(){
         try {
-            connector.loginAsync("abc@test.com", "abc123DEF!").get();
+            connector.loginAsync("abc@test.com", "abc123DEF!", true).get();
             CompletableFuture<Barrier> cbarrier = connector.addBarrierAsync("Test barrier", 48.5, 8.5, base64picture, "Dies ist eine Barriere", "72166", "So kann man diese barriere umgehen");
             Barrier b = cbarrier.get();
             barrierID = b.getId();
@@ -45,7 +45,7 @@ public class BackendCommunicationTest {
 
     @Test
     public void registerTest() {
-        CompletableFuture<User> cuser = connector.registerAsync("aasdaddc@test.com", "uGn4me123", "abdc123DEF!");
+        CompletableFuture<User> cuser = connector.registerAsync("aasdaddc@test.com", "uGn4me123", "abdc123DEF!", true);
         User user = null;
         try {
             user = cuser.get();
@@ -62,7 +62,24 @@ public class BackendCommunicationTest {
 
     @Test
     public void loginTest() {
-        CompletableFuture<User> cuser = connector.loginAsync("abc@test.com", "abc123DEF!");
+        CompletableFuture<User> cuser = connector.loginAsync("abc@test.com", "abc123DEF!", true);
+        User user = null;
+        try {
+            user = cuser.get();
+        } catch (ExecutionException e) {
+            if(e.getCause() instanceof BackendConnectionException){
+                System.out.println(((BackendConnectionException) e.getCause()).getErrorCode() + " - Http-Code: " + ((BackendConnectionException) e.getCause()).getHttpStatusCode());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.getId());
+    }
+
+    @Test
+    public void currentUserTest() {
+        CompletableFuture<User> cuser = connector.currenUserAsync();
         User user = null;
         try {
             user = cuser.get();
@@ -183,6 +200,7 @@ public class BackendCommunicationTest {
             Assert.fail();
         }
         Assert.assertNotNull(barrier);
+        Assert.assertNotNull(barrier.getSolutions().get(0));
     }
 
     @Test

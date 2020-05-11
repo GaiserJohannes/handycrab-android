@@ -57,6 +57,10 @@
     <string name="pictureNotFound">Das Bild wurde nicht gefunden</string>
     //errorcode = 16
     <string name="invalidPasswordError">Ungültiges Passwort</string>
+    //errorcode = 17
+    <string name="invalidJson">Ungültiges JSON in der Anfrage</string>
+    //errorcode = 18
+    <string name="invalidObjectID">Ungültige ID</string>
     <string name="noConnectionToServerError">Es kann keine Verbindung zum Server hergestellt werden</string>
     <string name="locationError">Position kann nicht ermittelt werden</string>
     <string name="radius1Label">10 m</string>
@@ -90,4 +94,10 @@
     <string name="aboutText">Diese App wurde im Rahmen eines Projektes an der DHBW Horb entworfen und entwickelt.\n\nEntwickelt wurde diese App von:\n\tJohannes Gaiser\n\tJoel Schmid</string>
     <string name="current_location">aktuelle Position</string>
     <string name="userBarriersLabel">Meine Barrieren</string>
+    <string name="distance_m">Distanz: %.0f m</string>
+    <string name="distance_km">Distanz: %.1f km</string>
+    <string name="logout">Ausloggen</string>
+    <string name="map">Karte</string>
+    <string name="barrier_list">Übersicht</string>
+    <string name="search_center">Zentrum der Suche</string>
 </resources>

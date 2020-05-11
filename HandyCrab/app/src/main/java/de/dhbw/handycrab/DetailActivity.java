@@ -20,6 +20,7 @@ import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.SolutionAdapter;
 import de.dhbw.handycrab.model.*;
+import de.dhbw.handycrab.view.BarrierListFragment;
 
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
@@ -33,6 +34,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView description;
     private TextView user;
     private TextView newSolution;
+    private TextView distance;
     private Button upvote;
     private Button downvote;
 
@@ -81,6 +83,7 @@ public class DetailActivity extends AppCompatActivity {
         upvote = findViewById(R.id.detail_barrier_upvote);
         downvote = findViewById(R.id.detail_barrier_downvote);
         newSolution = findViewById(R.id.detail_new_solution);
+        distance = findViewById(R.id.detail_distance);
 
         activeBarrier = (Barrier) dataCache.retrieve(BarrierListActivity.ACTIVE_BARRIER);
 
@@ -143,7 +146,12 @@ public class DetailActivity extends AppCompatActivity {
                 image.setImageBitmap(bitmap);
             }
         });
-
+        if(activeBarrier.getDistance() > 1000){
+            distance.setText(String.format(getString(R.string.distance_km), activeBarrier.getDistance()/1000));
+        }
+        else{
+            distance.setText(String.format(getString(R.string.distance_m), activeBarrier.getDistance()));
+        }
         upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
         downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
         switch (activeBarrier.getVote()) {

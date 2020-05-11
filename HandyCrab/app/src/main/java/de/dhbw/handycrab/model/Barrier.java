@@ -2,6 +2,8 @@ package de.dhbw.handycrab.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+
 import org.bson.types.ObjectId;
 
 import java.io.InputStream;
@@ -27,6 +29,7 @@ public class Barrier implements Votable {
     private int downvotes;
     private Vote vote;
     private Bitmap imageBitmap;
+    private float distance;
 
     public Barrier() {
     }
@@ -136,5 +139,16 @@ public class Barrier implements Votable {
 
     public Bitmap getImageBitmap() {
         return imageBitmap;
+    }
+
+    public void setDistanceTo(Location distLoc){
+        Location barrierLoc = new Location("barrierLoc");
+        barrierLoc.setLatitude(this.latitude);
+        barrierLoc.setLongitude(this.longitude);
+        distance =  barrierLoc.distanceTo(distLoc);
+    }
+
+    public float getDistance() {
+        return distance;
     }
 }

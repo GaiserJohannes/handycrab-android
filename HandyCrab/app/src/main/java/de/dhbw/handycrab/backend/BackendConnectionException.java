@@ -60,6 +60,10 @@ public class BackendConnectionException extends RuntimeException {
                 return context.getString(R.string.invalidPictureFormat);
             case PICTURE_NOT_FOUND:
                 return context.getString(R.string.pictureNotFound);
+            case INVALID_JSON:
+                return context.getString(R.string.invalidJson);
+            case INVALID_OBJECT_ID:
+                return context.getString(R.string.invalidObjectID);
             default:
                 return context.getString(R.string.unknownError);
         }

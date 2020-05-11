@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.snackbar.Snackbar;
@@ -25,16 +27,16 @@ import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.Barrier;
 import de.dhbw.handycrab.model.SearchMode;
 import de.dhbw.handycrab.view.HandyCrabMapFragment;
-import de.dhbw.handycrab.view.MapMode;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback {
-
+public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback{
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
     public final static String BARRIER_LIST = "de.dhbw.handycrab.BARRIERS";
+    public final static String SEARCH_LOCATION = "de.dhbw.handycrab.SEARCH_LOCATION";
     public final static String USER_BARRIERS = "de.dhbw.handycrab.USER_BARRIERS";
 
     private Button[] radiusButtons;
@@ -82,7 +84,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             locationService.getLastLocationCallback(this::UpdateLocationText);
         }
 
-        mapFragment = (HandyCrabMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (HandyCrabMapFragment) getSupportFragmentManager().findFragmentById(R.id.search_mapfragment);
         mapFragment.getMapAsync(this);
     }
 
@@ -120,6 +122,25 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 intent.putExtra(USER_BARRIERS, true);
                 startActivity(intent);
 
+                return true;
+            case R.id.action_logout:
+                CompletableFuture<Void> finished = dataHandler.logoutAsync();
+                Intent logout = new Intent(this, LoginActivity.class);
+                logout.putExtra(LoginActivity.LOGOUT, true);
+                startActivity(logout);
+                try {
+                    finished.get();
+                }
+                catch (ExecutionException | InterruptedException e) {
+                    if (e.getCause() instanceof BackendConnectionException) {
+                        BackendConnectionException ex = (BackendConnectionException) e.getCause();
+                        Toast.makeText(SearchActivity.this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -185,7 +206,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 if (checkPermission()) {
                     locationService.getLastLocationCallback(this::UpdateLocationText);
                     mode = SearchMode.GPS;
-                    mapFragment.setMapMode(MapMode.GPS);
                 }
                 else {
                     searchGpsButton.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimaryLight, getTheme()));
@@ -195,7 +215,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 break;
             case R.id.search_map:
                 mode = SearchMode.MAP;
-                mapFragment.setMapMode(MapMode.MAP);
                 zipText.setVisibility(View.GONE);
                 break;
             case R.id.search_zip:
@@ -203,6 +222,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 zipText.setVisibility(View.VISIBLE);
                 break;
         }
+        mapFragment.setSearchMode(mode);
     }
 
     public void switchRadius(View view) {
@@ -234,6 +254,10 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     progressBar.setVisibility(View.VISIBLE);
                     locationService.getLastLocationCallback(this::findBarriersGps);
                 }
+                break;
+            case MAP:
+                progressBar.setVisibility(View.VISIBLE);
+                mapFragment.getLocationCallback(this::findBarriersGps);
                 break;
             case ZIP:
                 String zip = zipText.getText() != null ? zipText.getText().toString() : "";
@@ -273,7 +297,9 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         if (success && location != null) {
             try {
                 List<Barrier> list = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius).get();
+                list.forEach(b -> b.setDistanceTo(location));
                 dataCache.store(BARRIER_LIST, list);
+                dataCache.store(SEARCH_LOCATION, location);
             }
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
@@ -299,12 +325,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        try {
-            List<Barrier> barriers = dataHandler.getBarriersAsync(0, 0, 0).get();
-            mapFragment.showBarriers(barriers);
-        }
-        catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        locationService.getLastLocationCallback(this::UpdateLocationText);
+        googleMap.moveCamera(CameraUpdateFactory.zoomTo(12));
     }
 }

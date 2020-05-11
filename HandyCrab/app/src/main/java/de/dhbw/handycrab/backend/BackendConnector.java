@@ -7,12 +7,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.client.methods.HttpPut;
+import cz.msebera.android.httpclient.client.methods.HttpUriRequest;
+import cz.msebera.android.httpclient.cookie.Cookie;
 import cz.msebera.android.httpclient.entity.ContentType;
 import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
+import cz.msebera.android.httpclient.impl.client.BasicCookieStore;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.HttpClients;
+import cz.msebera.android.httpclient.impl.cookie.BasicClientCookie;
 import de.dhbw.handycrab.model.Barrier;
 import de.dhbw.handycrab.model.ErrorCode;
 import de.dhbw.handycrab.model.User;
@@ -29,11 +34,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 public class BackendConnector implements IHandyCrabDataHandler {
+    private static String TOKEN = "TOKEN";
 
+    private CookieStore cookieStore = new BasicCookieStore();
     private String connection = "https://handycrab.nico-dreher.de/rest/";
-    private HttpClient client = HttpClientBuilder.create().build();
+    private CloseableHttpClient client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
     private Gson gson;
 
     public BackendConnector() {
@@ -54,13 +62,18 @@ public class BackendConnector implements IHandyCrabDataHandler {
     }
 
     @Override
-    public CompletableFuture<User> registerAsync(final String email, final String username, final String password) {
-        return CompletableFuture.supplyAsync(() -> register(email, username, password));
+    public CompletableFuture<User> registerAsync(final String email, final String username, final String password, boolean createToken) {
+        return CompletableFuture.supplyAsync(() -> register(email, username, password, createToken));
     }
 
     @Override
-    public CompletableFuture<User> loginAsync(String emailOrUsername, String password) {
-        return CompletableFuture.supplyAsync(() -> login(emailOrUsername, password));
+    public CompletableFuture<User> loginAsync(String emailOrUsername, String password, boolean createToken) {
+        return CompletableFuture.supplyAsync(() -> login(emailOrUsername, password, createToken));
+    }
+
+    @Override
+    public CompletableFuture<User> currenUserAsync() {
+        return CompletableFuture.supplyAsync(() -> currentUser());
     }
 
     @Override
@@ -123,23 +136,52 @@ public class BackendConnector implements IHandyCrabDataHandler {
         return CompletableFuture.runAsync(() -> voteSolution(id, vote));
     }
 
+    @Override
+    public void loadToken(String token, String domain) {
+        BasicClientCookie cookie = new BasicClientCookie(TOKEN, token);
+        cookie.setDomain(domain);
+        cookie.setPath("/");
+        cookie.setVersion(1);
+        cookieStore.addCookie(cookie);
+        client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
+    }
+
+    @Override
+    public void saveToken(BiConsumer<String, String> function) {
+        boolean tokenAvailable = cookieStore.getCookies().stream().anyMatch(c -> c.getName().equals(TOKEN));
+        if(tokenAvailable){
+            Cookie cookie = cookieStore.getCookies().stream().filter(c -> c.getName().equals(TOKEN)).findFirst().get();
+            String tokenValue = cookie.getValue();
+            String domain = cookie.getDomain();
+            function.accept(tokenValue, domain);
+        }
+    }
+
     //synchron Restcalls
-    private User register(String email, String username, String password) {
+    private User register(String email, String username, String password, boolean createToken) {
         String path = "users/register";
         JsonObject object = new JsonObject();
         object.addProperty("email", email);
         object.addProperty("username", username);
         object.addProperty("password", password);
+        object.addProperty("createToken", Boolean.toString(createToken));
         HttpResponse response = post(path, object.toString());
         return getUserOfResponse(response);
     }
 
-    private User login(String emailOrUsername, String password) {
+    private User login(String emailOrUsername, String password, boolean createToken) {
         String path = "users/login";
         JsonObject object = new JsonObject();
         object.addProperty("login", emailOrUsername);
         object.addProperty("password", password);
+        object.addProperty("createToken", Boolean.toString(createToken));
         HttpResponse response = post(path, object.toString());
+        return getUserOfResponse(response);
+    }
+
+    private User currentUser() {
+        String path = "users/currentuser";
+        HttpResponse response = get(path);
         return getUserOfResponse(response);
     }
 
@@ -205,7 +247,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         }
         object.addProperty("description", description);
         object.addProperty("postcode", postcode);
-        object.addProperty("solution", solution);
+        if(solution != null && !solution.isEmpty()) {
+            object.addProperty("solution", solution);
+        }
         HttpResponse response = post(path, object.toString());
         return getBarrierOfResponse(response);
     }
@@ -297,46 +341,37 @@ public class BackendConnector implements IHandyCrabDataHandler {
 
     //http methods
     private HttpResponse get(String path, String json) {
-        CustomRequest postRequest = new CustomRequest(connection + path);
-        postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
-        try {
-            return client.execute(postRequest);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        CustomRequest getRequest = new CustomRequest(connection + path);
+        getRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+        return execute(getRequest);
+    }
+
+    private HttpResponse get(String path) {
+        CustomRequest getRequest = new CustomRequest(connection + path);
+        return execute(getRequest);
     }
 
     private HttpResponse post(String path, String json) {
         HttpPost postRequest = new HttpPost(connection + path);
         postRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
-        try {
-            return client.execute(postRequest);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return execute(postRequest);
     }
 
     private HttpResponse put(String path, String json) {
         HttpPut putRequest = new HttpPut(connection + path);
         putRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
-        try {
-            return client.execute(putRequest);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return execute(putRequest);
     }
 
     private HttpResponse delete(String path, String json) {
         CustomRequest deleteRequest = new CustomRequest(connection + path, "DELETE");
         deleteRequest.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+        return execute(deleteRequest);
+    }
+
+    private HttpResponse execute(HttpUriRequest request){
         try {
-            return client.execute(deleteRequest);
+            return client.execute(request);
         }
         catch (IOException e) {
             e.printStackTrace();

@@ -1,26 +1,36 @@
 package de.dhbw.handycrab;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import de.dhbw.handycrab.helper.BarrierAdapter;
 import de.dhbw.handycrab.helper.BarrierDateComparator;
+import de.dhbw.handycrab.helper.BarrierDistanceComparator;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.VotableComparator;
 import de.dhbw.handycrab.model.Barrier;
+import de.dhbw.handycrab.helper.ViewPagerAdapter;
 
 import javax.inject.Inject;
+
 import java.util.List;
 
 public class BarrierListActivity extends AppCompatActivity {
+
 
     public static String ACTIVE_BARRIER = "de.dhbw.handycrab.ACTIVE_BARRIER";
 
@@ -28,31 +38,16 @@ public class BarrierListActivity extends AppCompatActivity {
 
     private BarrierAdapter adapter;
     private List<Barrier> barriers;
+    private ViewPagerAdapter sectionsPagerAdapter;
     private boolean userBarriers;
 
     @Inject
     IDataCache dataCache;
 
-    private final View.OnClickListener onItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
-            int position = viewHolder.getAdapterPosition();
-            // viewHolder.getItemId();
-            // viewHolder.getItemViewType();
-            // viewHolder.itemView;
-            Barrier thisItem = barriers.get(position);
-
-            dataCache.store(ACTIVE_BARRIER, thisItem);
-
-            selectBarrier();
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Program.getApplicationGraph().inject(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barrier_list);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -74,10 +69,6 @@ public class BarrierListActivity extends AppCompatActivity {
 
         addButton = findViewById(R.id.add_barrier);
 
-        RecyclerView recyclerView = findViewById(R.id.barrier_list_rv);
-        LinearLayoutManager llm = new LinearLayoutManager(getBaseContext());
-        recyclerView.setLayoutManager(llm);
-
         if (userBarriers) {
             barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.USER_BARRIERS);
             addButton.setVisibility(View.GONE);
@@ -87,21 +78,27 @@ public class BarrierListActivity extends AppCompatActivity {
             addButton.setVisibility(View.VISIBLE);
         }
 
-        adapter = new BarrierAdapter(barriers);
-        adapter.setClickListener(onItemClickListener);
-        recyclerView.setAdapter(adapter);
+        addButton = findViewById(R.id.add_barrier);
+
+        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+        Location searchLocation = (Location) dataCache.retrieve(SearchActivity.SEARCH_LOCATION);
+        sectionsPagerAdapter = new ViewPagerAdapter(this, getSupportFragmentManager(), barriers, searchLocation, this::selectBarrier);
+
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+
+        TabLayout tabs = findViewById(R.id.barrierlist_tabLayout);
+        tabs.setupWithViewPager(viewPager);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         updateBarriers();
     }
 
-    @SuppressWarnings("unchecked")
-    private void updateBarriers() {
-        adapter.notifyDataSetChanged();
+    public void updateBarriers(){
+        sectionsPagerAdapter.updateBarriers(barriers);
     }
 
     @Override
@@ -130,8 +127,12 @@ public class BarrierListActivity extends AppCompatActivity {
                 updateBarriers();
                 return true;
             case R.id.action_sort_by_distance_down:
+                barriers.sort(new BarrierDistanceComparator());
+                updateBarriers();
                 return true;
             case R.id.action_sort_by_distance_up:
+                barriers.sort(new BarrierDistanceComparator().reversed());
+                updateBarriers();
                 return true;
             case android.R.id.home:
                 finish();
@@ -148,8 +149,8 @@ public class BarrierListActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-
-    private void selectBarrier() {
+    private void selectBarrier(Barrier selectedBarrier) {
+        dataCache.store(BarrierListActivity.ACTIVE_BARRIER, selectedBarrier);
         Intent intent = new Intent(this, DetailActivity.class);
         startActivity(intent);
     }
