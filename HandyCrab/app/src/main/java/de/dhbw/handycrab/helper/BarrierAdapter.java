@@ -61,6 +61,11 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
         this.clickListener = clickListener;
     }
 
+    public void updateBarriers(List<Barrier> barriers){
+        this.barriers = barriers;
+        notifyDataSetChanged();
+    }
+
     public class BarrierViewHolder extends RecyclerView.ViewHolder {
         public TextView barrierTitle;
         public TextView barrierDesc;

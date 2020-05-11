@@ -19,16 +19,28 @@
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay" app:layout_scrollFlags="scroll|enterAlways">
         </androidx.appcompat.widget.Toolbar>
-
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/barrierlist_tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabBackground="@color/colorPrimary"
+            app:tabSelectedTextColor="#FFFFFF">
+        </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_barrier_list"/>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_input_add"
-            android:id="@+id/add_barrier" android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin" app:maxImageSize="48dp" android:alpha="0.5"
-            android:onClick="addBarrier" android:tint="@android:color/white"/>
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+    </androidx.viewpager.widget.ViewPager>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@android:drawable/ic_input_add"
+                android:id="@+id/add_barrier" android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin" app:maxImageSize="48dp" android:alpha="0.5"
+                android:onClick="addBarrier" android:tint="@android:color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

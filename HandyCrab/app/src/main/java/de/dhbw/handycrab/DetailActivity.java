@@ -21,6 +21,7 @@ import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.helper.SolutionAdapter;
 import de.dhbw.handycrab.model.*;
+import de.dhbw.handycrab.view.BarrierListFragment;
 
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;

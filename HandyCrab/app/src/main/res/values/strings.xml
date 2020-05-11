@@ -92,4 +92,7 @@
     <string name="distance_m">Distanz: %.0f m</string>
     <string name="distance_km">Distanz: %.1f km</string>
     <string name="logout">Ausloggen</string>
+    <string name="map">Karte</string>
+    <string name="barrier_list">Übersicht</string>
+    <string name="search_center">Zentrum der Suche</string>
 </resources>

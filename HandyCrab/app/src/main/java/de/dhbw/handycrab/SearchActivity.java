@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.snackbar.Snackbar;
@@ -34,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback{
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
     public final static String BARRIER_LIST = "de.dhbw.handycrab.BARRIERS";
+    public final static String SEARCH_LOCATION = "de.dhbw.handycrab.SEARCH_LOCATION";
 
     private Button search;
     private Button[] radiusButtons;
@@ -82,19 +85,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             locationService.getLastLocationCallback(this::UpdateLocationText);
         }
 
-        mapFragment = (HandyCrabMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (HandyCrabMapFragment) getSupportFragmentManager().findFragmentById(R.id.search_mapfragment);
         mapFragment.getMapAsync(this);
-        mapFragment.onLocationChangedCallback((success, location) -> {
-            List<Barrier> barriers = null;
-            try {
-                barriers = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), 1000).get();
-                mapFragment.showBarriers(barriers);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     @Override
@@ -281,6 +273,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 List<Barrier> list = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius).get();
                 list.forEach(b -> b.setDistanceTo(location));
                 dataCache.store(BARRIER_LIST, list);
+                dataCache.store(SEARCH_LOCATION, location);
             }
             catch (ExecutionException | InterruptedException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
@@ -307,5 +300,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         locationService.getLastLocationCallback(this::UpdateLocationText);
+        googleMap.moveCamera(CameraUpdateFactory.zoomTo(12));
     }
 }
