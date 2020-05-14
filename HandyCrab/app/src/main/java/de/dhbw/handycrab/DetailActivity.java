@@ -115,7 +115,7 @@ public class DetailActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_delete:
-                // TODO delete Barrier
+                dataHandler.deleteBarrierAsync(activeBarrier.getId());
                 dataHelper.deleteBarrierInList(activeBarrier);
                 finish();
             case android.R.id.home:
