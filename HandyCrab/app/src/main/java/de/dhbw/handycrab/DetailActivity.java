@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.backend.BackendConnectionException;
+import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
@@ -23,6 +24,8 @@ import de.dhbw.handycrab.model.*;
 
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -246,7 +249,7 @@ public class DetailActivity extends AppCompatActivity {
         String solution = newSolution.getText().toString();
         if (solution.trim().length() > 0) {
             try {
-                activeBarrier = dataHandler.addSolutionAsync(activeBarrier.getId(), null).get();
+                activeBarrier = dataHandler.addSolutionAsync(activeBarrier.getId(), null).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
                 dataCache.store(BarrierListActivity.ACTIVE_BARRIER, activeBarrier);
                 updateBarrier();
                 updateSolutions();
@@ -260,6 +263,8 @@ public class DetailActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(DetailActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
+            } catch (TimeoutException e) {
+                Toast.makeText(DetailActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
             }
         }
     }

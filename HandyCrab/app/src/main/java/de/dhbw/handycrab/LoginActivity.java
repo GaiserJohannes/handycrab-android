@@ -10,12 +10,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
 import de.dhbw.handycrab.backend.BackendConnectionException;
+import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.IDataCache;
 import de.dhbw.handycrab.model.User;
 
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class LoginActivity extends AppCompatActivity {
     public static String LOGOUT = "LOGOUT";
@@ -87,17 +90,19 @@ public class LoginActivity extends AppCompatActivity {
         if (token != null && !token.isEmpty() && domain != null && !domain.isEmpty()) {
             backendConnector.loadToken(token, domain);
             try {
-                User user = backendConnector.currenUserAsync().get();
+                User user = backendConnector.currenUserAsync().get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
                 successLogin(user);
             }
-            catch (ExecutionException e) {
+            catch (InterruptedException | ExecutionException e) {
                 if (e.getCause() instanceof BackendConnectionException) {
                     BackendConnectionException ex = (BackendConnectionException) e.getCause();
                     Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
                 }
-            }
-            catch (InterruptedException e) {
-                e.printStackTrace();
+                else{
+                    Toast.makeText(this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+                }
+            } catch (TimeoutException e) {
+                Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -106,22 +111,24 @@ public class LoginActivity extends AppCompatActivity {
         try {
             User user;
             if (tabLayout.getSelectedTabPosition() == 0) {
-                user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString(), true).get();
+                user = backendConnector.loginAsync(username.getText().toString(), password.getText().toString(), true).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             }
             else {
-                user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString(), true).get();
+                user = backendConnector.registerAsync(email.getText().toString(), username.getText().toString(), password.getText().toString(), true).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             }
             backendConnector.saveToken((token, domain) -> preferences.edit().putString(COOKIE_TOKEN, token).putString(COOKIE_DOMAIN, domain).commit());
             successLogin(user);
         }
-        catch (ExecutionException e) {
+        catch (InterruptedException | ExecutionException e) {
             if (e.getCause() instanceof BackendConnectionException) {
                 BackendConnectionException ex = (BackendConnectionException) e.getCause();
                 Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
             }
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
+            else{
+                Toast.makeText(this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+            }
+        } catch (TimeoutException e) {
+            Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
         }
     }
 
