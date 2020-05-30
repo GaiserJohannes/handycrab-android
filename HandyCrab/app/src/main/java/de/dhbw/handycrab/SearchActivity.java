@@ -285,8 +285,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 }
                 else {
                     Toast.makeText(SearchActivity.this, getString(R.string.missingZip), Toast.LENGTH_SHORT).show();
-                    break;
                 }
+                break;
             default:
                 Toast.makeText(SearchActivity.this, getString(R.string.missingSearchMode), Toast.LENGTH_SHORT).show();
         }

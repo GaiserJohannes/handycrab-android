@@ -23,7 +23,7 @@ public class BackendModule {
     @Provides
     @Singleton
     public IHandyCrabDataHandler provideDataHandler() {
-        return new MockConnector();
+        return new BackendConnector();
     }
 
     /**
