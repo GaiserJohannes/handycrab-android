@@ -14,40 +14,51 @@
             android:layout_height="wrap_content" app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:layout_margin="8pt">
 
-        <TextView
-                android:text="@string/titleLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:labelFor="@id/editor_title"/>
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapSentences"
-                android:ems="10"
-                android:id="@+id/editor_title"
-                android:autofillHints=""/>
-        <TextView
-                android:text="@string/descriptionLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:labelFor="@id/editor_description"
-                android:layout_marginTop="8dp"/>
-        <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:gravity="start|top"
-                android:ems="10"
-                android:id="@+id/editor_description"
-                android:autofillHints=""/>
-        <TextView
-                android:text="@string/zipLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="8dp" android:labelFor="@id/editor_zip"/>
-        <EditText
+                android:hint="@string/titleLabel">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editor_title"
+                    android:ems="10"
+                    android:inputType="textCapSentences"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/editor_zip" android:autofillHints=""/>
+                android:hint="@string/descriptionLabel"
+                android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editor_description"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:gravity="start|top"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/zipLabel"
+                android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editor_zip"
+                    android:ems="10"
+                    android:inputType="textPersonName"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <TextView
                 android:text="@string/imageLabel"
                 android:layout_width="match_parent"
@@ -65,19 +76,23 @@
                 android:id="@+id/editor_image" tools:visibility="gone"
                 android:contentDescription="@string/barrierImageContentDesc"
                 android:scaleType="fitCenter"/>
-        <TextView
-                android:text="@string/solutionLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:labelFor="@id/editor_solution"
-                android:id="@+id/editor_solution_label" android:layout_marginTop="8dp"/>
-        <EditText
+
+        <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:gravity="start|top"
-                android:ems="10"
-                android:id="@+id/editor_solution"
-                android:autofillHints=""/>
+                android:hint="@string/solutionLabel"
+                android:layout_marginTop="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editor_solution"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:gravity="start|top"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

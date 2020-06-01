@@ -86,7 +86,7 @@ public class EditorActivity extends AppCompatActivity {
             }
             fillContent();
             solution.setVisibility(View.GONE);
-            findViewById(R.id.editor_solution_label).setVisibility(View.GONE);
+//            findViewById(R.id.editor_solution_label).setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
             setTitle(R.string.title_barrier_edit);
         }

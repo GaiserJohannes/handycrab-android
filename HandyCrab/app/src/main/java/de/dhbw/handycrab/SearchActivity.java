@@ -19,6 +19,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.GeoLocationService;
@@ -46,6 +47,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private Button searchMapButton;
     private Button searchZipButton;
     private TextView zipText;
+    private TextInputLayout zipLayout;
     private ProgressBar progressBar;
 
     @Inject
@@ -80,6 +82,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         searchMapButton = findViewById(R.id.search_map);
         searchZipButton = findViewById(R.id.search_zip);
         zipText = findViewById(R.id.search_zip_text);
+        zipLayout = findViewById(R.id.search_zip_text_layout);
         progressBar = findViewById(R.id.search_progressbar);
 
         if (checkPermission()) {
@@ -208,7 +211,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         view.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
         switch (view.getId()) {
             case R.id.search_gps:
-                zipText.setVisibility(View.GONE);
+                zipLayout.setVisibility(View.GONE);
                 if (checkPermission()) {
                     locationService.getLastLocationCallback(this::UpdateLocationText);
                     mode = SearchMode.GPS;
@@ -221,11 +224,11 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 break;
             case R.id.search_map:
                 mode = SearchMode.MAP;
-                zipText.setVisibility(View.GONE);
+                zipLayout.setVisibility(View.GONE);
                 break;
             case R.id.search_zip:
                 mode = SearchMode.ZIP;
-                zipText.setVisibility(View.VISIBLE);
+                zipLayout.setVisibility(View.VISIBLE);
                 break;
         }
         mapFragment.setSearchMode(mode);
