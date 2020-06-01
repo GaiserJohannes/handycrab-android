@@ -4,7 +4,6 @@ import dagger.Module;
 import dagger.Provides;
 import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
-import de.dhbw.handycrab.test.MockConnector;
 
 import javax.inject.Singleton;
 
@@ -23,7 +22,7 @@ public class BackendModule {
     @Provides
     @Singleton
     public IHandyCrabDataHandler provideDataHandler() {
-        return new MockConnector();
+        return new BackendConnector();
     }
 
     /**
