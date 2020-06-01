@@ -56,20 +56,19 @@ public class BarrierListActivity extends AppCompatActivity {
         }
 
         addButton = findViewById(R.id.add_barrier);
+        Location searchLocation;
 
         if (userBarriers) {
             barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.USER_BARRIERS);
+            searchLocation = null;
             addButton.setVisibility(View.GONE);
         }
         else {
             barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+            searchLocation = (Location) dataCache.retrieve(SearchActivity.SEARCH_LOCATION);
             addButton.setVisibility(View.VISIBLE);
         }
 
-        addButton = findViewById(R.id.add_barrier);
-
-        barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
-        Location searchLocation = (Location) dataCache.retrieve(SearchActivity.SEARCH_LOCATION);
         sectionsPagerAdapter = new ViewPagerAdapter(this, getSupportFragmentManager(), barriers, searchLocation, this::selectBarrier);
 
         ViewPager viewPager = findViewById(R.id.view_pager);
