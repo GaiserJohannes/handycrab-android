@@ -15,7 +15,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.snackbar.Snackbar;
@@ -161,6 +160,9 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             // found Solution
             mapFragment.setLocation(location.getLatitude(), location.getLongitude(), 12, getString(R.string.current_location));
         }
+        else if (!success) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
+        }
         else {
             locationService.getLastLocationCallback(this::UpdateLocationText);
         }
@@ -285,7 +287,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                             Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                         }
                         break;
-                    } catch (TimeoutException e) {
+                    }
+                    catch (TimeoutException e) {
                         Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
                     }
                     finally {
@@ -321,7 +324,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
                 return;
-            } catch (TimeoutException e) {
+            }
+            catch (TimeoutException e) {
                 Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
             }
             finally {
@@ -332,7 +336,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             startActivity(intent);
         }
         else {
-            Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+            Toast.makeText(SearchActivity.this, getString(R.string.locationError), Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 

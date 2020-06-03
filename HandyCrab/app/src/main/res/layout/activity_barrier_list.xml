@@ -41,7 +41,7 @@
             app:srcCompat="@android:drawable/ic_input_add"
             android:id="@+id/add_barrier" android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin" app:maxImageSize="48dp"
-            android:onClick="addBarrier" app:backgroundTint="@color/colorAccent"
+            android:onClick="addBarrier" app:backgroundTint="@color/colorPrimaryLight"
     />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

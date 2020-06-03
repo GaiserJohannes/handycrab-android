@@ -39,7 +39,7 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
     @Override
     public void onBindViewHolder(@NonNull SolutionViewHolder solutionViewHolder, int i) {
         String userName;
-        if (solutions.get(i).getUserID() != null) {
+        if (solutions.get(i).getUserId() != null) {
             userName = dataHelper.getUsernameFromId(solutions.get(i).getUserId());
         }
         else {

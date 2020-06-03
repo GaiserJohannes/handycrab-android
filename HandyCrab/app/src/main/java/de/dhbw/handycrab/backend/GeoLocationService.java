@@ -5,14 +5,10 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import androidx.core.content.ContextCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.tasks.Tasks;
 import de.dhbw.handycrab.Program;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
 @Singleton
@@ -33,23 +29,13 @@ public class GeoLocationService {
      * @param function
      */
     public void getLastLocationCallback(BiConsumer<Boolean, Location> function) {
-//        if (!isLocationPermissionGranted()) {
-//            function.accept(false, null);
-//            return;
-//        }
+        if (!isLocationPermissionGranted()) {
+            function.accept(false, null);
+            return;
+        }
 
         fusedLocationClient.getLastLocation()
                 .addOnCompleteListener(task -> function.accept(task.isSuccessful(), task.getResult()));
-    }
-
-    public Location getLastLocation(long milliseconds) {
-        try {
-            return Tasks.await(fusedLocationClient.getLastLocation(), milliseconds, TimeUnit.MILLISECONDS);
-        }
-        catch (ExecutionException | InterruptedException | TimeoutException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**

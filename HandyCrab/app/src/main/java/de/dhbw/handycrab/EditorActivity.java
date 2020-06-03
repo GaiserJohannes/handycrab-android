@@ -86,7 +86,6 @@ public class EditorActivity extends AppCompatActivity {
             }
             fillContent();
             solution.setVisibility(View.GONE);
-//            findViewById(R.id.editor_solution_label).setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
             setTitle(R.string.title_barrier_edit);
         }
@@ -128,56 +127,74 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     public void sendBarrier(View view) {
-        Thread t = new Thread(() -> {
-            try {
-                if (!new_barrier) {
-                    updateBarrier();
-                }
-                else {
-                    addBarrier();
+        try {
+            if (!new_barrier) {
+                updateBarrier();
+            }
+            else {
+                if (checkInputs()) {
+                    locationService.getLastLocationCallback(this::addBarrier);
                 }
             }
-            catch (ExecutionException | InterruptedException e) {
-                if (e.getCause() instanceof BackendConnectionException) {
-                    BackendConnectionException ex = (BackendConnectionException) e.getCause();
-                    Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
-                }
-            } catch (TimeoutException e) {
-                Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            if (e.getCause() instanceof BackendConnectionException) {
+                BackendConnectionException ex = (BackendConnectionException) e.getCause();
+                Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
             }
-        });
-        t.start();
+            else {
+                Toast.makeText(this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+            }
+        }
+        catch (TimeoutException e) {
+            Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void addBarrier() throws ExecutionException, InterruptedException, TimeoutException {
+    private boolean checkInputs() {
         if (title.getText() == null || title.getText().toString().equals("")) {
             Toast.makeText(this, getString(R.string.missingTitle), Toast.LENGTH_LONG).show();
-            return;
+            return false;
         }
         if (zip.getText() == null || zip.getText().toString().equals("")) {
             Toast.makeText(this, getString(R.string.missingZip), Toast.LENGTH_LONG).show();
-            return;
+            return false;
         }
         if (imageView.getDrawable() == null && (description.getText() == null || description.getText().toString().equals(""))) {
             Toast.makeText(this, getString(R.string.missingDescription), Toast.LENGTH_LONG).show();
-            return;
+            return false;
         }
-        Location loc = locationService.getLastLocation(5000);
-        if (loc == null) {
+
+        return true;
+    }
+
+    private void addBarrier(boolean success, Location loc) {
+        if (!success || loc == null) {
             Toast.makeText(this, getString(R.string.locationError), Toast.LENGTH_LONG).show();
             return;
         }
 
         String descText = description.getText() != null ? description.getText().toString() : "";
         String solutionText = solution.getText() != null ? solution.getText().toString() : "";
-        Barrier barrier = dataHandler.addBarrierAsync(title.getText().toString(), loc.getLongitude(), loc.getLatitude(), getImageAsBase64(), descText, zip.getText().toString(), solutionText).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-        List<Barrier> barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
-        barriers.add(barrier);
+        try {
+            Barrier barrier = dataHandler.addBarrierAsync(title.getText().toString(), loc.getLongitude(), loc.getLatitude(), getImageAsBase64(), descText, zip.getText().toString(), solutionText).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+            List<Barrier> barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
+            barriers.add(barrier);
 
-        finish();
+            finish();
+        }
+        catch (ExecutionException | InterruptedException e) {
+            if (e.getCause() instanceof BackendConnectionException) {
+                BackendConnectionException ex = (BackendConnectionException) e.getCause();
+                Toast.makeText(this, ex.getDetailedMessage(this), Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
+            }
+        }
+        catch (TimeoutException e) {
+            Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void updateBarrier() throws ExecutionException, InterruptedException, TimeoutException {

@@ -83,7 +83,7 @@
             app:layout_constraintTop_toTopOf="@+id/search_map" app:layout_constraintStart_toEndOf="@+id/search_map"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
             android:onClick="changeSearchMode"/>
-    
+
     <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
@@ -124,7 +124,7 @@
             app:layout_constraintEnd_toEndOf="parent" android:id="@+id/search_progressbar"
             app:layout_constraintHorizontal_bias="0.498"
             android:layout_marginBottom="32dp" app:layout_constraintBottom_toTopOf="@+id/search"
-            android:visibility="invisible"/>
+            android:visibility="invisible" android:backgroundTint="@color/colorAccent"/>
     <Button
             android:text="@string/searchLabel"
             android:layout_width="0dp"

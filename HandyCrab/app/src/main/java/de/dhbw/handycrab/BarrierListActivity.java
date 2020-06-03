@@ -37,6 +37,7 @@ public class BarrierListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Program.getApplicationGraph().inject(this);
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_barrier_list);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
