@@ -53,14 +53,15 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51, 11), 5));
         map.setOnMapClickListener((latLong) -> {
             if(searchMode == SearchMode.MAP)
-                setLocation(latLong, getString(R.string.selected_location));
+                setLocation(latLong, 12,  getString(R.string.selected_location));
         });
         map.setOnMarkerClickListener(this::onMarkerClick);
         updateMarker();
         if(startupLocation != null){
-            setLocation(startupLocation, startupLocationTitle);
+            setLocation(startupLocation, 12, startupLocationTitle);
         }
     }
 
@@ -83,22 +84,22 @@ public class HandyCrabMapFragment extends SupportMapFragment implements OnMapRea
         }
     }
 
-    public void setLocation(double latitude, double longitude, String title){
-        setLocation(new LatLng(latitude, longitude), title);
+    public void setLocation(double latitude, double longitude, float zoom, String title){
+        setLocation(new LatLng(latitude, longitude), zoom, title);
     }
 
-    public void setLocation(Location location, String title){
-        setLocation(new LatLng(location.getLatitude(), location.getLongitude()), title);
+    public void setLocation(Location location, float zoom, String title){
+        setLocation(new LatLng(location.getLatitude(), location.getLongitude()), zoom, title);
     }
 
     public void onLocationChangedCallback(BiConsumer<Boolean, Location> function){
         this.function = function;
     }
 
-    public void setLocation(LatLng location, String title){
+    public void setLocation(LatLng location, float zoom, String title){
         if(map != null){
             if(searchMode == SearchMode.GPS){
-                map.moveCamera(CameraUpdateFactory.newLatLng(location));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
             }
             if(marker == null){
                 marker = map.addMarker(new MarkerOptions().position(location).title(title));

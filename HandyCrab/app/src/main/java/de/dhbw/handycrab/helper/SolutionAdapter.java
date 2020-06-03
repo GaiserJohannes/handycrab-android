@@ -40,15 +40,15 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
     public void onBindViewHolder(@NonNull SolutionViewHolder solutionViewHolder, int i) {
         String userName;
         if (solutions.get(i).getUserID() != null) {
-            userName = dataHelper.getUsernameFromId(solutions.get(i).getUserID());
+            userName = dataHelper.getUsernameFromId(solutions.get(i).getUserId());
         }
         else {
             userName = "404";
         }
         solutionViewHolder.solutionUser.setText(userName);
         solutionViewHolder.solutionText.setText(solutions.get(i).getText());
-        solutionViewHolder.upvote.setText(String.format("%s", solutions.get(i).getUpvotes()));
-        solutionViewHolder.downvote.setText(String.format("%s", solutions.get(i).getDownvotes()));
+        solutionViewHolder.upvote.setText(String.format("%s", solutions.get(i).getUpVotes()));
+        solutionViewHolder.downvote.setText(String.format("%s", solutions.get(i).getDownVotes()));
 
         switch (solutions.get(i).getVote()) {
             case UP:

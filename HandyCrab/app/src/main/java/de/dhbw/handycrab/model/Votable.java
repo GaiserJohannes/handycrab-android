@@ -1,13 +1,13 @@
 package de.dhbw.handycrab.model;
 
 public interface Votable {
-    int getUpvotes();
+    int getUpVotes();
 
-    void setUpvotes(int upvotes);
+    void setUpVotes(int upVotes);
 
-    int getDownvotes();
+    int getDownVotes();
 
-    void setDownvotes(int downvotes);
+    void setDownVotes(int downVotes);
 
     Vote getVote();
 

@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import de.dhbw.handycrab.backend.BackendConnectionException;
+import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.DataHelper;
@@ -29,6 +30,8 @@ import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class EditorActivity extends AppCompatActivity {
 
@@ -83,7 +86,7 @@ public class EditorActivity extends AppCompatActivity {
             }
             fillContent();
             solution.setVisibility(View.GONE);
-            findViewById(R.id.editor_solution_label).setVisibility(View.GONE);
+//            findViewById(R.id.editor_solution_label).setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
             setTitle(R.string.title_barrier_edit);
         }
@@ -142,12 +145,14 @@ public class EditorActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
+            } catch (TimeoutException e) {
+                Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
             }
         });
         t.start();
     }
 
-    private void addBarrier() throws ExecutionException, InterruptedException {
+    private void addBarrier() throws ExecutionException, InterruptedException, TimeoutException {
         if (title.getText() == null || title.getText().toString().equals("")) {
             Toast.makeText(this, getString(R.string.missingTitle), Toast.LENGTH_LONG).show();
             return;
@@ -168,15 +173,15 @@ public class EditorActivity extends AppCompatActivity {
 
         String descText = description.getText() != null ? description.getText().toString() : "";
         String solutionText = solution.getText() != null ? solution.getText().toString() : "";
-        Barrier barrier = dataHandler.addBarrierAsync(title.getText().toString(), loc.getLongitude(), loc.getLatitude(), getImageAsBase64(), descText, zip.getText().toString(), solutionText).get();
+        Barrier barrier = dataHandler.addBarrierAsync(title.getText().toString(), loc.getLongitude(), loc.getLatitude(), getImageAsBase64(), descText, zip.getText().toString(), solutionText).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         List<Barrier> barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
         barriers.add(barrier);
 
         finish();
     }
 
-    private void updateBarrier() throws ExecutionException, InterruptedException {
-        barrier = dataHandler.modifyBarrierAsync(barrier.getId(), title.getText().toString(), getImageAsBase64(), description.getText().toString()).get();
+    private void updateBarrier() throws ExecutionException, InterruptedException, TimeoutException {
+        barrier = dataHandler.modifyBarrierAsync(barrier.getId(), title.getText().toString(), getImageAsBase64(), description.getText().toString()).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
         dataCache.store(BarrierListActivity.ACTIVE_BARRIER, barrier);
         dataHelper.replaceBarrierInList(barrier);
 

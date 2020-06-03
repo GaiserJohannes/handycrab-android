@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.dhbw.handycrab.backend.BackendConnectionException;
+import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.DataHelper;
 import de.dhbw.handycrab.helper.IDataCache;
@@ -23,6 +24,8 @@ import de.dhbw.handycrab.model.*;
 
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -115,7 +118,7 @@ public class DetailActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_delete:
-                // TODO delete Barrier
+                dataHandler.deleteBarrierAsync(activeBarrier.getId());
                 dataHelper.deleteBarrierInList(activeBarrier);
                 finish();
             case android.R.id.home:
@@ -151,8 +154,8 @@ public class DetailActivity extends AppCompatActivity {
         else {
             distance.setText(String.format(getString(R.string.distance_m), activeBarrier.getDistance()));
         }
-        upvote.setText(String.format("%s", activeBarrier.getUpvotes()));
-        downvote.setText(String.format("%s", activeBarrier.getDownvotes()));
+        upvote.setText(String.format("%s", activeBarrier.getUpVotes()));
+        downvote.setText(String.format("%s", activeBarrier.getDownVotes()));
         switch (activeBarrier.getVote()) {
             case UP:
                 upvote.setAlpha(1.0f);
@@ -179,13 +182,13 @@ public class DetailActivity extends AppCompatActivity {
             case UP:
                 if (view == upvote) {
                     voteVotable(votable, Vote.NONE);
-                    votable.setUpvotes(votable.getUpvotes() - 1);
+                    votable.setUpVotes(votable.getUpVotes() - 1);
                     upvote.setAlpha(0.5f);
                 }
                 else {
                     voteVotable(votable, Vote.DOWN);
-                    votable.setUpvotes(votable.getUpvotes() - 1);
-                    votable.setDownvotes(votable.getDownvotes() + 1);
+                    votable.setUpVotes(votable.getUpVotes() - 1);
+                    votable.setDownVotes(votable.getDownVotes() + 1);
                     upvote.setAlpha(0.5f);
                     downvote.setAlpha(1.0f);
                 }
@@ -193,13 +196,13 @@ public class DetailActivity extends AppCompatActivity {
             case DOWN:
                 if (view == downvote) {
                     voteVotable(votable, Vote.NONE);
-                    votable.setDownvotes(votable.getDownvotes() - 1);
+                    votable.setDownVotes(votable.getDownVotes() - 1);
                     downvote.setAlpha(0.5f);
                 }
                 else {
                     voteVotable(votable, Vote.UP);
-                    votable.setUpvotes(votable.getUpvotes() + 1);
-                    votable.setDownvotes(votable.getDownvotes() - 1);
+                    votable.setUpVotes(votable.getUpVotes() + 1);
+                    votable.setDownVotes(votable.getDownVotes() - 1);
                     downvote.setAlpha(0.5f);
                     upvote.setAlpha(1.0f);
                 }
@@ -207,28 +210,28 @@ public class DetailActivity extends AppCompatActivity {
             default:
                 if (view == upvote) {
                     voteVotable(votable, Vote.UP);
-                    votable.setUpvotes(votable.getUpvotes() + 1);
+                    votable.setUpVotes(votable.getUpVotes() + 1);
                     upvote.setAlpha(1.0f);
                 }
                 else {
                     voteVotable(votable, Vote.DOWN);
-                    votable.setDownvotes(votable.getDownvotes() + 1);
+                    votable.setDownVotes(votable.getDownVotes() + 1);
                     downvote.setAlpha(1.0f);
                 }
                 break;
         }
-        upvote.setText(String.format("%s", votable.getUpvotes()));
-        downvote.setText(String.format("%s", votable.getDownvotes()));
+        upvote.setText(String.format("%s", votable.getUpVotes()));
+        downvote.setText(String.format("%s", votable.getDownVotes()));
     }
 
     private void voteVotable(Votable votable, Vote vote) {
         try {
             votable.setVote(vote);
             if (votable instanceof Barrier) {
-                dataHandler.voteBarrierAsync(((Barrier) votable).getId(), vote).get();
+                dataHandler.voteBarrierAsync(((Barrier) votable).getId(), vote).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             }
             else if (votable instanceof Solution) {
-                dataHandler.voteBarrierAsync(((Solution) votable).getId(), vote).get();
+                dataHandler.voteSolutionAsync(((Solution) votable).getId(), vote).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             }
         }
         catch (ExecutionException | InterruptedException e) {
@@ -240,13 +243,16 @@ public class DetailActivity extends AppCompatActivity {
                 Toast.makeText(DetailActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
             }
         }
+        catch (TimeoutException e) {
+            Toast.makeText(DetailActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void addSolution(View view) {
         String solution = newSolution.getText().toString();
         if (solution.trim().length() > 0) {
             try {
-                activeBarrier = dataHandler.addSolutionAsync(activeBarrier.getId(), null).get();
+                activeBarrier = dataHandler.addSolutionAsync(activeBarrier.getId(), newSolution.getText().toString()).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
                 dataCache.store(BarrierListActivity.ACTIVE_BARRIER, activeBarrier);
                 dataHelper.replaceBarrierInList(activeBarrier);
                 updateBarrier();
@@ -261,6 +267,8 @@ public class DetailActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(DetailActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
+            } catch (TimeoutException e) {
+                Toast.makeText(DetailActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
             }
         }
     }

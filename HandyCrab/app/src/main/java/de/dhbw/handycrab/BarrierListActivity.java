@@ -56,16 +56,18 @@ public class BarrierListActivity extends AppCompatActivity {
         }
 
         addButton = findViewById(R.id.add_barrier);
-        Location searchLocation;
 
+        Location searchLocation = null;
         if (userBarriers) {
             barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.USER_BARRIERS);
-            searchLocation = null;
             addButton.setVisibility(View.GONE);
         }
         else {
             barriers = (List<Barrier>) dataCache.retrieve(SearchActivity.BARRIER_LIST);
-            searchLocation = (Location) dataCache.retrieve(SearchActivity.SEARCH_LOCATION);
+            Object value = dataCache.retrieve(SearchActivity.SEARCH_LOCATION);
+            if(value instanceof Location){
+                searchLocation = (Location) value;
+            }
             addButton.setVisibility(View.VISIBLE);
         }
 

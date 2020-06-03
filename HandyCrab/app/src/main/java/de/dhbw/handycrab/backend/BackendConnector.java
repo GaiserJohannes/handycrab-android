@@ -37,6 +37,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class BackendConnector implements IHandyCrabDataHandler {
+
+    public static int TIMEOUT_MILLIS = 1000;
+
     private static String TOKEN = "TOKEN";
 
     private CookieStore cookieStore = new BasicCookieStore();

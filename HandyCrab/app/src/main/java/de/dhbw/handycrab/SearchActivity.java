@@ -19,7 +19,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import de.dhbw.handycrab.backend.BackendConnectionException;
+import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.GeoLocationService;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
 import de.dhbw.handycrab.helper.IDataCache;
@@ -31,6 +33,8 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class SearchActivity extends AppCompatActivity implements OnMapReadyCallback{
     private final static int REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -43,6 +47,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private Button searchMapButton;
     private Button searchZipButton;
     private TextView zipText;
+    private TextInputLayout zipLayout;
     private ProgressBar progressBar;
 
     @Inject
@@ -77,6 +82,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         searchMapButton = findViewById(R.id.search_map);
         searchZipButton = findViewById(R.id.search_zip);
         zipText = findViewById(R.id.search_zip_text);
+        zipLayout = findViewById(R.id.search_zip_text_layout);
         progressBar = findViewById(R.id.search_progressbar);
 
         if (checkPermission()) {
@@ -104,7 +110,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             case R.id.action_userBarriers:
                 if (!dataCache.contains(USER_BARRIERS)) {
                     try {
-                        dataCache.store(USER_BARRIERS, dataHandler.getBarriersAsync().get());
+                        dataCache.store(USER_BARRIERS, dataHandler.getBarriersAsync().get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS));
                     }
                     catch (ExecutionException | InterruptedException e) {
                         if (e.getCause() instanceof BackendConnectionException) {
@@ -114,6 +120,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                         else {
                             Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                         }
+                    } catch (TimeoutException e) {
+                        Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -128,7 +136,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 logout.putExtra(LoginActivity.LOGOUT, true);
                 startActivity(logout);
                 try {
-                    finished.get();
+                    finished.get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
                 }
                 catch (ExecutionException | InterruptedException e) {
                     if (e.getCause() instanceof BackendConnectionException) {
@@ -139,6 +147,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                         Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                     }
                     return false;
+                } catch (TimeoutException e) {
+                    Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
                 }
                 return true;
             default:
@@ -149,7 +159,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private void UpdateLocationText(Boolean success, Location location) {
         if (success && location != null) {
             // found Solution
-            mapFragment.setLocation(location.getLatitude(), location.getLongitude(), getString(R.string.current_location));
+            mapFragment.setLocation(location.getLatitude(), location.getLongitude(), 12, getString(R.string.current_location));
         }
         else {
             locationService.getLastLocationCallback(this::UpdateLocationText);
@@ -201,7 +211,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         view.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary, getTheme()));
         switch (view.getId()) {
             case R.id.search_gps:
-                zipText.setVisibility(View.GONE);
+                zipLayout.setVisibility(View.GONE);
                 if (checkPermission()) {
                     locationService.getLastLocationCallback(this::UpdateLocationText);
                     mode = SearchMode.GPS;
@@ -214,11 +224,11 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 break;
             case R.id.search_map:
                 mode = SearchMode.MAP;
-                zipText.setVisibility(View.GONE);
+                zipLayout.setVisibility(View.GONE);
                 break;
             case R.id.search_zip:
                 mode = SearchMode.ZIP;
-                zipText.setVisibility(View.VISIBLE);
+                zipLayout.setVisibility(View.VISIBLE);
                 break;
         }
         mapFragment.setSearchMode(mode);
@@ -263,7 +273,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 if (!zip.equals("")) {
                     progressBar.setVisibility(View.VISIBLE);
                     try {
-                        List<Barrier> list = dataHandler.getBarriersAsync(zip).get();
+                        List<Barrier> list = dataHandler.getBarriersAsync(zip).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
                         dataCache.store(BARRIER_LIST, list);
                     }
                     catch (ExecutionException | InterruptedException e) {
@@ -275,6 +285,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                             Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                         }
                         break;
+                    } catch (TimeoutException e) {
+                        Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
                     }
                     finally {
                         progressBar.setVisibility(View.INVISIBLE);
@@ -285,8 +297,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 }
                 else {
                     Toast.makeText(SearchActivity.this, getString(R.string.missingZip), Toast.LENGTH_SHORT).show();
-                    break;
                 }
+                break;
             default:
                 Toast.makeText(SearchActivity.this, getString(R.string.missingSearchMode), Toast.LENGTH_SHORT).show();
         }
@@ -295,7 +307,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private void findBarriersGps(Boolean success, Location location) {
         if (success && location != null) {
             try {
-                List<Barrier> list = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius).get();
+                List<Barrier> list = dataHandler.getBarriersAsync(location.getLongitude(), location.getLatitude(), radius).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
                 list.forEach(b -> b.setDistanceTo(location));
                 dataCache.store(BARRIER_LIST, list);
                 dataCache.store(SEARCH_LOCATION, location);
@@ -309,6 +321,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     Toast.makeText(SearchActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
                 return;
+            } catch (TimeoutException e) {
+                Toast.makeText(this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
             }
             finally {
                 progressBar.setVisibility(View.INVISIBLE);
@@ -325,6 +339,5 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         locationService.getLastLocationCallback(this::UpdateLocationText);
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(12));
     }
 }
