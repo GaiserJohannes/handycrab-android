@@ -9,6 +9,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputLayout;
+
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
@@ -31,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView username;
     private TextView email;
     private TextView password;
+    private TextInputLayout maillayout;
+    private TextInputLayout usernamelayout;
     private Button submit;
     private TabLayout tabLayout;
 
@@ -50,6 +54,8 @@ public class LoginActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         submit = findViewById(R.id.submit);
+        maillayout = findViewById(R.id.mail_layout);
+        usernamelayout = findViewById(R.id.username_layout);
 
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -58,13 +64,13 @@ public class LoginActivity extends AppCompatActivity {
                 submit.setText(tab.getText());
                 //login
                 if (tab.getPosition() == 0) {
-                    email.setVisibility(View.INVISIBLE);
-                    username.setHint(getString(R.string.usernameOrEmail));
+                    maillayout.setVisibility(View.INVISIBLE);
+                    usernamelayout.setHint(getString(R.string.usernameOrEmail));
                 }
                 //register
                 else {
-                    email.setVisibility(View.VISIBLE);
-                    username.setHint(getString(R.string.username));
+                    maillayout.setVisibility(View.VISIBLE);
+                    usernamelayout.setHint(getString(R.string.username));
                 }
             }
 
