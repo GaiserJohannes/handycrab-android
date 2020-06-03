@@ -159,7 +159,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private void UpdateLocationText(Boolean success, Location location) {
         if (success && location != null) {
             // found Solution
-            mapFragment.setLocation(location.getLatitude(), location.getLongitude(), getString(R.string.current_location));
+            mapFragment.setLocation(location.getLatitude(), location.getLongitude(), 12, getString(R.string.current_location));
         }
         else {
             locationService.getLastLocationCallback(this::UpdateLocationText);
@@ -339,6 +339,5 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         locationService.getLastLocationCallback(this::UpdateLocationText);
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(12));
     }
 }

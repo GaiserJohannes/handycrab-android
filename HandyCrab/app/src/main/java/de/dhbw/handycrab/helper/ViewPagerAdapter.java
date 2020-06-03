@@ -43,7 +43,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter implements OnMapReady
         mapFragment.getMapAsync(this);
         mapFragment.setMarkerBarriers(barriers);
         if(searchLocation != null){
-            mapFragment.setLocation(searchLocation, context.getString(R.string.search_center));
+            mapFragment.setLocation(searchLocation, 15, context.getString(R.string.search_center));
         }
         listFragment = new BarrierListFragment(barriers, selectBarrier);
     }
@@ -75,6 +75,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter implements OnMapReady
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+        if(barriers.size() > 0){
+            googleMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+        }
     }
 }
