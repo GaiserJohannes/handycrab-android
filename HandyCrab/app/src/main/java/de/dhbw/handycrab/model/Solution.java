@@ -6,9 +6,9 @@ public class Solution implements Votable {
 
     private ObjectId _id;
     private String text;
-    private ObjectId userID;
-    private int upvotes;
-    private int downvotes;
+    private ObjectId userId;
+    private int upVotes;
+    private int downVotes;
     private Vote vote;
 
     public Solution() {
@@ -17,9 +17,9 @@ public class Solution implements Votable {
     public Solution(ObjectId id, String text, ObjectId userID, int upvotes, int downvotes, Vote vote) {
         _id = id;
         this.text = text;
-        this.userID = userID;
-        this.upvotes = upvotes;
-        this.downvotes = downvotes;
+        this.userId = userID;
+        this.upVotes = upvotes;
+        this.downVotes = downvotes;
         this.vote = vote;
     }
 
@@ -31,24 +31,24 @@ public class Solution implements Votable {
         return text;
     }
 
-    public ObjectId getUserID() {
-        return userID;
+    public ObjectId getUserId() {
+        return userId;
     }
 
-    public int getUpvotes() {
-        return upvotes;
+    public int getUpVotes() {
+        return upVotes;
     }
 
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
+    public void setUpVotes(int upVotes) {
+        this.upVotes = upVotes;
     }
 
-    public int getDownvotes() {
-        return downvotes;
+    public int getDownVotes() {
+        return downVotes;
     }
 
-    public void setDownvotes(int downvotes) {
-        this.downvotes = downvotes;
+    public void setDownVotes(int downVotes) {
+        this.downVotes = downVotes;
     }
 
     public Vote getVote() {
