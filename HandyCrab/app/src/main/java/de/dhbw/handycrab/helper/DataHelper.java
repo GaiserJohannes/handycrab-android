@@ -29,6 +29,9 @@ public class DataHelper {
     }
 
     public String getUsernameFromId(ObjectId userId) {
+        if(userId == null){
+            return "404 Username not found!";
+        }
         String userName;
         if (dataCache.contains(userId.toString())) {
             userName = dataCache.retrieve(userId.toString()).toString();

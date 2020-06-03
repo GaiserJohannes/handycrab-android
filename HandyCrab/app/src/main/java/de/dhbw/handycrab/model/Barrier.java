@@ -25,8 +25,8 @@ public class Barrier implements Votable {
     private String description;
     private String postcode;
     private List<Solution> solutions = new ArrayList<>();
-    private int upvotes;
-    private int downvotes;
+    private int upVotes;
+    private int downVotes;
     private Vote vote;
     private Bitmap imageBitmap;
     private float distance;
@@ -44,8 +44,8 @@ public class Barrier implements Votable {
         this.description = description;
         this.postcode = postcode;
         this.solutions = solutions;
-        this.upvotes = upvotes;
-        this.downvotes = downvotes;
+        this.upVotes = upvotes;
+        this.downVotes = downvotes;
         this.vote = vote;
     }
 
@@ -85,20 +85,20 @@ public class Barrier implements Votable {
         return solutions;
     }
 
-    public int getUpvotes() {
-        return upvotes;
+    public int getUpVotes() {
+        return upVotes;
     }
 
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
+    public void setUpVotes(int upVotes) {
+        this.upVotes = upVotes;
     }
 
-    public int getDownvotes() {
-        return downvotes;
+    public int getDownVotes() {
+        return downVotes;
     }
 
-    public void setDownvotes(int downvotes) {
-        this.downvotes = downvotes;
+    public void setDownVotes(int downVotes) {
+        this.downVotes = downVotes;
     }
 
     public Vote getVote() {
