@@ -248,6 +248,7 @@ public class DetailActivity extends AppCompatActivity {
             try {
                 activeBarrier = dataHandler.addSolutionAsync(activeBarrier.getId(), null).get();
                 dataCache.store(BarrierListActivity.ACTIVE_BARRIER, activeBarrier);
+                dataHelper.replaceBarrierInList(activeBarrier);
                 updateBarrier();
                 updateSolutions();
                 newSolution.setText("");
