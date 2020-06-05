@@ -16,6 +16,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.textfield.TextInputLayout;
+
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.GeoLocationService;
@@ -45,6 +48,7 @@ public class EditorActivity extends AppCompatActivity {
     private TextView description;
     private TextView zip;
     private TextView solution;
+    private TextInputLayout solutionLayout;
 
     private boolean new_barrier;
     private Barrier barrier;
@@ -76,6 +80,7 @@ public class EditorActivity extends AppCompatActivity {
         zip = findViewById(R.id.editor_zip);
         solution = findViewById(R.id.editor_solution);
         imageView = findViewById(R.id.editor_image);
+        solutionLayout = findViewById(R.id.editor_soluton_layout);
 
         if (!new_barrier) {
             barrier = (Barrier) dataCache.retrieve(BarrierListActivity.ACTIVE_BARRIER);
@@ -85,7 +90,7 @@ public class EditorActivity extends AppCompatActivity {
                 return;
             }
             fillContent();
-            solution.setVisibility(View.GONE);
+            solutionLayout.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
             setTitle(R.string.title_barrier_edit);
         }
@@ -109,7 +114,15 @@ public class EditorActivity extends AppCompatActivity {
     private void fillContent() {
         title.setText(barrier.getTitle());
         description.setText(barrier.getDescription());
-        imageView.setImageBitmap(barrier.getImageBitmap());
+        barrier.setImageBitmapCallback((success, bitmap) -> {
+            if(success){
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setImageBitmap(bitmap);
+            }
+            else{
+                imageView.setVisibility(View.GONE);
+            }
+        });
     }
 
     public void choosePicture(View view) {
@@ -213,6 +226,9 @@ public class EditorActivity extends AppCompatActivity {
         if (imageView.getDrawable() != null) {
             BitmapDrawable bmapDraw = (BitmapDrawable) imageView.getDrawable();
             Bitmap bitmap = bmapDraw.getBitmap();
+            if(bitmap == null){
+                return "";
+            }
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             return new String(Base64.encodeBase64(stream.toByteArray()));
@@ -227,6 +243,7 @@ public class EditorActivity extends AppCompatActivity {
             try {
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
                 imageView.setImageBitmap(thumbnail);
+                imageView.setVisibility(View.VISIBLE);
             }catch (NullPointerException e){}
         }
     }
