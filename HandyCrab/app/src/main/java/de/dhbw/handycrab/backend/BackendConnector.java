@@ -5,7 +5,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
@@ -24,7 +23,6 @@ import de.dhbw.handycrab.model.User;
 import de.dhbw.handycrab.model.Vote;
 import io.gsonfire.GsonFireBuilder;
 import io.gsonfire.PostProcessor;
-
 import org.bson.types.ObjectId;
 
 import java.io.BufferedReader;
@@ -38,7 +36,7 @@ import java.util.function.BiConsumer;
 
 public class BackendConnector implements IHandyCrabDataHandler {
 
-    public static int TIMEOUT_MILLIS = 1000;
+    public static int TIMEOUT_MILLIS = 4000;
 
     private static String TOKEN = "TOKEN";
 

@@ -37,6 +37,7 @@ public class BarrierListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Program.getApplicationGraph().inject(this);
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_barrier_list);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,8 +71,6 @@ public class BarrierListActivity extends AppCompatActivity {
             }
             addButton.setVisibility(View.VISIBLE);
         }
-
-        addButton = findViewById(R.id.add_barrier);
 
         sectionsPagerAdapter = new ViewPagerAdapter(this, getSupportFragmentManager(), barriers, searchLocation, this::selectBarrier);
 

@@ -181,42 +181,48 @@ public class DetailActivity extends AppCompatActivity {
         switch (votable.getVote()) {
             case UP:
                 if (view == upvote) {
-                    voteVotable(votable, Vote.NONE);
-                    votable.setUpVotes(votable.getUpVotes() - 1);
-                    upvote.setAlpha(0.5f);
+                    if (voteVotable(votable, Vote.NONE)) {
+                        votable.setUpVotes(votable.getUpVotes() - 1);
+                        upvote.setAlpha(0.5f);
+                    }
                 }
                 else {
-                    voteVotable(votable, Vote.DOWN);
-                    votable.setUpVotes(votable.getUpVotes() - 1);
-                    votable.setDownVotes(votable.getDownVotes() + 1);
-                    upvote.setAlpha(0.5f);
-                    downvote.setAlpha(1.0f);
+                    if (voteVotable(votable, Vote.DOWN)) {
+                        votable.setUpVotes(votable.getUpVotes() - 1);
+                        votable.setDownVotes(votable.getDownVotes() + 1);
+                        upvote.setAlpha(0.5f);
+                        downvote.setAlpha(1.0f);
+                    }
                 }
                 break;
             case DOWN:
                 if (view == downvote) {
-                    voteVotable(votable, Vote.NONE);
-                    votable.setDownVotes(votable.getDownVotes() - 1);
-                    downvote.setAlpha(0.5f);
+                    if (voteVotable(votable, Vote.NONE)) {
+                        votable.setDownVotes(votable.getDownVotes() - 1);
+                        downvote.setAlpha(0.5f);
+                    }
                 }
                 else {
-                    voteVotable(votable, Vote.UP);
-                    votable.setUpVotes(votable.getUpVotes() + 1);
-                    votable.setDownVotes(votable.getDownVotes() - 1);
-                    downvote.setAlpha(0.5f);
-                    upvote.setAlpha(1.0f);
+                    if (voteVotable(votable, Vote.UP)) {
+                        votable.setUpVotes(votable.getUpVotes() + 1);
+                        votable.setDownVotes(votable.getDownVotes() - 1);
+                        downvote.setAlpha(0.5f);
+                        upvote.setAlpha(1.0f);
+                    }
                 }
                 break;
             default:
                 if (view == upvote) {
-                    voteVotable(votable, Vote.UP);
-                    votable.setUpVotes(votable.getUpVotes() + 1);
-                    upvote.setAlpha(1.0f);
+                    if (voteVotable(votable, Vote.UP)) {
+                        votable.setUpVotes(votable.getUpVotes() + 1);
+                        upvote.setAlpha(1.0f);
+                    }
                 }
                 else {
-                    voteVotable(votable, Vote.DOWN);
-                    votable.setDownVotes(votable.getDownVotes() + 1);
-                    downvote.setAlpha(1.0f);
+                    if (voteVotable(votable, Vote.DOWN)) {
+                        votable.setDownVotes(votable.getDownVotes() + 1);
+                        downvote.setAlpha(1.0f);
+                    }
                 }
                 break;
         }
@@ -224,7 +230,7 @@ public class DetailActivity extends AppCompatActivity {
         downvote.setText(String.format("%s", votable.getDownVotes()));
     }
 
-    private void voteVotable(Votable votable, Vote vote) {
+    private boolean voteVotable(Votable votable, Vote vote) {
         try {
             votable.setVote(vote);
             if (votable instanceof Barrier) {
@@ -233,6 +239,8 @@ public class DetailActivity extends AppCompatActivity {
             else if (votable instanceof Solution) {
                 dataHandler.voteSolutionAsync(((Solution) votable).getId(), vote).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             }
+
+            return true;
         }
         catch (ExecutionException | InterruptedException e) {
             if (e.getCause() instanceof BackendConnectionException) {
@@ -246,6 +254,8 @@ public class DetailActivity extends AppCompatActivity {
         catch (TimeoutException e) {
             Toast.makeText(DetailActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
         }
+
+        return false;
     }
 
     public void addSolution(View view) {
@@ -254,6 +264,7 @@ public class DetailActivity extends AppCompatActivity {
             try {
                 activeBarrier = dataHandler.addSolutionAsync(activeBarrier.getId(), newSolution.getText().toString()).get(BackendConnector.TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
                 dataCache.store(BarrierListActivity.ACTIVE_BARRIER, activeBarrier);
+                dataHelper.replaceBarrierInList(activeBarrier);
                 updateBarrier();
                 updateSolutions();
                 newSolution.setText("");
@@ -266,7 +277,8 @@ public class DetailActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(DetailActivity.this, getString(R.string.unknownError), Toast.LENGTH_SHORT).show();
                 }
-            } catch (TimeoutException e) {
+            }
+            catch (TimeoutException e) {
                 Toast.makeText(DetailActivity.this, getString(R.string.timeout), Toast.LENGTH_SHORT).show();
             }
         }

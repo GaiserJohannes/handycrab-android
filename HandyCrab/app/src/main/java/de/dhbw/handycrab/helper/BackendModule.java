@@ -4,7 +4,6 @@ import dagger.Module;
 import dagger.Provides;
 import de.dhbw.handycrab.backend.BackendConnector;
 import de.dhbw.handycrab.backend.IHandyCrabDataHandler;
-import de.dhbw.handycrab.test.MockConnector;
 
 import javax.inject.Singleton;
 
