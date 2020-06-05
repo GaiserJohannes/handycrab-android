@@ -45,6 +45,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
     private CloseableHttpClient client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
     private Gson gson;
 
+    private String token_value;
+    private String domain_value;
+
     public BackendConnector() {
         gson = new GsonFireBuilder()
                 .registerPostProcessor(Barrier.class, new PostProcessor<Barrier>() {
@@ -139,12 +142,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
 
     @Override
     public void loadToken(String token, String domain) {
-        BasicClientCookie cookie = new BasicClientCookie(TOKEN, token);
-        cookie.setDomain(domain);
-        cookie.setPath("/");
-        cookie.setVersion(1);
-        cookieStore.addCookie(cookie);
-        client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
+        token_value = token;
+        domain_value = domain;
+        reset();
     }
 
     @Override
@@ -378,7 +378,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
             e.printStackTrace();
         }
         finally {
-            client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
+            reset();
         }
         return null;
     }
@@ -402,5 +402,14 @@ public class BackendConnector implements IHandyCrabDataHandler {
         JsonObject object = gson.fromJson(getJsonBody(response), JsonObject.class);
         ErrorCode err = ErrorCode.values()[object.get("errorCode").getAsInt()];
         return new BackendConnectionException(err, response.getStatusLine().getStatusCode());
+    }
+
+    private void reset() {
+        BasicClientCookie cookie = new BasicClientCookie(TOKEN, token_value);
+        cookie.setDomain(domain_value);
+        cookie.setPath("/");
+        cookie.setVersion(1);
+        cookieStore.addCookie(cookie);
+        client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
     }
 }
