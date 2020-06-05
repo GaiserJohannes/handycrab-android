@@ -42,7 +42,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
 
     private CookieStore cookieStore = new BasicCookieStore();
     private String connection = "https://handycrab.nico-dreher.de/rest/";
-    private CloseableHttpClient client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
+    private CloseableHttpClient client;// = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
     private Gson gson;
 
     public BackendConnector() {
@@ -144,7 +144,6 @@ public class BackendConnector implements IHandyCrabDataHandler {
         cookie.setPath("/");
         cookie.setVersion(1);
         cookieStore.addCookie(cookie);
-        client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
     }
 
     @Override
@@ -167,7 +166,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("password", password);
         object.addProperty("createToken", Boolean.toString(createToken));
         HttpResponse response = post(path, object.toString());
-        return getUserOfResponse(response);
+        User temp = getUserOfResponse(response);
+        close();
+        return temp;
     }
 
     private User login(String emailOrUsername, String password, boolean createToken) {
@@ -177,19 +178,24 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("password", password);
         object.addProperty("createToken", Boolean.toString(createToken));
         HttpResponse response = post(path, object.toString());
-        return getUserOfResponse(response);
+        User temp = getUserOfResponse(response);
+        close();
+        return temp;
     }
 
     private User currentUser() {
         String path = "users/currentuser";
         HttpResponse response = get(path);
-        return getUserOfResponse(response);
+        User temp = getUserOfResponse(response);
+        close();
+        return temp;
     }
 
     private void logout() {
         String path = "users/logout";
         HttpResponse response = post(path, "");
         checkSuccessResponse(response);
+        close();
     }
 
     private String getUsername(ObjectId id) {
@@ -198,9 +204,12 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("_id", id.toString());
         HttpResponse response = get(path, object.toString());
         if (response != null && response.getStatusLine().getStatusCode() == 200) {
-            return gson.fromJson(getJsonBody(response), JsonObject.class).get("result").getAsString();
+            String temp = gson.fromJson(getJsonBody(response), JsonObject.class).get("result").getAsString();
+            close();
+            return temp;
         }
         else {
+            close();
             throw getException(response);
         }
     }
@@ -212,7 +221,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("latitude", latitude);
         object.addProperty("radius", radius);
         HttpResponse response = get(path, object.toString());
-        return getBarriersOfResponse(response);
+        List<Barrier> temp = getBarriersOfResponse(response);
+        close();
+        return temp;
     }
 
     private List<Barrier> getBarriers(String postcode) {
@@ -220,13 +231,17 @@ public class BackendConnector implements IHandyCrabDataHandler {
         JsonObject object = new JsonObject();
         object.addProperty("postcode", postcode);
         HttpResponse response = get(path, object.toString());
-        return getBarriersOfResponse(response);
+        List<Barrier> temp = getBarriersOfResponse(response);
+        close();
+        return temp;
     }
 
     private List<Barrier> getBarriers() {
         String path = "barriers/get";
         HttpResponse response = get(path, new JsonObject().toString());
-        return getBarriersOfResponse(response);
+        List<Barrier> temp = getBarriersOfResponse(response);
+        close();
+        return temp;
     }
 
     private Barrier getBarrier(ObjectId id) {
@@ -234,7 +249,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         JsonObject object = new JsonObject();
         object.addProperty("_id", id.toString());
         HttpResponse response = get(path, object.toString());
-        return getBarrierOfResponse(response);
+        Barrier temp = getBarrierOfResponse(response);
+        close();
+        return temp;
     }
 
     private Barrier addBarrier(String title, double longitude, double latitude, String picture_base64, String description, String postcode, String solution) {
@@ -252,7 +269,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
             object.addProperty("solution", solution);
         }
         HttpResponse response = post(path, object.toString());
-        return getBarrierOfResponse(response);
+        Barrier temp = getBarrierOfResponse(response);
+        close();
+        return temp;
     }
 
     private Barrier modifyBarrier(ObjectId id, String title, String picture_base64, String description) {
@@ -265,7 +284,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         }
         object.addProperty("description", description);
         HttpResponse response = put(path, object.toString());
-        return getBarrierOfResponse(response);
+        Barrier temp = getBarrierOfResponse(response);
+        close();
+        return temp;
     }
 
     private void deleteBarrier(ObjectId id) {
@@ -274,6 +295,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("_id", id.toString());
         HttpResponse response = delete(path, object.toString());
         checkSuccessResponse(response);
+        close();
     }
 
     private void voteBarrier(ObjectId id, Vote vote) {
@@ -283,6 +305,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("vote", vote.toString());
         HttpResponse response = put(path, object.toString());
         checkSuccessResponse(response);
+        close();
     }
 
     private Barrier addSolution(ObjectId barrierID, String solution) {
@@ -291,7 +314,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("_id", barrierID.toString());
         object.addProperty("solution", solution);
         HttpResponse response = post(path, object.toString());
-        return getBarrierOfResponse(response);
+        Barrier temp = getBarrierOfResponse(response);
+        close();
+        return temp;
     }
 
     private void voteSolution(ObjectId id, Vote vote) {
@@ -301,6 +326,7 @@ public class BackendConnector implements IHandyCrabDataHandler {
         object.addProperty("vote", vote.toString());
         HttpResponse response = put(path, object.toString());
         checkSuccessResponse(response);
+        close();
     }
 
     //helper get objects of Response
@@ -372,13 +398,11 @@ public class BackendConnector implements IHandyCrabDataHandler {
 
     private HttpResponse execute(HttpUriRequest request){
         try {
+            client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
             return client.execute(request);
         }
         catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
-            client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
         }
         return null;
     }
@@ -402,5 +426,14 @@ public class BackendConnector implements IHandyCrabDataHandler {
         JsonObject object = gson.fromJson(getJsonBody(response), JsonObject.class);
         ErrorCode err = ErrorCode.values()[object.get("errorCode").getAsInt()];
         return new BackendConnectionException(err, response.getStatusLine().getStatusCode());
+    }
+
+    private void close() {
+        try {
+            client.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

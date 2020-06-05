@@ -38,10 +38,11 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_input_add"
+            app:srcCompat="@drawable/add"
             android:id="@+id/add_barrier" android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin" app:maxImageSize="48dp"
-            android:onClick="addBarrier" app:backgroundTint="@color/colorPrimaryLight"
+            android:onClick="addBarrier"
+            app:backgroundTint="@color/colorPrimaryDark"
     />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
