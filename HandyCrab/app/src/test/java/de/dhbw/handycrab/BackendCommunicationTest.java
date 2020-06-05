@@ -5,9 +5,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import de.dhbw.handycrab.backend.BackendConnectionException;
 import de.dhbw.handycrab.backend.BackendConnector;
@@ -30,10 +34,10 @@ public class BackendCommunicationTest {
     public void init(){
         try {
             connector.loginAsync("abc@test.com", "abc123DEF!", true).get();
-            CompletableFuture<Barrier> cbarrier = connector.addBarrierAsync("Test barrier", 48.5, 8.5, base64picture, "Dies ist eine Barriere", "72166", "So kann man diese barriere umgehen");
+            /*CompletableFuture<Barrier> cbarrier = connector.addBarrierAsync("Test barrier", 48.5, 8.5, base64picture, "Dies ist eine Barriere", "72166", "So kann man diese barriere umgehen");
             Barrier b = cbarrier.get();
             barrierID = b.getId();
-            solutionID = b.getSolutions().get(0).getId();
+            solutionID = b.getSolutions().get(0).getId();*/
         } catch (ExecutionException e) {
             if(e.getCause() instanceof BackendConnectionException){
                 System.out.println(((BackendConnectionException) e.getCause()).getErrorCode() + " - Http-Code: " + ((BackendConnectionException) e.getCause()).getHttpStatusCode());
@@ -66,11 +70,21 @@ public class BackendCommunicationTest {
         User user = null;
         try {
             user = cuser.get();
+            List<Barrier> myBarriers = connector.getBarriersAsync().get();
+            List<CompletableFuture<Void>> a = new ArrayList<>();
+            for(Barrier b : myBarriers){
+                a.add(connector.deleteBarrierAsync(b.getId()));
+            }
+            for(CompletableFuture<Void> b : a){
+                b.get(1, TimeUnit.SECONDS);
+            }
         } catch (ExecutionException e) {
             if(e.getCause() instanceof BackendConnectionException){
                 System.out.println(((BackendConnectionException) e.getCause()).getErrorCode() + " - Http-Code: " + ((BackendConnectionException) e.getCause()).getHttpStatusCode());
             }
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
             e.printStackTrace();
         }
         Assert.assertNotNull(user);
@@ -261,7 +275,7 @@ public class BackendCommunicationTest {
     public void voteSolutionTest(){
         try {
             //zu einer SolutionID machen
-            connector.voteSolutionAsync(solutionID, Vote.UP).get();
+            connector.voteSolutionAsync(new ObjectId("5ed7e1e24a956d4aee1ab32e"), Vote.NONE).get();
         } catch (ExecutionException e) {
             if(e.getCause() instanceof BackendConnectionException){
                 System.out.println(((BackendConnectionException) e.getCause()).getErrorCode() + " - Http-Code: " + ((BackendConnectionException) e.getCause()).getHttpStatusCode());

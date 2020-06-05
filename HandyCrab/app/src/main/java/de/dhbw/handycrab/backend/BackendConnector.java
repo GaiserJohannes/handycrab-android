@@ -377,6 +377,9 @@ public class BackendConnector implements IHandyCrabDataHandler {
         catch (IOException e) {
             e.printStackTrace();
         }
+        finally {
+            client = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
+        }
         return null;
     }
 
