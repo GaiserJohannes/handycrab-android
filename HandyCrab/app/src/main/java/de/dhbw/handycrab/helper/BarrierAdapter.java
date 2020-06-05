@@ -1,6 +1,5 @@
 package de.dhbw.handycrab.helper;
 
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,11 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
     @Override
     public void onBindViewHolder(@NonNull BarrierViewHolder barrierViewHolder, int i) {
         barrierViewHolder.barrierTitle.setText(barriers.get(i).getTitle());
-        barrierViewHolder.barrierDesc.setText(barriers.get(i).getDescription());
+        String desc = barriers.get(i).getDescription();
+        if (desc.length() > 200) {
+            desc = desc.substring(0, 200) + "...";
+        }
+        barrierViewHolder.barrierDesc.setText(desc);
         barriers.get(i).setImageBitmapCallback((success, bitmap) -> {
             if(success){
                 barrierViewHolder.barrierImage.setImageBitmap(bitmap);
