@@ -147,6 +147,9 @@ public class DetailActivity extends AppCompatActivity {
             if (success) {
                 image.setImageBitmap(bitmap);
             }
+            else{
+                image.setImageDrawable(getDrawable(R.drawable.handycrab));
+            }
         });
         if (activeBarrier.getDistance() > 1000) {
             distance.setText(String.format(getString(R.string.distance_km), activeBarrier.getDistance() / 1000));

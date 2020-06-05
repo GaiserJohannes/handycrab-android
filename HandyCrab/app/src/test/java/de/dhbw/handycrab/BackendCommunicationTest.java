@@ -70,21 +70,11 @@ public class BackendCommunicationTest {
         User user = null;
         try {
             user = cuser.get();
-            List<Barrier> myBarriers = connector.getBarriersAsync().get();
-            List<CompletableFuture<Void>> a = new ArrayList<>();
-            for(Barrier b : myBarriers){
-                a.add(connector.deleteBarrierAsync(b.getId()));
-            }
-            for(CompletableFuture<Void> b : a){
-                b.get(1, TimeUnit.SECONDS);
-            }
         } catch (ExecutionException e) {
             if(e.getCause() instanceof BackendConnectionException){
                 System.out.println(((BackendConnectionException) e.getCause()).getErrorCode() + " - Http-Code: " + ((BackendConnectionException) e.getCause()).getHttpStatusCode());
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
             e.printStackTrace();
         }
         Assert.assertNotNull(user);

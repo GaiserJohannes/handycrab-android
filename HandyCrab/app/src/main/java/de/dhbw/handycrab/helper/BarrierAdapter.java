@@ -38,6 +38,9 @@ public class BarrierAdapter extends RecyclerView.Adapter<BarrierAdapter.BarrierV
             if(success){
                 barrierViewHolder.barrierImage.setImageBitmap(bitmap);
             }
+            else{
+                barrierViewHolder.barrierImage.setImageResource(R.drawable.handycrab);
+            }
         });
         if(barriers.get(i).getDistance() > 1000){
             barrierViewHolder.barrierDistance.setText(format(barrierViewHolder.itemView.getContext().getString(R.string.distance_km), barriers.get(i).getDistance()/1000));
