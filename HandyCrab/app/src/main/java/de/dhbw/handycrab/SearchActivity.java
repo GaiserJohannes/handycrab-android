@@ -163,9 +163,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         else if (!success) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
         }
-        else {
-            locationService.getLastLocationCallback(this::UpdateLocationText);
-        }
     }
 
     private boolean checkPermission() {
